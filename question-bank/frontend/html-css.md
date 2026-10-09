@@ -8,182 +8,202 @@ Semantic HTML, layout, styling, browser behavior, accessibility, and responsive 
 
 **Answer**
 
-Block-Level Elements: Used for larger sections of content, such as paragraphs, headings, lists, and sections. They help in creating the overall structure of the webpage.
-Characteristics:
-Width and Height: Block-level elements respect the width and height properties. By default, they take up the full width of their container.
-Margin and Padding: Margins and padding can be applied on all four sides (top, right, bottom, left) and will affect the layout as expected.
-Display Property: The default display property for block-level elements is block.
-Positioning: Block-level elements can be positioned using CSS properties like position, top, right, bottom, left, float, and clear.
-Examples: <div>, <p>, <h1> to <h6>, <ul>, <ol>, <table>, <header>, <footer>, <section>, <article>, and <nav>.
-Inline Elements: Used for smaller pieces of content within block-level elements, such as links, emphasized text, and images. They help format and style specific parts of the content without disrupting the flow.
-Characteristics:
-Width and Height: Inline elements do not respect the width and height properties. They take up only as much width as necessary to fit their content.
-Margin and Padding: Margins and padding can be applied, but only the horizontal (left and right) margins and padding will affect the layout. Vertical (top and bottom) margins and padding will not push other elements away.
-Display Property: The default display property for inline elements is inline.
-Positioning: Inline elements can be positioned using position, but they do not respond to float and clear properties in the same way block-level elements do.
-Examples: <span>, <a>, <img>, <strong>, <b>, <em>, <i>, <code>, <br>, and <input>.
+In normal flow, a block box starts on a new line and usually expands to the available inline width.
+Examples include `<div>`, `<p>`, headings, and semantic sectioning elements.
+
+An inline box participates in a line of text and normally occupies only the space its content needs.
+Examples include `<span>`, `<a>`, `<strong>`, and `<code>`. Width and height do not size a
+non-replaced inline box in the same way they size a block box, and vertical margins do not move
+surrounding lines apart.
+
+These are default CSS display behaviors, not permanent properties of an HTML tag. CSS can change an
+element to `block`, `inline`, `inline-block`, `flex`, or another display type. Some replaced inline
+elements, such as images, also have intrinsic dimensions and different sizing behavior.
 
 ## What is z-index?
 
 **Answer**
 
-z-index Property: Controls the stacking order of elements along the z-axis.
-Positioning Context: Works on elements with position set to relative, absolute, fixed, or sticky.
-Stacking Context: Formed when an element is positioned and has a z-index value other than auto.
-Default Value: auto, meaning the element follows the default stacking order.
-Integer Values: Accepts both positive and negative integer values.
-Nested Stacking Contexts: Stacking contexts can be nested, and z-index values are relative within their respective contexts.
+`z-index` controls an element's stack level within its **stacking context**. A high value inside one
+stacking context cannot escape that context and appear above an element in a higher parent context.
+
+It applies to positioned elements and also to flex and grid items. Many properties can create a new
+stacking context, including positioned elements with a non-`auto` `z-index`, `opacity` below `1`,
+certain transforms, and `isolation: isolate`. When `z-index` seems ineffective, inspect the ancestor
+stacking contexts instead of continually increasing the number.
 
 ## What is the difference between display: none and visibility: hidden?
 
 **Answer**
 
-Effect on Layout:
-display: none: Element is removed from the document flow.
-visibility: hidden: Element remains in the document flow.
-Space Occupied:
-display: none: Does not occupy any space.
-visibility: hidden: Occupies space.
-Rendering:
-display: none: Element and its children are not rendered.
-visibility: hidden: Element and its children are rendered but not visible.
-Use Cases:
-display: none: Hiding elements without affecting layout.
-visibility: hidden: Hiding elements while preserving layout.
+- `display: none` prevents the element from generating boxes, so it occupies no layout space.
+- `visibility: hidden` keeps the element's box in layout but does not paint it.
 
-## How do you display an image without using the <img> tag?
+Both normally remove the hidden content from keyboard interaction and the accessibility tree, though
+assistive-technology behavior should be tested for the target browser combination. If content should
+be visually hidden but remain available to screen readers, use a tested visually-hidden CSS pattern
+instead of either property.
+
+## How do you display an image without using the `<img>` tag?
 
 **Answer**
 
-HTML: A <div> element with a class of image-container is used to hold the image.
-CSS: The .image-container class is styled to set the background-image property to the URL of the image. The background-size: cover property ensures that the image covers the entire container, and background-position: center centers the image within the container.
+Use a CSS background image when the image is decorative:
+
+```css
+.hero {
+  min-height: 20rem;
+  background: center / cover no-repeat url("hero.webp");
+}
+```
+
+A CSS background has no native alternative-text semantics. If the image conveys content, use
+`<img alt="...">` or `<picture>` instead so it remains accessible and participates in responsive
+image loading.
 
 ## What is the use of flex and grid in CSS?
 
 **Answer**
 
-Flexbox (Flexible Box Layout) is designed for one-dimensional layouts, either in a row or a column. It is useful for distributing space and aligning items within a container.
-Grid (CSS Grid Layout) is designed for two-dimensional layouts, allowing you to control both rows and columns. It is useful for creating complex layouts with precise control over the placement of items.
+Flexbox is primarily one-dimensional: it lays items out along a row or column and distributes or
+aligns space along those axes. It is well suited to navigation bars, toolbars, and component-level
+alignment.
 
-## How to align 2 divs horizontally?
+Grid is two-dimensional: it defines rows and columns and places items within that structure. It is
+well suited to page layouts and components whose row and column alignment must coordinate. They can
+be nested and used together.
+
+## How do you align two elements horizontally?
 
 **Answer**
 
-Put both the divs in a parent div and use display: flex; on that parent div.
-Flexbox makes elements horizontal by default when you set the display property of the container to flex. This is because the default value of the flex-direction property is row, which arranges the child elements in a horizontal line.
+Place them in a flex container. The default `flex-direction` is `row`:
+
+```css
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+```
+
+Use `justify-content` for alignment along the row and `align-items` for the cross axis. Grid may be a
+better fit when the elements must align with a larger column structure.
 
 ## How will you ensure responsiveness in your web application?
 
 **Answer**
 
-Responsiveness: The ability of a website or web application to adapt its layout, content, and functionality to different screen sizes, orientations, and devices.
-Responsive Frameworks: Use frameworks like Bootstrap or libraries like Material-UI for built-in responsive components.
-CSS Media Queries: Apply different styles based on screen size and device characteristics.
-Flexbox and CSS Grid: Use modern layout models for flexible and responsive layouts.
-Responsive Images: Provide different image sizes for different screen resolutions.
-Viewport Meta Tag: Ensure correct rendering on different devices.
-Test Responsiveness: Use developer tools and online services to test responsiveness.
-Responsive Units: Use relative units like percentages, em, rem, and viewport units.
-Mobile-First Design: Design for mobile devices first and enhance for larger screens.
+- Include a viewport meta tag and start with a usable narrow-screen layout.
+- Prefer intrinsic layouts with Flexbox, Grid, `min()`, `max()`, `clamp()`, and relative units rather
+  than fixed device widths.
+- Add media or container queries where the content actually needs a layout change.
+- Use responsive images with `srcset`, `sizes`, or `<picture>` and reserve image dimensions to limit
+  layout shift.
+- Preserve readable line lengths, touch-target sizes, keyboard access, zoom, and reduced-motion
+  preferences.
+- Test real content at narrow, wide, zoomed, landscape, and high-density configurations rather than
+  checking only a few named devices.
 
 ## What is Material UI?
 
 **Answer**
 
-Material-UI (MUI): A React component library that implements Google's Material Design guidelines, providing pre-built, customizable, and accessible UI components.
-Installation: Install the core package and optional icons package using npm or yarn.
-Usage: Import and use Material-UI components in your React application, and customize the theme to match your branding.
-Components: Offers a wide range of components such as buttons, cards, dialogs, menus, and more, all built with responsive design and accessibility in mind.
+MUI is a React component library whose default design system follows Material Design. It provides
+components, theming, styling utilities, and optional icon packages.
+
+Using a component library improves consistency and can provide useful accessibility behavior, but it
+does not make an application automatically accessible. Teams must still use correct labels and
+semantics, manage focus, choose sufficient contrast, and test keyboard and assistive-technology
+behavior after customization.
 
 ## What are CSS precompilers?
 
 **Answer**
 
-CSS Precompilers: Tools that extend the capabilities of standard CSS by adding features such as variables, nesting, mixins, functions, and more.
-Common Precompilers:
-Sass: Offers SCSS and Sass syntax, with features like variables, nesting, mixins, functions, inheritance, partials, and imports.
-LESS: Similar to CSS with additional features like variables, nesting, mixins, functions, and imports.
-Stylus: Flexible syntax with features like variables, nesting, mixins, functions, and imports.
-Key Features:
-Variables: Store values for reuse.
-Nesting: Nest CSS selectors for better readability.
-Mixins: Create reusable chunks of CSS.
-Functions: Create custom functions that return values.
-Partials and Imports: Split CSS into multiple files and import them.
-Inheritance: Share CSS properties between selectors.
+CSS preprocessors compile an extended stylesheet language into CSS. Sass, Less, and Stylus provide
+features such as variables, mixins, functions, modules, and programmatic transformations.
+
+Modern CSS now supports custom properties, nesting, and other features that once required a
+preprocessor, but preprocessors remain useful for build-time computation and reusable abstractions.
+Keep nesting shallow and avoid generating selectors or output that are difficult to inspect.
 
 ## What is SCSS?
 
 **Answer**
 
-SCSS (Sassy CSS): A syntax of Sass that extends the capabilities of standard CSS by adding features such as variables, nesting, mixins, functions, and more.
-Key Features:
-Variables: Store values for reuse.
-Nesting: Nest CSS selectors for better readability.
-Mixins: Create reusable chunks of CSS.
-Functions: Create custom functions that return values.
-Partials and Imports: Split CSS into multiple files and import them.
-Inheritance: Share CSS properties between selectors.
-Operators: Perform mathematical operations directly in stylesheets.
+SCSS is the CSS-compatible syntax of Sass. Sass compiles SCSS variables, mixins, functions, modules,
+and control constructs into ordinary CSS. SCSS uses braces and semicolons, unlike Sass's indented
+syntax.
+
+Prefer the Sass module system (`@use` and `@forward`) over legacy `@import`, and use native CSS
+custom properties when a value must change at runtime.
 
 ## How do you write common CSS in SCSS?
 
 **Answer**
 
-Variables: Store values for reuse.
-Mixins: Create reusable chunks of CSS.
-Partials and Imports: Split CSS into multiple files and import them.
-Nesting: Nest CSS selectors for better readability.
-Inheritance: Share CSS properties between selectors.
+Extract repeated declarations into a mixin, pass the varying values as parameters, and organize
+shared code into modules:
+
+```scss
+@mixin focus-ring($color) {
+  outline: 0.2rem solid $color;
+  outline-offset: 0.2rem;
+}
+
+.button:focus-visible {
+  @include focus-ring(#2457d6);
+}
+```
+
+Use placeholders and `@extend` carefully because they can generate coupled selectors. Reuse should
+improve the compiled CSS and its maintenance, not merely reduce the number of source lines.
 
 ## What are mixins and plugins?
 
 **Answer**
 
-Mixins:
-Definition: Reusable chunks of CSS code that can include properties and accept parameters.
-Use Case: Avoid code duplication, enhance maintainability, and centralize common styles.
-Plugins:
-Definition: Extensions or add-ons that provide additional functionality to a software application, such as a CSS preprocessor or build tool.
-Use Case: Extend functionality, automate tasks, and customize behavior.
-Example (PostCSS with Autoprefixer and CSSNano):
+A **mixin** is a source-language abstraction, such as a Sass block that emits declarations wherever
+it is included and may accept parameters.
+
+A **plugin** extends a tool's processing pipeline. For example, PostCSS plugins can add vendor
+prefixes, transform newer syntax for selected browser targets, or minify the generated CSS. A mixin
+is invoked by stylesheet source; a plugin transforms the stylesheet as part of the build.
 
 ## What is Bootstrap?
 
 **Answer**
 
-Bootstrap: A popular open-source front-end framework for developing responsive and mobile-first websites.
-Key Features:
-Responsive Grid System: Create responsive layouts with a flexible grid system.
-Pre-styled Components: Use a wide range of pre-styled components like buttons, forms, navbars, and modals.
-JavaScript Plugins: Add interactivity with JavaScript plugins like modals, tooltips, and carousels.
-Customization: Override default styles or generate a custom build.
-Cross-browser Compatibility: Works seamlessly across modern browsers and devices.
-Documentation and Community: Extensive documentation and a large community for support.
+Bootstrap is a frontend toolkit that provides a responsive grid, utility classes, styled components,
+and JavaScript behavior for components such as modals and dropdowns. Its Sass variables and build
+can be customized.
+
+It can accelerate consistent UI development, but teams should avoid shipping unused components,
+understand its generated markup and JavaScript, and verify accessibility after customization.
 
 ## How can you optimize CSS files?
 
 **Answer**
 
-Minification:
-Remove Unnecessary Characters: Use minification tools (e.g., CSSNano, UglifyCSS) to remove whitespace, comments, and other unnecessary characters from CSS files, reducing their size.
-Combine CSS Files:
-Reduce HTTP Requests: Combine multiple CSS files into a single file to reduce the number of HTTP requests, which can improve load times.
-Remove Unused CSS:
-Clean Up Styles: Use tools like PurifyCSS, UnCSS, or the Coverage tab in Chrome DevTools to identify and remove unused CSS rules, reducing the file size.
-Use CSS Preprocessors:
-Leverage Preprocessors: Use CSS preprocessors like Sass or Less to write more maintainable and modular CSS. Preprocessors can help you organize your styles and reduce redundancy.
-Optimize CSS Delivery:
-Inline Critical CSS: Inline the critical CSS required for above-the-fold content directly into the HTML to reduce render-blocking and improve perceived load times.
-Load CSS Asynchronously: Use the media attribute or JavaScript to load non-critical CSS asynchronously, preventing it from blocking the rendering of the page.
-Use Shorthand Properties:
-Simplify Code: Use shorthand properties (e.g., margin, padding, border) to reduce the amount of CSS code and improve readability.
-Leverage Browser Caching:
-Set Cache Headers: Configure your server to set appropriate cache headers for CSS files, allowing browsers to cache them and reduce the need to re-download them on subsequent visits.
-Use Modern CSS Features:
-CSS Variables: Use CSS variables to reduce redundancy and improve maintainability.
-Flexbox and Grid: Use modern layout techniques like Flexbox and CSS Grid to simplify complex layouts and reduce the need for additional CSS.
-Optimize Selectors:
-Efficient Selectors: Use efficient CSS selectors to minimize the impact on rendering performance. Avoid overly complex or deeply nested selectors.
-Gzip Compression:
-Enable Compression: Enable Gzip or Brotli compression on your server to reduce the size of CSS files sent to the browser.
+Measure before optimizing, then address the largest costs:
+
+- remove unused rules carefully, including classes generated dynamically at runtime;
+- minify production output and serve it with Brotli or gzip compression;
+- use content-hashed filenames with long-lived cache headers;
+- avoid large frameworks or icon sets when only a small portion is used;
+- split styles by route or component when it improves first-load cost without causing excessive
+  requests or flashes of unstyled content;
+- consider small, measured critical CSS for render-blocking paths; and
+- inspect coverage, transfer size, render timing, and real-user performance after the change.
+
+Combining every stylesheet is not universally faster under modern HTTP, and selector micro-
+optimization is rarely the first priority. Preserve cascade order and test visual regressions when
+changing bundling or removing CSS.
+
+## References
+
+- [MDN: normal flow](https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/CSS_layout/Introduction)
+- [MDN: stacking context](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_positioned_layout/Stacking_context)
+- [MDN: responsive images](https://developer.mozilla.org/en-US/docs/Web/HTML/Guides/Responsive_images)
+- [Sass documentation](https://sass-lang.com/documentation/)

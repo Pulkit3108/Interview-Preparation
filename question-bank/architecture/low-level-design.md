@@ -1,1047 +1,329 @@
 # Low-Level Design
 
-Object-oriented design, SOLID principles, design patterns, caching, messaging, and design exercises.
+Object modeling, relationships, SOLID principles, and reusable design patterns.
 
 [Back to the question-bank index](../README.md)
 
 ## Topic Map
 
-- [Object-oriented design and SOLID](#what-is-oops-and-explain-its-concepts)
-- [Creational, structural, and behavioral patterns](#what-are-some-different-design-patterns-out-there)
-- [API, microservice, gateway, and resilience design](#what-are-microservices)
-- [Transactions and durable workflows](#is-it-possible-to-revert-a-transaction-in-microservice-architecture)
-- [Authentication, messaging, and caching](#what-is-token-based-authentication-in-microservice-architecture)
-- [Testing practices and BDD](#what-is-tdd)
-- [Design and scaling exercises](#what-should-you-do-if-an-e-commerce-website-is-getting-a-large-number-of-requests)
+- [Object-oriented fundamentals](#what-is-oops-and-explain-its-concepts)
+- [Relationships and composition](#what-is-association-aggregation-and-composition)
+- [SOLID and dependency design](#explain-solid-principles)
+- [Creational patterns](#what-is-a-singleton-class)
+- [Structural and behavioral patterns](#what-are-some-different-design-patterns-out-there)
 
 ## What is OOPS and explain its concepts?
 
 **Answer**
 
-Object-Oriented Programming (OOP) is a programming paradigm based on the concept of "objects", which can contain data and code to manipulate that data.
-Class: A blueprint for creating objects. It defines a datatype by bundling data and methods that work on the data into one single unit.
-Object: An instance of a class. It is a real-world entity that has state and behavior.
-Encapsulation: The wrapping of data (variables) and code (methods) together as a single unit. It restricts direct access to some of the object's components and can prevent the accidental modification of data.
-Achieved using access modifiers (private, protected, public) and getter/setter methods.
-Inheritance: The mechanism by which one class (child/subclass) inherits the fields and methods of another class (parent/superclass). It promotes code reusability.
-Achieved using the extends keyword.
-Polymorphism: The ability of a variable, function, or object to take on multiple forms. It allows one interface to be used for a general class of actions.
-Compile-time Polymorphism (Method Overloading): Multiple methods with the same name but different parameters.
-Runtime Polymorphism (Method Overriding): A subclass provides a specific implementation of a method that is already defined in its superclass.
-Abstraction: The concept of hiding the complex implementation details and showing only the essential features of the object. It reduces complexity and increases efficiency.
-Achieved using abstract classes and interfaces.
+Object-oriented programming models state and behavior through collaborating objects. A class defines
+construction and shared behavior, while an object is a runtime instance. Its core ideas are:
+
+- **Encapsulation:** protect invariants behind an intentional API.
+- **Abstraction:** expose essential behavior while hiding changeable details.
+- **Inheritance:** define a subtype relationship and share base behavior.
+- **Polymorphism:** use different implementations through one contract.
+
+OOP is one tool; good designs also use functions, modules, composition, and immutable values where
+those are clearer.
 
 ## What are the different types of Polymorphism?
 
 **Answer**
 
-Compile-Time Polymorphism (Static Polymorphism):
-Achieved through method overloading.
-The method to be called is determined at compile time.
-Also known as early binding.
-Runtime Polymorphism (Dynamic Polymorphism):
-Achieved through method overriding.
-The method to be called is determined at runtime.
-Also known as late binding.
+Common forms include ad-hoc polymorphism through overloads, subtype polymorphism through overriding
+and dynamic dispatch, and parametric polymorphism through generics. Some languages also support
+coercion polymorphism. The exact forms and dispatch rules depend on the language.
 
 ## What is Method Overloading?
 
 **Answer**
 
-Method overloading is a feature that allows a class to have more than one method with the same name, but with different parameter lists. It is a form of compile-time polymorphism.
-- Methods must have the same name.
-- Methods must have different parameter lists (different number, type, or order of parameters).
-- Return type can be different, but it alone is not sufficient for overloading
+Method overloading declares methods with the same name but different parameter lists. The compiler
+selects an applicable signature from the static argument types. It is distinct from overriding, where
+a subtype supplies a new implementation for an inherited signature. Support and ambiguity rules are
+language-specific.
 
 ## What is the difference between abstraction and encapsulation?
 
 **Answer**
 
-Abstraction:
-Focus: Hides the complex implementation details and shows only the essential features.
-Purpose: Reduces complexity and allows the programmer to focus on interactions at a higher level.
-
-**How: Achieved using abstract classes and interfaces.**
-
-Example: An interface Vehicle with methods start(), stop(), and accelerate().
-Encapsulation:
-Focus: Wraps data and methods into a single unit and restricts direct access to some of the object's components.
-Purpose: Protects the internal state of an object and ensures data integrity.
-
-**How: Achieved using access modifiers and getter/setter methods.**
-
-Example: A class Person with private fields name and age, and public getter and setter methods.
+Abstraction defines the essential contract while omitting irrelevant implementation detail.
+Encapsulation groups state and behavior and controls how state may be observed or changed. An
+interface is an abstraction; a class that keeps fields private and preserves invariants uses
+encapsulation. Getters and setters alone do not guarantee either quality.
 
 ## How can we achieve abstraction?
 
 **Answer**
 
-Abstract Classes: Used to provide a common base class with both abstract and concrete methods. Cannot be instantiated.
-Interfaces: Used to define a contract with abstract methods, default methods, and static methods. Supports multiple inheritance.
+Use small interfaces, abstract base classes where shared implementation is justified, functions,
+modules, facades, or service contracts. Choose the narrowest abstraction that captures what clients
+need and avoid leaking storage, framework, or transport details.
 
 ## Can you overload a method by changing just it's return type
 
 **Answer**
 
-Method Overloading: Requires methods to have the same name but different parameter lists.
-Return Type: The return type alone cannot be used to distinguish overloaded methods.
-Valid Overloading: Methods must have different parameter lists (different number of parameters, different types of parameters, or both).
-Invalid Overloading: Changing only the return type does not constitute valid method overloading and will result in a compilation error.
+Not in Java, C#, and many similar overload-resolution systems. The arguments would not identify which
+method to call, so overloads need distinct parameter signatures. Other languages may differ; state
+the target language.
 
 ## Explain SOLID Principles.
 
 **Answer**
 
-The SOLID principles are a set of five design principles intended to make software designs more understandable, flexible, and maintainable.
-Single Responsibility Principle (SRP):
-A class should have only one reason to change, meaning it should have only one job or responsibility.
-Open/Closed Principle (OCP):
-Software entities (classes, modules, functions, etc.) should be open for extension but closed for modification. This means you should be able to add new functionality without changing existing code.
-Liskov Substitution Principle (LSP):
-Objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. Subtypes must be substitutable for their base types.
-Interface Segregation Principle (ISP):
-No client should be forced to depend on methods it does not use. This means that interfaces should be client-specific rather than general-purpose.
-Dependency Inversion Principle (DIP):
-High-level modules should not depend on low-level modules. Both should depend on abstractions. Additionally, abstractions should not depend on details. Details should depend on abstractions.
+- **Single Responsibility:** a module should have one cohesive reason to change.
+- **Open/Closed:** behavior should be extensible at deliberate variation points without repeatedly
+  editing stable code.
+- **Liskov Substitution:** subtypes must honor the behavioral contract of their base type.
+- **Interface Segregation:** clients should not depend on operations they do not need.
+- **Dependency Inversion:** high-level policy and low-level detail should depend on appropriate
+  abstractions rather than policy depending directly on volatile details.
+
+These are design heuristics, not instructions to create an interface for every class.
 
 ## What changes will you make to make sure the class follows an open-closed principle?
 
 **Answer**
 
-Open-Closed Principle: A class should be open for extension but closed for modification.
-Refactoring Steps:
-Define an Interface: Declare the methods for the class.
-Create an Abstract Class: Implement the interface and provide common behavior.
-Create Concrete Classes: Extend the abstract class and add specific behavior.
+Identify behavior that genuinely varies, define a stable contract for it, and move each policy into a
+separate implementation selected through composition, configuration, or a factory. Keep stable
+orchestration dependent on the contract. Inheritance is not required, and speculative extension
+points add complexity.
 
 ## Explain the Liskov Substitution Principle with an example.
 
 **Answer**
 
-The Liskov Substitution Principle (LSP) states that objects of a superclass should be replaceable with objects of a subclass without affecting the correctness of the program. In other words, subclasses should be able to stand in for their parent classes without the program knowing the difference.
-For Example: if a child class inherits a parent class, you can use the object of the child class in place of a parent class
+A subtype must accept everything its base contract accepts, preserve promised outcomes and
+invariants, and not introduce stronger preconditions. If `Bird.fly()` is part of a base contract,
+making `Penguin` throw violates substitutability. Model `Bird` separately from a `FlyingAnimal`
+capability so flight algorithms accept only valid implementations.
 
 ## Explain the Dependency Injection
 
 **Answer**
 
-Dependency Injection (DI) is a design pattern used in software development to achieve Inversion of Control (IoC) between classes and their dependencies. Instead of a class creating its dependencies, they are provided to the class, typically by an external entity. This promotes loose coupling, easier testing, and better maintainability..
+Dependency injection supplies an object's collaborators from outside instead of letting it construct
+concrete dependencies internally. Constructor injection makes required dependencies explicit and
+supports testing and replacement. A DI container can automate assembly, but the design technique does
+not require a framework.
 
 ## What is cohesion and coupling?
 
 **Answer**
 
-Cohesion:
-Definition: The degree to which the elements within a module are related to each other and work together to achieve a single purpose.
-High Cohesion: Elements are closely related and focused on a specific task.
-Low Cohesion: Elements are loosely related and may serve multiple, unrelated purposes.
-Example: A UserService class with methods related to user management has high cohesion.
-Coupling:
-Definition: The degree of interdependence between different modules or components in a system.
-High Coupling: Modules are highly dependent on each other.
-Low Coupling: Modules are relatively independent and interact through well-defined interfaces.
-Example: An OrderService class that depends on a UserService class through constructor injection has low coupling.
-Best Practices
-Aim for high cohesion within modules to ensure that each module has a clear and well-defined purpose.
-Aim for low coupling between modules to ensure that changes in one module have minimal impact on other modules.
-Use design principles such as encapsulation, modularization, and separation of concerns to achieve high cohesion and low coupling.
+Cohesion measures how strongly a module's responsibilities belong together; high cohesion gives it a
+clear purpose. Coupling measures how much one module depends on another's details. Aim for cohesive
+modules connected through small, stable contracts, but make real domain coupling explicit rather than
+hiding it behind unnecessary layers.
 
 ## What is Composition over Inheritance principle?
 
 **Answer**
 
-Composition over Inheritance:
-A design principle that favors composition (combining objects) over inheritance (extending classes) to achieve code reuse and flexibility.
-Advantages:
-Flexibility: Allows for dynamic changes in behavior.
-Reusability: Promotes reusable components.
-Encapsulation: Encapsulates behavior and implementation details.
-Avoids Inheritance Pitfalls: Avoids issues like the fragile base class problem and tight coupling.
+Composition assembles behavior from collaborators and can vary it independently. Inheritance tightly
+couples a subtype to base-class behavior and should represent a genuine substitutable "is-a"
+relationship. Prefer composition for reuse and orthogonal capabilities; use inheritance when the
+behavioral subtype contract is stable and meaningful.
 
 ## What is Association, Aggregation and Composition?
 
 **Answer**
 
-Association:
-General relationship between two classes (uses-a relationship)
-Bidirectional.
-Example: Student and Course.
-Aggregation:
-Specialized form of association (whole-part relationship). [has-a]
-Unidirectional, with independent life cycles.
-Example: Department and Employee.
-Composition:
-Stronger form of aggregation (contains-a relationship).
-Unidirectional, with dependent life cycles.
-Example: House and Room.
+Association is a general relationship in which objects know about or collaborate with each other; it
+may be uni- or bidirectional. Aggregation is a weak whole-part relationship where the part can exist
+independently. Composition is strong ownership: the whole controls the part's lifecycle and the part
+normally belongs to one whole. UML uses a hollow diamond for aggregation and a filled diamond for
+composition, but code should express actual ownership rather than diagram labels alone.
 
 ## Tell a bit about different types of entity relationships with examples?
 
 **Answer**
 
-In database design, entity relationships define how entities (tables) interact with each other. Understanding these relationships is crucial for designing a normalized database schema. The main types of entity relationships are:
-One-to-One (1:1): Each record in one table is associated with exactly one record in another table.
-Example: Person and Passport
-One-to-Many (1:N): A single record in one table can be associated with multiple records in another table.
-Example: Department and Employee
-Many-to-One (N:1): Multiple records in one table are associated with a single record in another table.
-Example: Employee and Department
-Many-to-Many (N:M): Multiple records in one table are associated with multiple records in another table, implemented using a junction table.
-Example: Student and Course
+Cardinality describes how many instances can participate: one-to-one, one-to-many/many-to-one, and
+many-to-many. In a relational model, a foreign key commonly implements one-to-many, a unique foreign
+key constrains one-to-one, and a junction table implements many-to-many. Also specify optionality,
+ownership, uniqueness, and deletion behavior; labels alone do not capture those rules.
 
 ## If you are given a task to design University, how will you form the relationships?
 
 **Answer**
 
-Association:
-Student and Course: Students enroll in courses.
-Professor and Course: Professors teach courses.
-Address and University/Student/Professor: Addresses are associated with the university, students, and professors.
-Aggregation:
-Department and Professor: Departments have professors, but professors can exist independently.
-Department and Student: Departments have students, but students can exist independently.
-Composition:
-University and Department: Universities are composed of departments.
-Department and Course: Departments are composed of courses.
+Model `Student`, `Instructor`, `Department`, `Course`, `CourseOffering`, and `Enrollment`. A department
+offers courses; a course has many term-specific offerings; instructors teach offerings; students join
+offerings through enrollment, which owns status and grade. This resolves the many-to-many relationship
+and distinguishes a catalog course from a scheduled section. Treat addresses as value objects when
+their lifecycle follows the owner. Confirm whether departments/courses survive university deletion
+before calling the relationship composition.
 
 ## What is the difference between is-a and has-a relationship?
 
 **Answer**
 
-Is-a Relationship:
-Represents inheritance or implementation.
-Indicates that one class is a subtype of another class or interface.
-Established using extends (for classes) or implements (for interfaces).
-Example: Dog is an Animal.
-Has-a Relationship:
-Represents composition or aggregation.
-Indicates that one class contains or is composed of one or more instances of another class.
-Established by including instances of one class as instance variables in another class.
-Example (Composition): Car has an Engine.
-Example (Aggregation): Person has an Address.
+An "is-a" relationship is behavioral subtyping: every subtype must be usable where the base contract
+is expected. A "has-a" relationship uses composition or aggregation: one object collaborates with or
+owns another. Use inheritance only for substitutability, not merely to reuse code.
 
 ## Suppose you are refactoring an existing application to improve Object Oriented Design. You find a Vehicle which has methods called fly and sale. How would you refactor the class using is-a and has-a relationship. So, that it follows the Single Responsibility Principle?
 
 **Answer**
 
-Identify Responsibilities: Separate flying and sailing responsibilities.
-Create Interfaces: Define Flyable and Sailable interfaces.
-Create Specific Classes: Implement specific classes like Airplane and Boat that extend Vehicle and implement the respective interfaces.
-Use Composition: Include shared behavior or properties in the Vehicle class.
+Assuming `sale` means `sail`, remove both capabilities from a universal `Vehicle` base. Keep only
+shared vehicle invariants, define `Flyable` and `Sailable` capabilities, and implement them only for
+valid types such as `Airplane` and `Boat`. Prefer injected `FlightBehavior` or `SailingBehavior` when
+behavior must vary independently. This improves responsibility and avoids subtypes whose inherited
+methods must throw.
 
 ## What is a Singleton Class?
 
 **Answer**
 
-A Singleton class in Java is a design pattern that ensures a class has only one instance and provides a global point of access to that instance. This is useful when exactly one object is needed to coordinate actions across the system.
-The constructor is private to prevent direct instantiation.
-Useful in scenarios like logging, configuration settings, and managing shared resources.
+A singleton restricts a class to one instance within a defined runtime or class-loader boundary and
+provides access to it. It is not one instance across processes or a cluster. The global lifetime can
+hide dependencies, complicate tests, and create contention, so prefer explicit dependency scopes when
+possible.
 
 ## What is the Singleton design pattern and in which scenario we will use it?
 
 **Answer**
 
-Singleton Design Pattern: Ensures a class has only one instance and provides a global point of access to that instance.
-Implementation Approaches: Eager Initialization, Lazy Initialization, Thread-Safe Singleton (Double-Checked Locking), Bill Pugh Singleton Design, Enum Singleton
-Use Cases:
-Configuration Settings: When you need a single object to manage configuration settings for an application.
-Logging: When you need a single object to handle logging across the application.
-Caching: When you need a single object to manage a cache of objects.
-Thread Pool: When you need a single object to manage a pool of threads.
-Database Connection Pool: When you need a single object to manage a pool of database connections.
-Resource Manager: When you need a single object to manage access to a shared resource.
+Use it only when one process-wide instance is an actual invariant or when integrating with an API that
+requires it. In Java, an enum singleton gives simple serialization and initialization safety; a
+static-holder idiom supports lazy initialization. Logging, caches, pools, and configuration often need
+lifecycle management or multiple test instances, so a DI-container singleton scope is usually more
+flexible than a hard-coded global.
 
 ## How would you implement Singleton Design Pattern with double check locking?
 
 **Answer**
 
-Private Constructor: Prevents instantiation from other classes.
-Volatile Instance Variable: Ensures visibility of changes to the instance across threads.
-Double-Checked Locking:
-First check without locking to improve performance.
-Synchronized block to ensure only one thread can create the instance.
-Second check inside the synchronized block to prevent multiple instances.
+In Java, the field must be `volatile` so publication is safe, and the second check must occur inside
+the synchronized block:
+
+```java
+public final class Registry {
+    private static volatile Registry instance;
+
+    private Registry() {}
+
+    public static Registry getInstance() {
+        Registry result = instance;
+        if (result == null) {
+            synchronized (Registry.class) {
+                result = instance;
+                if (result == null) {
+                    result = new Registry();
+                    instance = result;
+                }
+            }
+        }
+        return result;
+    }
+}
+```
+
+Prefer an enum or initialization-on-demand holder unless double-checked locking is specifically being
+tested.
 
 ## What are some different design patterns out there?
 
 **Answer**
 
-Creational design patterns deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. These patterns abstract the instantiation process, making the system independent of how its objects are created, composed, and represented.
-Singleton: Ensures a class has only one instance and provides a global point of access to it.
-Factory Method: Defines an interface for creating an object, but lets subclasses alter the type of objects that will be created.
-Abstract Factory: Provides an interface for creating families of related or dependent objects without specifying their concrete classes.
-Builder: Separates the construction of a complex object from its representation, allowing the same construction process to create different representations.
-Prototype: Specifies the kinds of objects to create using a prototypical instance, and creates new objects by copying this prototype.
-Structural design patterns deal with object composition or the way to assemble objects and classes into larger structures while keeping these structures flexible and efficient.
-Adapter: Converts the interface of a class into another interface that a client expects.
-Bridge: Separates an object’s abstraction from its implementation so that the two can vary independently.
-Composite: Composes objects into tree structures to represent part-whole hierarchies.
-Decorator: Attaches additional responsibilities to an object dynamically.
-Facade: Provides a unified interface to a set of interfaces in a subsystem.
-Flyweight: Uses sharing to support large numbers of fine-grained objects efficiently.
-Proxy: Provides a surrogate or placeholder for another object to control access to it.
-Behavioural design patterns are concerned with algorithms and the assignment of responsibilities between objects. These patterns describe not just patterns of objects or classes but also the patterns of communication between them.
-Chain of Responsibility: Passes a request along a chain of handlers.
-Command: Encapsulates a request as an object, thereby allowing for parameterization of clients with queues, requests, and operations.
-Interpreter: Defines a grammatical representation for a language and an interpreter to interpret the grammar.
-Iterator: Provides a way to access the elements of an aggregate object sequentially without exposing its underlying representation.
-Mediator: Defines an object that encapsulates how a set of objects interact.
-Memento: Captures and externalizes an object’s internal state so that the object can be restored to this state later.
-Observer: Defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
-State: Allows an object to alter its behaviour when its internal state changes.
-Strategy: Defines a family of algorithms, encapsulates each one, and makes them interchangeable.
-Template Method: Defines the skeleton of an algorithm in a method, deferring some steps to subclasses.
-Visitor: Represents an operation to be performed on the elements of an object structure.
+The GoF catalog groups patterns by intent:
+
+- **Creational:** Abstract Factory, Builder, Factory Method, Prototype, Singleton.
+- **Structural:** Adapter, Bridge, Composite, Decorator, Facade, Flyweight, Proxy.
+- **Behavioral:** Chain of Responsibility, Command, Interpreter, Iterator, Mediator, Memento,
+  Observer, State, Strategy, Template Method, and Visitor.
+
+Patterns are vocabulary for recurring trade-offs, not mandatory layers. Explain the problem, forces,
+and consequences rather than only naming a pattern.
 
 ## What is an Observable design pattern?
 
 **Answer**
 
-Observable Design Pattern: Defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
-Key Components:
-Subject (Observable): Maintains a list of observers and notifies them of state changes.
-Observer: Gets notified when the subject's state changes.
-Benefits:
-Decoupling: Loose coupling between subject and observers.
-Flexibility: Observers can be added or removed at runtime.
-Reusability: Promotes code reusability by allowing different observers to react to changes in the subject.
+The usual name is the **Observer** pattern. A subject maintains subscriptions and notifies observers
+when an event or state change occurs. It decouples the publisher from concrete consumers, but still
+needs unsubscribe/lifecycle handling, ordering and error policy, and protection from slow or
+reentrant observers. Reactive streams add completion, errors, operators, and often backpressure
+semantics beyond the basic GoF pattern.
 
 ## What is the Command Design Pattern?
 
 **Answer**
 
-Command Design Pattern is a behavioral design pattern that encapsulates a request as an object, thereby allowing for parameterization of clients with queues, requests, and operations. It also allows for the logging of requests, and provides support for undoable operations.
-Key Concepts:
-Command: An interface or abstract class that declares an execute method.
-Concrete Command: A class that implements the Command interface and defines the binding between a receiver and an action.
-Receiver: The object that performs the actual action when the command's execute method is called.
-Invoker: The object that holds the command and at some point asks the command to carry out the request.
-Client: The object that creates the command and sets its receiver.
+Command represents a request as an object with an operation such as `execute`. A concrete command
+captures the receiver and arguments; an invoker triggers it without knowing the business operation.
+Commands can support queues, audit, retries, macros, or undo when the command explicitly captures
+enough state. Persisted commands also need versioning and idempotency.
 
 ## What is the factory design pattern?
 
 **Answer**
 
-Factory Design Pattern: A creational design pattern that provides an interface for creating objects, allowing subclasses to alter the type of objects that will be created.
-Key Concepts:
-Factory Method: A method that returns an instance of a class.
-Product: The interface or abstract class that defines the type of objects the factory method creates.
-Concrete Product: The concrete implementations of the Product interface.
-Creator: The class that contains the factory method.
-Concrete Creator: The subclasses that implement the factory method to create instances of Concrete Products.
-Benefits:
-Encapsulation: Encapsulates the object creation process.
-Loose Coupling: Promotes loose coupling by reducing dependency between client code and concrete classes.
-Flexibility: Makes it easy to introduce new types of products without changing client code.
+Factory Method defines a creation operation in a base creator and lets subclasses choose the concrete
+product. A simple factory function is a related idiom but not the same GoF structure. Both hide
+construction details and let clients depend on a product contract; use them when selection or setup is
+complex enough to justify indirection.
 
-## What is an abstract design pattern?
+## What is the Abstract Factory design pattern?
 
 **Answer**
 
-Abstract Factory Design Pattern: A creational design pattern that provides an interface for creating families of related or dependent objects without specifying their concrete classes.
-Key Concepts:
-Abstract Factory: An interface that declares methods for creating abstract products.
-Concrete Factory: A class that implements the Abstract Factory interface and creates concrete products.
-Abstract Product: An interface for a type of product.
-Concrete Product: A class that implements the Abstract Product interface.
-Client: A class that uses the Abstract Factory to create instances of abstract products.
-Benefits:
-Encapsulation: Encapsulates the creation of families of related objects.
-Loose Coupling: Promotes loose coupling by reducing the dependency between client code and concrete classes.
-Consistency: Ensures that related products are used together.
+Abstract Factory creates a compatible family of related products without exposing concrete classes.
+For example, a UI factory can create matching button, menu, and dialog implementations for one
+platform theme. It preserves family consistency and makes family replacement easy, but adding a new
+product kind requires changing every factory implementation.
 
 ## Suppose you're using a Factory Pattern to create objects in a multithreaded environment. How would you ensure that the factory itself is thread-safe without significantly impacting the performance of object creation?
 
 **Answer**
 
-Synchronized Method or Block: Ensures thread safety but can lead to performance bottlenecks.
-Initialization-on-Demand Holder Idiom: Efficient and thread-safe lazy initialization using the class loader mechanism.
-Concurrent Collections: Use concurrent collections like ConcurrentHashMap for managing shared state.
-Atomic Variables: Use atomic variables for simple state management.
-Double-Checked Locking with Volatile: Reduces synchronization overhead for lazy initialization.
+First make the factory stateless; allocating a new object from immutable configuration needs no lock.
+For shared registries or cached constructors, use immutable snapshots, `ConcurrentHashMap` with an
+appropriate atomic operation, or safely published initialization. Synchronize only the mutation that
+must be atomic, and verify whether a mapping function may execute more than once. Double-checked
+locking is relevant to lazy publication of one shared value, not general object creation.
 
 ## What is Builder Design Pattern?
 
 **Answer**
 
-Builder Design Pattern: A creational design pattern that provides a way to construct complex objects step by step.
-Key Components:
-Builder: Defines the methods for building the parts of the complex object.
-Concrete Builder: Implements the Builder interface and provides specific implementations for building the parts of the complex object.
-Product: The complex object that is being constructed.
-Director: An optional class that directs the construction process using the Builder interface.
-Benefits:
-Improves readability by separating the construction process from the representation.
-Handles optional parameters without the need for multiple constructors.
-Encapsulates the construction logic.
-Facilitates the creation of immutable objects.
+Builder constructs a complex object step by step and performs final validation before producing it.
+It makes many optional parameters readable and can create immutable products. A director is optional
+and captures a reusable construction sequence. Avoid a builder when a small constructor or factory is
+already clear.
 
 ## What is the Decorator Design Pattern?
 
 **Answer**
 
-Decorator Design Pattern is a structural design pattern that allows behavior to be added to individual objects, dynamically, without affecting the behavior of other objects from the same class. It is typically used to extend the functionalities of classes in a flexible and reusable way.
-Key Concepts
-Component Interface: Defines the interface for objects that can have responsibilities added to them dynamically.
-Concrete Component: The class to which additional responsibilities can be attached.
-Decorator: Maintains a reference to a Component object and defines an interface that conforms to the Component's interface.
-Concrete Decorators: Extend the functionality of the Component by adding responsibilities to i
-Benefits
-Flexibility: Allows you to add responsibilities to objects dynamically and transparently.
-Reusability: Promotes code reuse by allowing you to mix and match decorators to create different combinations of behavior.
+Decorator wraps an object behind the same component interface and adds behavior before or after
+delegation. Decorators can be stacked to combine responsibilities without subclass explosion. Order
+can matter, identity/debugging becomes less obvious, and a decorator must preserve the component
+contract.
 
 ## Which of the following design patterns are creational patterns?
 
 **Answer**
 
-Singleton: Ensures a class has only one instance.
-Factory Method: Defines an interface for creating an object, but lets subclasses alter the type of objects that will be created.
-Abstract Factory: Provides an interface for creating families of related or dependent objects without specifying their concrete classes.
-Builder: Separates the construction of a complex object from its representation.
-Prototype: Creates new objects by copying an existing object, known as the prototype.
+Singleton, Factory Method, Abstract Factory, Builder, and Prototype are the five GoF creational
+patterns.
 
-## What are Microservices?
-
-**Answer**
-
-Microservices:
-An architectural style that structures an application as a collection of small, loosely coupled, independently deployable services.
-Key Characteristics:
-Single Responsibility, Independence, Loose Coupling, Decentralized Data Management, Technology Diversity, Resilience, Continuous Delivery.
-Benefits:
-Scalability, Flexibility, Improved Fault Isolation, Faster Time to Market, Easier Maintenance.
-Challenges:
-Complexity, Data Consistency, Inter-Service Communication, Deployment and DevOps, Security.
-
-## What is an API Gateway?
-
-**Answer**
-
-API Gateway:
-A server that acts as an intermediary between clients and microservices, providing a single entry point for all client requests.
-Key Responsibilities:
-Request Routing, Authentication and Authorization, Rate Limiting and Throttling, Load Balancing, Caching, Request and Response Transformation, Monitoring and Logging, Security.
-Benefits:
-Simplified Client Interaction, Centralized Cross-Cutting Concerns, Improved Security, Performance Optimization, Scalability and Flexibility.
-Example Using Spring Cloud Gateway:
-Add dependencies for Spring Cloud Gateway and Eureka Client.
-Configure routes in the application.yml file.
-Enable the discovery client in the main application class.
-
-## If an API Gateway goes down. How will you identify and resolve the issue?
-
-**Answer**
-
-Monitoring and Alerts: Use monitoring tools and set up alerts to detect issues.
-Log Analysis: Analyze logs to identify errors and root causes.
-Health Checks and Diagnostics: Perform health checks and diagnostics to assess the state of the API Gateway.
-Resource Utilization: Monitor resource utilization to identify bottlenecks.
-Configuration and Deployment: Review recent changes and roll back if necessary.
-Redundancy and Failover: Implement redundancy and failover mechanisms for high availability.
-Incident Response and Communication: Follow incident response plans and communicate with stakeholders.
-
-## What are the benefits of using Microservice Architecture over Monolith?
-
-**Answer**
-
-Scalability:
-Independent scaling of microservices based on resource requirements.
-Flexibility in Technology Stack:
-Use of different programming languages and technologies for different microservices.
-Improved Fault Isolation:
-Failures in one microservice do not impact others.
-Faster Development and Deployment:
-Independent development, testing, and deployment of microservices.
-Easier Maintenance and Updates:
-Modular and loosely coupled services simplify maintenance and updates.
-Enhanced Team Autonomy:
-Decentralized development with clear boundaries and responsibilities.
-Better Resource Utilization:
-Optimized resource allocation based on the needs of each microservice.
-Improved Security:
-Isolated services with individual security policies and access controls.
-Easier Integration with Third-Party Services:
-API-driven communication facilitates integration with external systems.
-
-## What are the challenges faced when converting Monolithic to Microservices?
-
-**Answer**
-
-Identifying Service Boundaries: Use domain-driven design to define service boundaries.
-Data Management: Implement database per service pattern and handle data consistency.
-Inter-Service Communication: Use lightweight protocols and robust error handling.
-Service Discovery: Use service discovery mechanisms like Eureka or Consul.
-Security: Implement API gateways, OAuth2, JWT, and mutual TLS.
-Monitoring and Logging: Use centralized logging and monitoring solutions.
-Deployment and DevOps: Use containerization, orchestration tools, and CI/CD pipelines.
-Data Consistency and Transactions: Use eventual consistency models and patterns like Saga.
-Cultural and Organizational Changes: Foster collaboration and provide training.
-Performance and Latency: Optimize communication, use caching, and load balancing.
-
-## What is the difference between Fault Tolerance and Resilience in Microservice Architecture?
-
-**Answer**
-
-Fault Tolerance:
-Ensures continuity of operation in the presence of faults.
-Involves redundancy, failover mechanisms, and error detection/correction.
-Contributes to high availability.
-Example: Deploying multiple instances of a service behind a load balancer.
-Resiliency:
-Ensures quick recovery from failures and graceful handling of disruptions.
-Involves graceful degradation, self-healing, isolation, and containment.
-Contributes to system robustness and stability.
-Example: Using circuit breakers to prevent cascading failures and implementing retries with exponential backoff.
-
-## How do you connect one Microservice to another?
-
-**Answer**
-
-RESTful HTTP Communication:
-Use RestTemplate for synchronous HTTP requests.
-Use WebClient for non-blocking, asynchronous HTTP requests.
-Service Discovery:
-Use Spring Cloud Netflix Eureka for service registration and discovery.
-Use @LoadBalanced RestTemplate to make requests to discovered services.
-Messaging:
-Use Spring Cloud Stream with RabbitMQ or Kafka for message-driven communication between microservices
-
-## How can you make a request to an external API from your REST API code?
-
-**Answer**
-
-HttpURLConnection: Part of the Java standard library, suitable for simple use cases.
-Apache HttpClient: A more powerful and flexible library for making HTTP requests.
-Spring RestTemplate: A convenient way to make HTTP requests in Spring-based applications.
-
-## Describe all the possible ways by which Microservices can communicate with each other?
-
-**Answer**
-
-Synchronous Communication:
-HTTP/REST: Simple, widely used, language-agnostic.
-gRPC: High performance, efficient binary serialization, built-in support for load balancing and retries.
-Asynchronous Communication:
-Message Queues: Decouples services, improves scalability and fault tolerance.
-Event Streaming: Real-time data processing, high throughput, fault tolerance.
-Shared Database: Simple to implement but tightly couples services and can lead to data consistency issues.
-Service Mesh: Centralized management of communication policies, improved observability, security, and reliability.
-
-## Is it possible to revert a transaction in Microservice Architecture?
-
-**Answer**
-
-Two-Phase Commit (2PC):
-Ensures all participants in a transaction either commit or rollback.
-Drawbacks: Complex, performance bottlenecks, blocking issues.
-Saga Pattern:
-Manages distributed transactions using a sequence of local transactions and compensating transactions.
-Types:
-Choreography: Services listen for events and perform local transactions.
-Orchestration: A central orchestrator coordinates the saga.
-Eventual Consistency:
-Ensures all services eventually reach a consistent state.
-Often used with the Saga pattern.
-
-## What is Temporal?
-
-**Answer**
-
-Temporal is an open-source, distributed, and scalable workflow orchestration engine designed to manage the execution of complex business processes and workflows in microservices architectures. Temporal provides a framework for building, running, and managing workflows that involve multiple microservices, ensuring reliability, consistency, and fault tolerance.
-Workflows:
-Definition: A workflow in Temporal is a sequence of tasks or activities that represent a business process. Workflows are defined as code and can include conditional logic, loops, and parallel execution.
-Durability: Workflow state is reconstructed from durable event history, so execution can continue
-after worker or process failure. Workflow code must be deterministic during replay. Activities are
-normally at-least-once and may be retried, so side-effecting activities should be idempotent; do not
-describe the entire business workflow as an unconditional exactly-once execution guarantee.
-Activities:
-Definition: Activities are the individual tasks or operations that make up a workflow. They are typically implemented as functions or methods and can be executed by different microservices.
-Idempotency: Activities should be idempotent, meaning they can be safely retried without causing unintended side effects.
-Workers:
-Definition: Workers are processes that execute activities. They poll Temporal for tasks, execute the corresponding activities, and report the results back to Temporal.
-Scalability: Workers can be scaled horizontally to handle increased load and ensure high availability.
-Task Queues:
-Definition: Task queues are used to manage the distribution of tasks to workers. Each workflow and activity can be associated with a specific task queue.
-Load Balancing: Task queues enable load balancing and ensure that tasks are distributed evenly across available workers.
-Temporal Service:
-Definition: The Temporal service is the core component that manages workflow execution, task scheduling, state persistence, and communication between workers and workflows.
-Persistence: Temporal uses a durable storage backend (e.g., Cassandra, MySQL, PostgreSQL) to persist workflow state and ensure reliability.
-
-## What strategy would you use to manage transactions across multiple Microservices?
-
-**Answer**
-
-Saga Pattern:
-Choreography-Based Saga: Each service listens for events and performs transactions and compensations.
-Orchestration-Based Saga: A central orchestrator manages the sequence of transactions and compensations.
-Two-Phase Commit (2PC):
-Ensures all participants in a distributed transaction either commit or rollback.
-Involves a coordinator managing the transaction in two phases: prepare and commit.
-Challenges: Overhead, complexity, performance bottlenecks, and lack of fault tolerance.
-Event-Driven Approach:
-Services publish events and react to them asynchronously.
-Ensures eventual consistency through event propagation.
-Compensation Transactions:
-Use compensating actions to undo the effects of a transaction if a failure occurs.
-Each service provides a compensating action to revert its changes.
-
-## What will you do if one of your critical sections of Microservice architecture fails because it cannot connect with Database. What will you do so that your application remains functional?
-
-**Answer**
-
-Circuit Breaker Pattern: Prevents repeated failures by failing fast and recovering gracefully.
-Fallback Mechanism: Provides alternative responses or behavior when the primary operation fails.
-Retry Mechanism: Attempts the operation multiple times before failing.
-Graceful Degradation: Provides limited functionality when the database is unavailable.
-Caching: Stores frequently accessed data to reduce dependency on the database.
-Database Replication and Failover: Ensures high availability and redundancy with primary and secondary databases.
-Monitoring and Alerting: Detects database connectivity issues and responds promptly.
-
-## What is the SAGA Pattern?
-
-**Answer**
-
-SAGA Pattern: A design pattern used to manage distributed transactions in microservices architectures, ensuring data consistency without relying on two-phase commit protocols.
-Saga: A sequence of transactions coordinated to achieve a single business goal, with compensating transactions to handle failures.
-Eventual Consistency: The system eventually reaches a consistent state, even if some transactions fail and need to be compensated.
-Types of SAGA Patterns:
-Choreography-Based SAGA: Each service listens for events and performs transactions and compensations in response to those events.
-Orchestration-Based SAGA: A central orchestrator manages the sequence of transactions and compensations by sending commands to the services.
-
-## How does the SAGA Pattern ensure data consistency in a microservices architecture?
-
-**Answer**
-
-The SAGA Pattern ensures data consistency by splitting a large transaction into multiple steps, each handled by a service, and implementing compensation logic to rollback if a failure occurs at any step.
-
-## What are the two types of SAGA Patterns and how do they differ?
-
-**Answer**
-
-The two types of SAGA Patterns are Choreography and Orchestration. In Choreography, each service notifies the next, creating a chain reaction. In Orchestration, a central orchestrator controls the transaction flow.
-
-## What is Circuit Breaker Pattern?
-
-**Answer**
-
-Circuit Breaker Pattern: A design pattern used to improve the resilience and stability of applications by preventing cascading failures and handling failures in dependent services or resources gracefully.
-Key Concepts:
-Closed State: Allows calls to the external service. Transitions to open state on consecutive failures.
-Open State: Prevents calls to the external service. Transitions to half-open state after a timeout.
-Half-Open State: Allows limited test calls to the external service. Transitions to closed or open state based on test call results.
-Benefits:
-Improved Resilience: Prevents cascading failures and isolates failing services.
-Graceful Degradation: Provides fallback responses or alternative behavior when a service is unavailable.
-Faster Recovery: Allows failing services to recover more quickly.
-Example Usage:
-Add dependencies for Resilience4j.
-Enable Circuit Breaker in your Spring Boot application.
-Configure Circuit Breaker settings.
-Use Circuit Breaker in your service class with @CircuitBreaker annotation and fallback method.
-
-## How would you configure a circuit breaker for a service that shows periodic spikes in failure rates?
-
-**Answer**
-
-Choose a Circuit Breaker Library: Use libraries like Resilience4j or Netflix Hystrix.
-Set Failure Thresholds: Define the conditions under which the circuit breaker should open (e.g., failure rate threshold).
-Configure Timeouts: Set timeouts for requests to prevent long waits.
-Define Recovery Logic: Specify how the circuit breaker should attempt to recover from failures (e.g., wait duration in open state, sliding window size).
-
-## What is the Strangler Pattern?
-
-**Answer**
-
-Strangler Pattern: A software design pattern used to incrementally migrate a legacy system to a new system.
-Allows for a gradual transition while keeping the system operational.
-Key Concepts:
-Incremental Migration: Migrate the system in small, manageable increments.
-Parallel Operation: Operate both the legacy and new systems in parallel.
-Routing and Redirection: Route requests to either the legacy or new system based on criteria.
-Decommissioning: Gradually decommission legacy components as they are replaced.
-Steps to Implement:
-Identify Components: Identify and prioritize components to migrate.
-Create New Components: Develop new components to replace legacy functionality.
-Implement Routing: Implement routing logic to direct requests.
-Test and Validate: Test new components and validate routing.
-Gradual Transition: Gradually transition functionality to the new system.
-Decommission Legacy Components: Decommission legacy components as they are replaced.
-
-## What is the main purpose of the Strangler Pattern?
-
-**Answer**
-
-The main purpose of the Strangler Pattern is to incrementally migrate legacy systems into modern architectures without disruption.
-
-## What is the primary benefit of using the CQRS Pattern?
-
-**Answer**
-
-The primary benefit of using the CQRS Pattern is the ability to scale read and write workloads independently, optimizing system performance.
-
-## Can you give an example of a use case for the CQRS Pattern?
-
-**Answer**
-
-A use case for the CQRS Pattern is real-time systems like stock trading platforms where read and write operations have different performance needs.
 
 ## What is Proxy Design Pattern?
 
 **Answer**
 
-Proxy Design Pattern:
-Provides a surrogate or placeholder for another object to control access to it.
-Adds additional functionality such as access control, lazy initialization, logging, or caching.
-Key Concepts:
-Proxy: Controls access to the real object and adds additional behavior.
-Real Subject: The actual object that performs the work.
-Client: Interacts with the proxy as if it were the real object.
-Types of Proxies:
-Virtual Proxy: Controls access to an expensive-to-create object.
-Protection Proxy: Controls access by checking permissions.
-Remote Proxy: Represents an object in a different address space.
-Caching Proxy: Adds caching functionality.
-Logging Proxy: Adds logging functionality.
+Proxy provides a surrogate implementing the same subject interface and controls access to the real
+subject. Examples include virtual proxies for lazy creation, protection proxies for access control,
+remote proxies for another address space, and caching proxies. Unlike Decorator, Proxy primarily
+manages access or location, though their structures can look similar.
 
-## How can you monitor and detect performance issues in a Microservice Environment?
+## References
 
-**Answer**
-
-Centralized Logging: Collect and aggregate logs from all microservices into a centralized logging system.
-Tools: ELK Stack, Fluentd, Graylog.
-Distributed Tracing: Track requests as they flow through multiple microservices to identify bottlenecks and latency issues.
-Tools: Jaeger, Zipkin, OpenTelemetry.
-Metrics and Monitoring: Collect and monitor metrics to track performance, resource usage, and application health.
-Tools: Prometheus, Grafana, Datadog.
-Health Checks: Implement health checks to monitor the health and availability of microservices.
-Tools: Spring Boot Actuator, Consul, Kubernetes.
-Alerting: Set up alerting to notify you of performance issues, errors, and critical events.
-Tools: Prometheus Alertmanager, PagerDuty, Opsgenie.
-Profiling and Debugging: Use profiling and debugging tools to analyze performance and identify bottlenecks and memory leaks.
-Tools: VisualVM, YourKit, JProfiler.
-
-## How would you implement tracing in Microservice Architecture?
-
-**Answer**
-
-Choose a Tracing Framework:
-Popular options: OpenTelemetry, Jaeger, Zipkin, Spring Cloud Sleuth.
-Integrate Tracing Library:
-Add dependencies for the tracing library to your microservices.
-Instrument Your Code:
-Use annotations or APIs provided by the tracing library to create spans and propagate trace context.
-Configure Tracing Backend:
-Set up a tracing backend (e.g., Jaeger, Zipkin) to collect and visualize trace data.
-Configure your services to send trace data to the tracing backend.
-Propagate Trace Context:
-Ensure trace context is propagated across service boundaries using HTTP headers or messaging protocols.
-
-## Tell me a bit about security features in Microservices?
-
-**Answer**
-
-Authentication and Authorization: Use OAuth2, OpenID Connect, and JWT for secure authentication and authorization.
-API Gateway: Acts as a single entry point for client requests, handling security concerns.
-Transport Layer Security (TLS): Encrypts data in transit to protect it from eavesdropping and tampering.
-Service-to-Service Authentication: Use mTLS or token-based authentication for secure inter-service communication.
-Rate Limiting and Throttling: Protect services from being overwhelmed by too many requests.
-Logging and Monitoring: Detects and responds to security incidents with comprehensive logging and monitoring.
-Security Testing: Regularly test for vulnerabilities and security risks.
-Data Encryption: Encrypt sensitive data both at rest and in transit.
-Security Policies and Governance: Ensure consistent application of security practices across all microservices.
-
-## What is token based authentication in Microservice architecture?
-
-**Answer**
-
-Token-Based Authentication: A method of authenticating users and services using tokens issued by an authentication server.
-Key Concepts:
-Token: Represents the user's identity and permissions.
-Authentication Server: Issues tokens after authenticating users.
-Access Token: Grants access to specific resources or services.
-Refresh Token: Used to obtain a new access token without re-authenticating.
-Bearer Token: Included in the Authorization header of each request.
-How It Works:
-User Authentication: User authenticates with the authentication server.
-Token Issuance: Authentication server issues an access token.
-Token Usage: User includes the access token in requests to microservices.
-Token Validation: Microservices validate the access token.
-Token Renewal: User uses the refresh token to obtain a new access token.
-Example Implementation:
-Set up an authentication server to issue tokens.
-Configure microservices to validate tokens using a filter.
-Use tokens in the Authorization header to access protected resources.
-
-## How can you pass tokens between Microservices in a secure manner?
-
-**Answer**
-
-OAuth 2.0 and OpenID Connect: Use access tokens and ID tokens issued by an authorization server.
-JSON Web Tokens (JWT): Use JWTs for secure token transmission and validation.
-Mutual TLS (mTLS): Ensure mutual authentication using SSL/TLS certificates.
-API Gateway: Use an API Gateway to validate tokens and forward requests securely.
-Service Mesh: Use a service mesh to manage secure communication and token validation.
-
-## What is Optimistic vs Pessimistic Locking?
-
-**Answer**
-
-Optimistic Locking:
-Assumes conflicts are rare and checks for conflicts only at commit time.
-Uses version numbers or timestamps to detect conflicts.
-Suitable for low-contention environments with high read-to-write ratios.
-Advantages: No locks held, better performance in low-contention environments.
-Disadvantages: Transactions may need to be retried if conflicts occur.
-Pessimistic Locking:
-Assumes conflicts are likely and locks the resource when it is read.
-Blocks other transactions from accessing the locked resource until the lock is released.
-Suitable for high-contention environments with high write-to-read ratios.
-Advantages: Ensures no conflicts by blocking other transactions, stronger consistency.
-Disadvantages: Increased risk of deadlocks, reduced performance due to blocking.
-
-## Can you give an example of real world scenario where Optimistic Locking will fail?
-
-**Answer**
-
-Optimistic Locking:
-Assumes low contention and checks for conflicts only at commit time.
-Uses version numbers or timestamps to detect conflicts.
-Suitable for low-contention environments with high read-to-write ratios.
-Failure Scenario:
-In a high-contention environment, such as an online ticket booking system for a popular event, multiple users may frequently update the same data.
-This can lead to frequent transaction failures and retries, degrading performance and user experience.
-
-## How would you do Cache Invalidation?
-
-**Answer**
-
-Cache invalidation is the process of removing or updating stale or outdated data in a cache. This ensures that the cache remains consistent with the underlying data source. There are several strategies for cache invalidation:
- Time-Based Invalidation (TTL - Time to Live)
-Description: Each cache entry is given a time-to-live (TTL) value. Once the TTL expires, the cache entry is considered invalid and is either removed or refreshed.
-Use Case: Suitable for data that changes at predictable intervals.
-Example: Setting a TTL of 5 minutes for user session data.
-Write-Through Cache
-Description: The application writes through the cache abstraction, which updates the backing store
-as part of the write path. Failure handling and partial-write behavior still determine whether the
-cache can become stale; write-through is not an unconditional consistency guarantee.
-Use Case: Suitable for applications where data consistency is critical.
-Example: Updating user profile information in both the cache and the database at the same time.
-Write-Behind (Write-Back) Cache
-Description: Data is first written to the cache and then asynchronously written to the underlying data store. This can improve write performance but may lead to temporary inconsistencies.
-Use Case: Suitable for applications where write performance is critical and temporary inconsistencies are acceptable.
-Example: Logging user activities where eventual consistency is acceptable.
-Invalidate on Update
-Description: When the underlying data store is updated, the corresponding cache entry is invalidated or updated.
-Use Case: Suitable for applications where data changes are infrequent but need to be reflected immediately.
-Example: Invalidating a product's cache entry when its price is updated in the database.
-Cache Aside (Lazy Loading)
-Description: The application checks the cache first. If the data is not present (cache miss), it loads the data from the underlying data store, updates the cache, and returns the data.
-Use Case: Suitable for read-heavy applications where data changes are infrequent.
-Example: Loading user profile data into the cache only when it is requested.
-Distributed Cache Invalidation
-Description: In a distributed cache system, invalidation messages are sent to all cache nodes to ensure consistency across the cluster.
-Use Case: Suitable for applications using distributed caching systems like Redis or Memcached.
-Example: Using a message broker to broadcast invalidation messages to all cache nodes.
-Manual Invalidation
-Description: The application explicitly invalidates cache entries based on specific events or conditions.
-Use Case: Suitable for applications with complex invalidation logic that cannot be handled by automated strategies.
-Example: Invalidating cache entries when a user logs out or when a specific business event occurs.
-
-## What are the different Strategies for Caching?
-
-**Answer**
-
-Cache Aside (Lazy Loading)
-Description: The application checks the cache first. If the data is not present (cache miss), it loads the data from the underlying data store, updates the cache, and returns the data.
-Use Case: Suitable for read-heavy applications where data changes are infrequent.
-Example: Loading user profile data into the cache only when it is requested.
-Write-Through Cache
-Description: The application writes through the cache abstraction, which updates the backing store
-as part of the write path. Define how partial failures are recovered because the two updates are not
-automatically atomic.
-Use Case: Suitable for applications where data consistency is critical.
-Example: Updating user profile information in both the cache and the database at the same time.
-Write-Behind (Write-Back) Cache
-Description: Data is first written to the cache and then asynchronously written to the underlying data store. This can improve write performance but may lead to temporary inconsistencies.
-Use Case: Suitable for applications where write performance is critical and temporary inconsistencies are acceptable.
-Example: Logging user activities where eventual consistency is acceptable.
-Read-Through Cache
-Description: The cache sits in front of the data store. When a cache miss occurs, the cache itself loads the data from the underlying data store, updates the cache, and returns the data.
-Use Case: Suitable for applications where the cache can handle the logic of loading data from the data store.
-Example: Using a caching library that supports read-through caching.
-Time-Based Invalidation (TTL - Time to Live)
-Description: Each cache entry is given a time-to-live (TTL) value. Once the TTL expires, the cache entry is considered invalid and is either removed or refreshed.
-Use Case: Suitable for data that changes at predictable intervals.
-Example: Setting a TTL of 5 minutes for user session data.
-Distributed Cache
-Description: A cache that is shared across multiple nodes in a distributed system, ensuring consistency and availability of cached data.
-Use Case: Suitable for applications with high availability and scalability requirements.
-Example: Using Redis or Memcached in a distributed setup.
-Local Cache
-Description: A cache that is local to a single instance of an application, typically used to reduce latency and improve performance.
-Use Case: Suitable for applications where data consistency across instances is not critical.
-Example: Using an in-memory cache like Guava Cache within a single application instance.
-Hierarchical Cache
-Description: A multi-level caching strategy where data is cached at multiple levels (e.g., local cache, distributed cache) to balance performance and consistency.
-Use Case: Suitable for applications that require both fast access to frequently used data and consistency across multiple instances.
-Example: Using a combination of local in-memory cache and a distributed cache.
-Content Delivery Network (CDN) Cache
-Description: A caching strategy that uses geographically distributed servers to cache and deliver static content to users based on their location.
-Use Case: Suitable for applications with a global user base that require fast delivery of static content like images, videos, and scripts.
-Example: Using a CDN like Cloudflare or Akamai to cache and deliver website assets.
-
-## What is TDD?
-
-**Answer**
-
-Test-Driven Development (TDD) is a software development methodology where tests are written before the actual code. The primary goal of TDD is to ensure that the code meets its requirements and behaves as expected. TDD follows a repetitive cycle known as Red-Green-Refactor.
-Key Concepts:
-Red-Green-Refactor Cycle:
-Red: Write a test for a new feature or functionality. Initially, this test will fail because the feature is not yet implemented.
-Green: Write the minimum amount of code necessary to make the test pass. The focus is on getting the test to pass, not on writing perfect code.
-Refactor: Refactor the code to improve its structure and design while ensuring that all tests still pass. This step focuses on code quality and maintainability.
-Benefits of TDD:
-Improved Code Quality: Ensures that the code is thoroughly tested and meets the specified requirements.
-Early Bug Detection: Catches bugs early in the development process, reducing the cost and effort required to fix them later.
-Better Design: Encourages writing modular and loosely coupled code, as it is easier to test.
-Documentation: Tests serve as documentation for the code, providing examples of expected behavior.
-TDD Workflow:
-Write a Test: Identify a small piece of functionality and write a test for it.
-Run the Test: Ensure the test fails, confirming that the functionality is not yet implemented.
-Write Code: Write the minimum amount of code required to make the test pass.
-Run All Tests: Ensure that the new code does not break any existing functionality.
-Refactor: Improve the code's design and structure while ensuring all tests still pass.
-Repeat: Continue the cycle for the next piece of functionality.
-
-## What is BDD?
-
-**Answer**
-
-Behavior-Driven Development (BDD) is a software development methodology that extends Test-Driven Development (TDD) by emphasizing collaboration between developers, testers, and business stakeholders. BDD focuses on defining the behavior of an application through examples in plain language, which helps ensure that all team members have a shared understanding of the requirements.
-Key Concepts of BDD:
-Collaboration:
-BDD encourages collaboration between developers, testers, and business stakeholders to define the desired behavior of the application.
-This collaboration helps ensure that the development team builds the right functionality that meets business requirements.
-User Stories and Scenarios:
-BDD uses user stories and scenarios written in plain language to describe the desired behavior of the application.
-These stories and scenarios are typically written in a Given-When-Then format.
-Given-When-Then Format:
-- **Given:** the initial context or state of the system.
-- **When:** the action or event that triggers the behavior.
-- **Then:** the expected observable outcome.
-Executable Specifications:
-BDD scenarios are written in a way that they can be executed as automated tests.
-Tools like Cucumber, SpecFlow, and JBehave are commonly used to automate BDD scenarios.
-Benefits of BDD:
-Improved Communication:
-BDD fosters better communication between developers, testers, and business stakeholders, ensuring that everyone has a shared understanding of the requirements.
-Clear Requirements:
-Writing scenarios in plain language helps clarify requirements and reduces misunderstandings.
-Early Detection of Issues:
-By defining behavior upfront, BDD helps identify potential issues and gaps in requirements early in the development process.
-Living Documentation:
-BDD scenarios serve as living documentation that evolves with the application, providing up-to-date information about its behavior.
-BDD Workflow:
-Define User Stories and Scenarios:
-Collaborate with stakeholders to define user stories and scenarios in plain language using the Given-When-Then format.
-Automate Scenarios:
-Use BDD tools like Cucumber to automate the scenarios as executable specifications.
-Implement Code:
-Write the code to make the scenarios pass, following the TDD approach of writing tests first.
-Run and Refactor:
-Run the automated scenarios to ensure they pass and refactor the code as needed.
-
-## What will you do if you have some static data that is frequently accessed and not going to change, and you don't want to hit the database multiple times?
-
-**Answer**
-
-If you have static data that is frequently accessed and not going to change, and you want to avoid hitting the database multiple times, you should use caching. Caching allows you to store the data in a fast-access storage layer, reducing the load on the database and significantly improving the performance of your application.
-Choose a Caching Solution:
-Select an appropriate caching solution such as Redis, Memcached, or in-memory caching within your application.
-Load Data into Cache:
-Load the static data into the cache when the application starts or on the first access. This involves querying the database once and storing the result in the cache.
-Access Data from Cache:
-Modify your application to access the data from the cache instead of querying the database. This ensures that subsequent requests for the static data are served from the cache, reducing database load.
-
-## How can you identify which queries are running slow in a database?
-
-**Answer**
-
-Database-Specific Tools and Logs:
-MySQL: Use the slow_query_log to log queries that exceed a specified execution time.
-Enable the slow query log: SET GLOBAL slow_query_log = 'ON';
-Set the long query time: SET GLOBAL long_query_time = 1; (time in seconds)
-Analyze the slow_query_log file to identify slow queries.
-PostgreSQL: Use the pg_stat_statements extension to track execution statistics of all SQL statements.
-Enable the extension: CREATE EXTENSION pg_stat_statements;
-Query the pg_stat_statements view to find slow queries.
-SQL Server: Use the SQL Server Profiler or Extended Events to capture and analyze slow-running queries.
-Oracle: Use the Automatic Workload Repository (AWR) reports and the V$SQL view to identify slow queries.
-Query Execution Plans:
-EXPLAIN: Use the EXPLAIN command to analyze the execution plan of a query. This helps identify inefficient operations like full table scans, missing indexes, and suboptimal join strategies.
-EXPLAIN ANALYZE: In PostgreSQL, use EXPLAIN ANALYZE to execute the query and provide a detailed execution plan with actual run times.
-Performance Monitoring Tools:
-Database Performance Monitoring Tools: Use tools like New Relic, Datadog, SolarWinds Database Performance Analyzer, or Percona Monitoring and Management (PMM) to monitor database performance and identify slow queries.
-Built-in Monitoring: Many databases have built-in monitoring tools and dashboards that provide insights into query performance.
-Query Profiling:
-MySQL: Use the SHOW PROFILE command to profile the execution of individual queries.
-Enable profiling: SET profiling = 1;
-Run the query and then use SHOW PROFILE to analyze its execution.
-PostgreSQL: Use the auto_explain module to automatically log execution plans of slow queries.
-Index Usage Analysis:
-Unused Indexes: Identify and remove unused indexes that may be slowing down write operations.
-Missing Indexes: Identify queries that could benefit from additional indexes to improve performance.
-Application-Level Logging:
-Log Slow Queries: Implement logging in your application to capture and log slow queries. This can be done by setting thresholds for query execution times and logging queries that exceed these thresholds.
-
-## What should you do if an e-commerce website is getting a large number of requests?
-
-**Answer**
-
-Load Balancing:
-Distribute Traffic: Use load balancers (e.g., Nginx, HAProxy, AWS ELB) to distribute incoming requests across multiple server instances, preventing any single server from becoming a bottleneck.
-Auto-Scaling: Implement auto-scaling to automatically add or remove server instances based on traffic load.
-Caching:
-Content Delivery Network (CDN): Use a CDN (e.g., Cloudflare, Akamai) to cache and serve static assets (images, CSS, JavaScript) from edge locations closer to users, reducing the load on your origin servers.
-Application Caching: Cache frequently accessed data (e.g., product details, user sessions) using in-memory caches like Redis or Memcached to reduce database load and improve response times.
-HTTP Caching: Implement HTTP caching headers (e.g., Cache-Control, ETag) to enable browsers to cache responses and reduce repeated requests.
-Database Optimization:
-Indexing: Ensure that your database is properly indexed to speed up query execution.
-Read Replicas: Use read replicas to distribute read queries and reduce the load on the primary database.
-Query Optimization: Optimize slow queries and use database profiling tools to identify and fix performance bottlenecks.
-Asynchronous Processing:
-Background Jobs: Offload long-running tasks (e.g., order processing, email notifications) to background job queues (e.g., RabbitMQ, Amazon SQS) to free up web server resources for handling incoming requests.
-Message Queues: Use message queues to decouple components and ensure reliable communication between services.
-Rate Limiting and Throttling:
-Rate Limiting: Implement rate limiting to control the number of requests a user or IP address can make within a specified time period, protecting your system from abuse and ensuring fair usage.
-Throttling: Throttle requests to prevent any single user or service from overwhelming your system.
-Microservices Architecture:
-Service Decomposition: Break down your monolithic application into smaller, independent microservices that can be scaled independently based on demand.
-Service Isolation: Isolate critical services (e.g., payment processing, inventory management) to ensure they remain available even if other parts of the system are under heavy load.
-Monitoring and Alerting:
-Performance Monitoring: Use monitoring tools (e.g., New Relic, Datadog, Prometheus) to track system performance, identify bottlenecks, and detect anomalies in real-time.
-Alerting: Set up alerts to notify your team of performance issues or unusual traffic patterns, enabling quick response and mitigation.
-Content Optimization:
-Minification: Minify CSS, JavaScript, and HTML files to reduce their size and improve load times.
-Image Optimization: Compress and optimize images to reduce their size without compromising quality.
-
-## What is vertical scaling?
-
-**Answer**
-
-Vertical scaling, also known as scaling up, refers to the process of increasing the capacity of a single server or resource to handle a greater load. This is achieved by adding more powerful hardware or resources to the existing server, such as increasing the CPU, memory (RAM), storage, or network bandwidth.
-Increasing Resources:
-Vertical scaling involves upgrading the existing server's hardware components to enhance its performance and capacity.
-Examples include adding more CPU cores, increasing RAM, upgrading to faster storage (e.g., SSDs), and improving network interfaces.
-Single Server:
-Vertical scaling focuses on enhancing the capabilities of a single server rather than adding more servers to the system.
-It is suitable for applications that are designed to run on a single server and can benefit from increased resources.
-Simplicity:
-Vertical scaling is often simpler to implement compared to horizontal scaling (adding more servers) because it does not require changes to the application's architecture or the addition of load balancers.
-It involves fewer complexities in terms of data consistency and synchronization.
-Limitations:
-There is a physical limit to how much a single server can be scaled up. Eventually, you may reach the maximum capacity of the hardware.
-Vertical scaling can become cost-prohibitive as the cost of high-end hardware increases significantly.
-Use Cases:
-Vertical scaling is suitable for applications with a monolithic architecture that cannot be easily distributed across multiple servers.
-It is also useful for databases and applications that require high performance and low latency.
+- [Design Patterns: Elements of Reusable Object-Oriented Software](https://www.pearson.com/en-us/subject-catalog/p/design-patterns-elements-of-reusable-object-oriented-software/P200000000477)
+- [Java Language Specification: method signatures](https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.2)

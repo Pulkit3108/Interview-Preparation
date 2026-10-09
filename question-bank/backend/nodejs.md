@@ -4,55 +4,91 @@ Node.js asynchronous programming, streams, Express, and data access.
 
 [Back to the question-bank index](../README.md)
 
-## How to handle promises in Node.js?
+## How do you handle promises in Node.js?
 
 **Answer**
 
-.then() and .catch(): Handle resolved values and errors of promises.
-async and await: Provide a more readable way to work with promises, making asynchronous code look synchronous.
-Promise.all: Handle multiple promises concurrently, resolving when all promises resolve or rejecting if any promise rejects.
-Promise.race: Resolve or reject as soon as one of the promises resolves or rejects.
-Promise.allSettled: Resolve after all promises have either resolved or rejected, providing the outcome of each promise
+Promises can be consumed with `.then()` and `.catch()`, but `async`/`await` usually makes multi-step asynchronous control flow easier to read. Use `try`/`catch` around awaited operations when the current layer can handle or enrich the error; otherwise, let the rejection propagate to a centralized error handler.
+
+The main promise combinators have different completion rules:
+
+- `Promise.all()` fulfills when every input fulfills and rejects when the first input rejects. It does not cancel the remaining operations.
+- `Promise.allSettled()` waits for every input and returns each fulfillment or rejection outcome.
+- `Promise.race()` settles with the first input to settle.
+- `Promise.any()` fulfills with the first input to fulfill and rejects only if every input rejects.
+
+```js
+async function loadDashboard(userId) {
+  try {
+    const [profile, notifications] = await Promise.all([
+      loadProfile(userId),
+      loadNotifications(userId),
+    ]);
+
+    return { profile, notifications };
+  } catch (error) {
+    throw new Error(`Unable to load dashboard for ${userId}`, { cause: error });
+  }
+}
+```
 
 ## What are streams in Node.js?
 
 **Answer**
 
-Streams in Node.js are objects that allow you to read data from a source or write data to a destination in a continuous fashion. They are particularly useful for handling large amounts of data or working with data that is being generated or received over time, such as reading files, handling HTTP requests, or processing data from a network.
-Types of Streams in Node.js
-Readable Streams: Streams from which data can be read (e.g., fs.createReadStream).
-Writable Streams: Streams to which data can be written (e.g., fs.createWriteStream).
-Duplex Streams: Streams that are both readable and writable (e.g., TCP sockets).
-Transform Streams: Duplex streams that can modify or transform the data as it is written and read (e.g., zlib.createGzip).
+Streams process data incrementally instead of loading an entire payload into memory. They are useful for files, HTTP bodies, compression, and network traffic.
 
-## Tell a bit about express in node js
+- **Readable:** produces data, such as `fs.createReadStream()`.
+- **Writable:** consumes data, such as `fs.createWriteStream()`.
+- **Duplex:** can be read from and written to, such as a TCP socket.
+- **Transform:** a duplex stream that converts data, such as `zlib.createGzip()`.
+
+Streams also support **backpressure**, which prevents a fast producer from overwhelming a slower consumer. Prefer `stream.pipeline()` or its promise-based form when connecting streams because it forwards errors and cleans up the pipeline.
+
+```js
+import { createReadStream, createWriteStream } from "node:fs";
+import { pipeline } from "node:stream/promises";
+import { createGzip } from "node:zlib";
+
+await pipeline(
+  createReadStream("input.log"),
+  createGzip(),
+  createWriteStream("input.log.gz"),
+);
+```
+
+## What is Express, and what does it provide?
 
 **Answer**
 
-Express: A minimal and flexible web application framework for Node.js that provides a robust set of features for building web and mobile applications.
-Key Features:
-Routing: Define routes for different HTTP methods and URL patterns.
-Middleware: Use middleware functions for tasks such as logging, authentication, and parsing request bodies.
-Template Engines: Generate HTML dynamically using template engines like Pug, EJS, and Handlebars.
-Static Files: Serve static files such as images, CSS files, and JavaScript files.
-Error Handling: Handle errors consistently in your application.
-Extensibility: Integrate middleware and plugins to add functionality.
+Express is a small web framework for Node.js. It builds on Node's HTTP primitives and provides:
 
-## How will you connect with DB?
+- routing by HTTP method and path;
+- an ordered middleware pipeline for concerns such as authentication, logging, validation, and body parsing;
+- helpers for requests and responses;
+- static-file and template-engine integration; and
+- centralized error-handling middleware.
+
+Middleware order matters because each function can handle the request, modify it, pass control with `next()`, or report an error. Route handlers should validate untrusted input, return deliberate status codes, and pass unexpected errors to the application's error boundary.
+
+## How would you connect a Node.js service to a database?
 
 **Answer**
 
-Set Up the Project:
-Install Node.js and initialize a new Node.js project.
-Install required packages (Express, body-parser, database client).
-Set Up Express.js:
-Create the main application file and set up a basic Express server.
-Connect to the Database:
-For MongoDB, use Mongoose to connect to the database.
-For PostgreSQL, use Sequelize to connect to the database.
-Define Models and Routes:
+The exact API depends on the database and driver, but a production service should follow the same basic approach:
 
-**Define models for your data.**
+1. Choose a maintained driver or ORM appropriate for the database.
+2. Read the connection configuration from environment or secret management, never from committed source.
+3. Create a bounded connection pool during application startup and reuse it across requests.
+4. Use parameterized queries or the ORM's safe query API, and use transactions when multiple writes must succeed atomically.
+5. Manage schema changes with migrations and expose a health check that distinguishes application health from database readiness.
+6. Close the pool during graceful shutdown.
 
-Create routes to handle API endpoints.
-Use the routes in the main application file.
+Database access should live in a dedicated repository or data-access layer rather than being mixed directly into HTTP route handlers. This keeps transport, business logic, and persistence concerns separate and easier to test.
+
+## References
+
+- [Node.js promises](https://nodejs.org/api/globals.html#class-promise)
+- [Node.js streams](https://nodejs.org/api/stream.html)
+- [Express routing](https://expressjs.com/en/guide/routing.html)
+- [Express middleware](https://expressjs.com/en/guide/using-middleware.html)

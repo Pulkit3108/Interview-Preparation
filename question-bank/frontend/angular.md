@@ -8,64 +8,57 @@ Angular and TypeScript fundamentals, components, templates, dependency injection
 
 **Answer**
 
-Typing:
-JavaScript: Dynamically typed.
-TypeScript: Statically typed (optional).
-Compilation:
-JavaScript: Interpreted directly by the browser or Node.js.
-TypeScript: Compiled to JavaScript before execution.
-Inheritance:
-JavaScript: Prototype-based inheritance.
-TypeScript: Class-based inheritance.
-Interfaces:
-JavaScript: No built-in support for interfaces.
-TypeScript: Supports interfaces for defining contracts.
-Development Experience:
-JavaScript: Provides basic development experience with dynamic typing.
-TypeScript: Enhances development experience with static typing, better tooling, and advanced type features.
+JavaScript is a dynamically typed runtime language. TypeScript is a superset of JavaScript that adds
+an erasable, structural static type system and must be transpiled to JavaScript before it runs.
+
+TypeScript adds interfaces, type aliases, generics, unions, and compile-time checking, which improves
+editor tooling and catches many mistakes before execution. Its types do not validate untrusted data
+at runtime, and both languages ultimately use JavaScript's prototype-based object model.
 
 ## What is Type Checking and Type Definitions?
 
 **Answer**
 
-Type Checking: TypeScript performs static type checking at compile time to ensure that variables, function parameters, return values, and other expressions have the correct types.
-Type Definitions: TypeScript provides several ways to define types, including basic types, interfaces, and type aliases.
-Type Checking and Type Definitions in Angular: Angular leverages TypeScript's type system to ensure the correctness and consistency of the code in components, services, and other constructs.
+Type checking verifies at compile time that expressions are compatible with their declared or
+inferred types. A type definition describes a value's shape using primitives, interfaces, type
+aliases, classes, generics, unions, and related constructs. Declaration files (`.d.ts`) describe the
+types exposed by JavaScript libraries without adding runtime code.
+
+Angular's compiler extends this checking to templates when strict template checking is enabled.
+Runtime validation is still required for API responses, storage, and other untrusted input.
 
 ## What are the advantages and disadvantages of using Angular?
 
 **Answer**
 
-Advantages:
-Two-Way Data Binding
-Component-Based Architecture
-Dependency Injection
-Comprehensive Framework
-TypeScript Support
-Reactive Programming with RxJS
-Strong Community and Ecosystem
-Performance Optimization
-Disadvantages:
-Steep Learning Curve
-Verbose and Complex Code
-Performance Overhead
-Frequent Updates and Breaking Changes
-Opinionated Framework
-Heavy Framework
+Advantages include an integrated router, forms, HTTP client, dependency injection, testing support,
+CLI, component model, TypeScript tooling, signals, and RxJS interoperability. The consistent,
+opinionated structure can help large teams maintain applications.
+
+Trade-offs include a broad API surface, framework-specific concepts, migration work between major
+versions, and more initial structure than a small application may need. Performance depends on
+bundle design, rendering behavior, and application code; calling Angular simply "heavy" is not a
+useful diagnosis.
 
 ## What is a Single Page Application?
 
 **Answer**
 
-A single-page application is a web application or website that interacts with the user by dynamically rewriting the current web page with new data from the web server, instead of the default method of loading entire new pages. The goal is faster transitions that make the website feel more like a native app
+A single-page application loads an application shell and handles later navigation by updating the
+current document rather than requesting a full HTML page for every route. It can provide smooth
+transitions, but it still needs deliberate routing, history, accessibility, loading, error, caching,
+SEO, and deep-link behavior. SSR or prerendering can complement an SPA for initial delivery.
 
 ## What are modules, services, and components?
 
 **Answer**
 
-Modules are containers that group together related components, directives, pipes, and services. It organizes the application into cohesive blocks which helps to structure the data.
-Services are singleton objects that encapsulate business logic, data access, or other reusable functionalities. It is used for loading data and communicating it.
-Components are the building blocks of an Angular application. They control a part of the user interface. It defines the UI interaction and behavior of a part of the application.
+- A **component** combines a template, behavior, and styles for part of the user interface.
+- A **service** is an ordinary class used for reusable state or logic and is commonly obtained through
+  dependency injection. It is a singleton only within the injector that provides it.
+- An **NgModule** groups declarations and providers in module-based applications. Modern Angular
+  components are standalone by default, so new applications can compose components and providers
+  without application NgModules. NgModules remain supported for existing code and libraries.
 
 ## What are JIT and AOT compilation in Angular, and how are current Angular applications built?
 
@@ -95,40 +88,34 @@ application builder.
 
 **Answer**
 
-The Angular CLI (Command Line Interface) is a powerful tool that helps developers efficiently create, manage, and build Angular applications. It provides a set of commands for various tasks, streamlining the development workflow and ensuring best practices are followed
+The Angular CLI creates and updates workspaces, generates code, serves development builds, runs tests,
+builds deployable artifacts, and applies supported migrations. Common commands include `ng new`,
+`ng generate`, `ng serve`, `ng test`, `ng build`, and `ng update`.
 
 ## What happens when you build your Angular code?
 
 **Answer**
 
-Compilation:
-TypeScript Compilation: Transpiles TypeScript to JavaScript and performs type checking.
-Angular Template Compilation: Compiles Angular templates into JavaScript (AOT compilation).
-Bundling:
-Module Bundling: Combines all JavaScript files into a few optimized bundles.
-Optimization:
-Minification: Reduces file size by removing whitespace and shortening variable names.
-Tree Shaking: Removes unused code from the final bundle.
-Ahead-of-Time (AOT) Compilation: Pre-compiles Angular templates and components.
-Asset Optimization:
-CSS and HTML Optimization: Minifies and concatenates CSS and HTML files.
-Image Optimization: Compresses images to reduce file size.
-Output Generation:
-Distribution Directory: Places the final build artifacts in the dist/ directory.
-Configuration and Environment Handling:
-Environment Configuration: Applies environment-specific configurations.
+The CLI selects a build configuration, compiles TypeScript and Angular templates, resolves imports,
+processes styles and configured assets, and emits browser bundles. Production builds normally apply
+AOT compilation, tree shaking, minification, hashing, and configured size budgets. SSR or prerendered
+outputs are produced when those features are configured.
+
+The output location and file replacements come from workspace configuration. A build does not
+automatically optimize arbitrary images or guarantee that unused code with side effects disappears;
+inspect the emitted bundles and budgets rather than assuming every optimization occurred.
 
 ## What are different data bindings in Angular?
 
 **Answer**
 
-Interpolation: {{ expression }} - Component to template.
-Property Binding: [property]="expression" - Component to element property.
-Attribute Binding: [attr.attributeName]="expression" - Component to element attribute.
-Class Binding: [class.className]="expression" - Adds/removes class.
-Style Binding: [style.styleProperty]="expression" - Sets style property.
-Event Binding: (event)="handler" - Template to component method.
-Two-way Binding: [(ngModel)]="property" - Two-way data binding.
+- Interpolation: `{{ expression }}` renders a value as text.
+- Property binding: `[property]="expression"` assigns a DOM, directive, or component property.
+- Attribute binding: `[attr.name]="expression"` writes an HTML attribute.
+- Class and style bindings: `[class.active]` and `[style.width.px]` update presentation.
+- Event binding: `(event)="handler($event)"` invokes template logic.
+- Two-way binding: `[(ngModel)]="value"` combines an input and matching change event. Component
+  two-way binding can also be exposed with a model input.
 
 ## What is the Angular import for Component and Input?
 
@@ -142,486 +129,509 @@ import { Component, Input } from '@angular/core';
 
 **Answer**
 
-In Angular, you can pass data from a parent component to a child component using property binding and the @Input decorator.
+Declare an input in the child, then bind it from the parent. Current Angular supports signal-based
+`input()` declarations as well as the `@Input` decorator.
+
+```typescript
+// child
+name = input.required<string>();
+```
+
+```html
+<app-child [name]="selectedName" />
+```
 
 ## Can we Share data from parent to child like 2 way binding?
 
 **Answer**
 
-Sharing data from a parent component to a child component in Angular is typically done using one-way data binding, not two-way binding. This is achieved using @Input properties in the child component. Two-way binding, on the other hand, is used for synchronizing data between the view and the component.
+Yes. Prefer one-way input binding plus an explicit output when that makes ownership clearer. For a
+true component two-way binding, expose an input/output pair such as `value` and `valueChange`, or use
+a model input and bind it with `[(value)]`. Two-way binding should not obscure which component owns
+the state.
 
 ## What are different ways to share data between 2 components?
 
 **Answer**
 
-Parent to Child using @Input: Pass data from parent to child.
-Child to Parent using @Output and EventEmitter: Pass data from child to parent.
-Using a Shared Service: Share data between components using a service.
-Using Local Storage or Session Storage: Store and retrieve data in the browser's storage.
-Using Angular Router with Route Parameters: Pass data through route parameters during navigation.
+- Parent to child: an input property or signal input.
+- Child to parent: an output event.
+- Closely related components: lift state to their common parent.
+- Unrelated components: an injected service using signals or RxJS; use a store when state complexity
+  justifies one.
+- Navigation state: route parameters, query parameters, resolver data, or history state.
+- Persistent client state: storage only when persistence is required; do not treat browser storage as
+  an event bus or store sensitive credentials there.
 
 ## What are different ways to share data between sibling components?
 
 **Answer**
 
-Using a Shared Service:
-Create a service to hold shared data and provide methods to get and set the data.
-Inject the service into sibling components to share data.
-Using a Parent Component:
-Use a parent component to hold shared data and pass it to sibling components via input properties and event emitters.
-Using a State Management Library:
-Use libraries like NgRx or Akita to manage and share state across the application, including between sibling components.
+The simplest approach is to keep the state in the closest common parent, pass values down through
+inputs, and receive changes through outputs. If the siblings do not share a practical parent, inject
+a service scoped to the feature and expose controlled signal or observable state. Adopt a store such
+as NgRx only when application-wide state, effects, traceability, or team conventions justify it.
 
 ## Explain a bit about each Angular lifecycle hook.
 
 **Answer**
 
-Angular lifecycle hooks are methods that provide visibility into key moments in the lifecycle of a component or directive. Here are brief definitions:
-ngOnChanges: Called when an input property value changes.
-ngOnInit: Called once after the first ngOnChanges, when component is initialized.
-ngDoCheck: Called during every change detection run.
-ngAfterContentInit: Called once after content (ng-content) has been projected into the view.
-ngAfterContentChecked: Called after every check of projected content.
-ngAfterViewInit: Called once after the component's view and child views have been initialized.
-ngAfterViewChecked: Called after every check of the component's view and child views.
-ngOnDestroy: Called just before the component is destroyed.
+- `ngOnChanges`: runs when bound inputs change; the first call precedes `ngOnInit`.
+- `ngOnInit`: runs once after Angular initializes the component's inputs.
+- `ngDoCheck`: runs during checks and supports custom change detection; keep it lightweight.
+- `ngAfterContentInit` / `ngAfterContentChecked`: run after projected content is initialized or
+  checked.
+- `ngAfterViewInit` / `ngAfterViewChecked`: run after the component view and view children are
+  initialized or checked.
+- `ngOnDestroy`: runs immediately before destruction and is used for cleanup.
+
+`afterNextRender` and `afterEveryRender` schedule callbacks after Angular has rendered application
+changes to the DOM. Avoid changing bound state inside the checked hooks because that can cause
+expression-changed errors or repeated work.
 
 ## What are some common uses of ngOnInit?
 
 **Answer**
 
-Fetching Data: Retrieve data from services or APIs.
-Initializing Component State: Set initial values for component properties.
-Subscribing to Observables: Handle data streams.
-Setting Up Event Listeners: Initialize event listeners.
-Dependency Injection Initialization: Initialize services or other dependencies.
+Use `ngOnInit` for initialization that depends on resolved inputs or injected collaborators, such as
+starting a data request or deriving initial component state. Prefer template `async`, signals, or
+`takeUntilDestroyed` for subscriptions. Constructor injection already makes dependencies available;
+`ngOnInit` does not perform dependency injection.
 
 ## Which Lifecycle Hook to use to fetch DOM Element?
 
 **Answer**
 
-Lifecycle Hook: Use ngAfterViewInit to fetch or interact with DOM elements after the component's view has been fully initialized.
-Steps:
-Import AfterViewInit, ViewChild, and ElementRef from @angular/core.
-Use the @ViewChild decorator to get a reference to the DOM element.
-Implement the ngAfterViewInit method to perform DOM manipulations.
+Use a view query such as `viewChild()` or `@ViewChild`. For imperative work that requires the view to
+exist, read it in `ngAfterViewInit`; for DOM work that must happen after rendering, use a render
+callback such as `afterNextRender`. Prefer bindings and `Renderer2` over direct DOM mutation, and
+guard browser-only DOM access in SSR applications.
 
 ## Which Lifecycle hook to use when sending value from parent to child?
 
 **Answer**
 
-Lifecycle Hook: Use ngOnChanges to capture changes to input properties and access both the previous and current values.
-Steps:
-Import OnChanges and SimpleChanges from @angular/core.
-Implement the ngOnChanges method to capture the previous and current values of the input property.
+No lifecycle hook is needed merely to receive a value: Angular assigns a bound input automatically.
+Use `ngOnChanges` when code must react to decorated-input changes and needs previous/current values.
+For signal inputs, derive state with `computed` or react with `effect` only when a side effect is
+actually required.
 
 ## What is ViewChild?
 
 **Answer**
 
-@ViewChild: A decorator that allows you to access a child component, directive, or DOM element from a parent component.
-Access Child Components: Use @ViewChild to access public properties and methods of a child component.
-Access DOM Elements: Use @ViewChild to access native DOM elements directly.
-Access Directives: Use @ViewChild to access directives applied to elements.
-Lifecycle Hook: Use ngAfterViewInit to ensure the child component or DOM element is fully initialized before accessing it.
+`@ViewChild` is a view query that retrieves the first matching component, directive, provider, or
+template/element reference from a component's own view. Dynamic queries update when the view changes;
+static queries resolve before initialization and do not update. Current Angular also provides the
+signal-based `viewChild()` API. A view query does not cross component boundaries.
 
 ## What is a Dynamic Component?
 
 **Answer**
 
-Dynamic Component: A component that is created and inserted into the DOM at runtime.
-Key Services:
-ComponentFactoryResolver: Used to create a component factory for a given component type.
-ViewContainerRef: Used to insert the dynamically created component into the DOM.
-Steps:
-Create the dynamic component.
-Create a host component with a container for the dynamic component.
-Use ComponentFactoryResolver and ViewContainerRef to create and insert the dynamic component.
+A dynamic component is selected and instantiated at runtime rather than appearing statically in a
+template. Use `ViewContainerRef.createComponent(ComponentType)` to insert one at a known container,
+or the standalone `createComponent` function for more controlled host-element creation. Configure
+inputs, outputs, environment injector, and destruction explicitly. `ComponentFactoryResolver` is a
+legacy approach and is unnecessary in current Angular.
 
 ## What is ViewContainerRef?
 
 **Answer**
 
-ViewContainerRef: A service that provides a way to interact with the view container of a component.
-Key Methods:
-createComponent: Creates and inserts a component into the view container.
-createEmbeddedView: Creates and inserts an embedded view from a TemplateRef.
-clear: Clears all views from the container.
-remove: Removes a view from the container at a specified index.
-insert: Inserts a view into the container at a specified index.
-detach: Detaches a view from the container without destroying it.
+`ViewContainerRef` represents a location that can contain host views and embedded views. It can
+create components, instantiate a `TemplateRef`, insert or move views, detach a view without
+destroying it, remove a view, or clear the container. Angular includes attached views in rendering
+and change detection.
 
 ## What is the concept of dependency injection?
 
 **Answer**
 
-Dependency Injection (DI) in Angular: A design pattern that allows you to inject dependencies into components, services, and other parts of the application.
-Providers: Define how to create an instance of a dependency.
-Injectors: Responsible for creating and managing instances of dependencies.
-Tokens: Identifiers used to look up dependencies in the injector.
-Hierarchical Injectors: Angular uses a hierarchical injector system, allowing services to be provided at different levels (root, component, etc.).
+Dependency injection separates a consumer from construction of its collaborators. A token identifies
+a dependency, a provider explains how to create or obtain its value, and an injector resolves and
+caches it according to provider scope. Angular's hierarchical injectors allow application-, route-,
+and component-scoped instances. Resolution can use constructor parameters or `inject()` in an
+injection context.
 
 ## How to implement Dependency Injection in Angular?
 
 **Answer**
 
-Create a Service: Define a service using the @Injectable decorator.
-Inject the Service into a Component: Use Angular's DI system to inject the service into a component's constructor.
-Register the Service with an Injector: Use the providedIn property in the @Injectable decorator or the providers array in a module.
+Define an injectable class or another provider, register it at the intended scope, and request its
+token from the consumer. `providedIn: 'root'` provides one lazily created instance in the root
+environment injector; component `providers` create scoped instances for that component subtree.
+
+```typescript
+@Injectable({ providedIn: 'root' })
+export class UserService {}
+
+@Component({ /* ... */ })
+export class ProfileComponent {
+  private readonly users = inject(UserService);
+}
+```
 
 ## What is Angular Routing and How to use it?
 
 **Answer**
 
-Angular Routing enables navigation between different views in your single-page application (SPA). It allows users to move seamlessly between different parts of your app without full page reloads, providing a smooth user experience.
-Steps to Use:
-- Create an array of routes in your app's routing module:
-- Add the RouterOutlet.
-- Use the routerLink directive to create links in your templates
+Angular Router maps URLs to component trees. Define a `Routes` array, register it with
+`provideRouter(routes)` in a standalone application, place a `RouterOutlet` where activated content
+should render, and navigate with `routerLink` or `Router`. Routes can lazy-load components, declare
+children, resolve data, and run guards.
 
 ## What is Auth Guard in Angular?
 
 **Answer**
 
-In Angular, an Auth Guard is a feature that helps you protect certain routes in your application from unauthorized access. It acts as a gatekeeper, checking whether a user is authenticated before allowing them to navigate to a protected route.
+A route guard can allow, reject, redirect, or conditionally match client-side navigation based on
+authentication state or another condition. It improves navigation UX, but browser code is
+modifiable and therefore cannot enforce authorization. Every protected API and resource must also
+authorize the request on the server.
 
 ## What are different types of guard in Angular?
 
 **Answer**
 
-CanActivate: Determines if a route can be activated. Used for authentication and authorization checks.
-CanActivateChild: Determines if child routes can be activated. Used for protecting nested routes.
-CanDeactivate: Determines if a route can be deactivated. Used to prevent users from leaving a route if certain conditions are not met.
-CanLoad: Determines if a module can be loaded. Used for authentication and authorization checks for lazy-loaded modules.
-Resolve: Pre-fetches data before activating a route. Used to ensure necessary data is available before the route is activated.
+- `CanActivate`: controls activation of a route.
+- `CanActivateChild`: controls activation of descendant routes.
+- `CanDeactivate`: controls leaving the current route, often for unsaved changes.
+- `CanMatch`: controls whether a route definition can match, including lazy routes.
+
+A resolver loads data before activation but is not a guard. `CanLoad` appears in older Angular code;
+current routing guidance uses `CanMatch` for route matching and lazy-loading decisions.
 
 ## What are custom pipes in Angular?
 
 **Answer**
 
-In Angular, custom pipes are a way to transform data directly in your templates. They are essentially functions that take an input value and return a transformed output
+A custom pipe encapsulates a reusable template transformation. Pure pipes run again when a primitive
+argument changes or an input object reference changes. Impure pipes run during every check and can be
+expensive, so use them only when necessary. Pipes should not hide side effects or subscriptions.
 
 ## How do you create custom pipes?
 
 **Answer**
 
-Generate the Pipe: Use Angular CLI to generate a new pipe.
-ng generate pipe custom
-Implement the Pipe: Define the transformation logic in the pipe class.
-Register the Pipe: Ensure the pipe is declared in an Angular module.
-Use the Pipe: Apply the custom pipe in your templates.
-Import Required Modules: Import Pipe and PipeTransform from @angular/core.
-Decorator: Use the @Pipe decorator to define the name of the pipe (titleCase).
-Implement PipeTransform: Implement the PipeTransform interface by defining the transform method.
+Generate one with `ng generate pipe short-name`, implement `PipeTransform`, and import the standalone
+pipe into each component that uses it. Module-based applications can declare and export it from an
+NgModule.
+
+```typescript
+@Pipe({ name: 'initials' })
+export class InitialsPipe implements PipeTransform {
+  transform(value: string): string {
+    return value.split(/\s+/).filter(Boolean).map(part => part[0]).join('');
+  }
+}
+```
 
 ## What is the difference between ngIf and ngSwitch?
 
 **Answer**
 
-Use ngIf for simple true/false conditions and ngSwitch when you need to choose between multiple options.
+`NgIf` conditionally includes one branch; `NgSwitch` selects among multiple cases. In current Angular,
+the built-in `@if` and `@switch` template blocks are preferred for new code and do not require
+importing structural directives. Use an `if` for a binary or chained condition and a switch when one
+expression is compared against several cases.
 
 ## How do we implement form validation in Angular?
 
 **Answer**
 
-Validation in Template: You add validation rules directly within the HTML template using built-in directives like required, minlength, maxlength, pattern, etc.
-Validation in Component: You define validation logic within your component class using the Validators class and its built-in validators or by creating custom validators.
+Angular supports template-driven and reactive forms. Add synchronous or asynchronous validators to
+controls, display messages after an appropriate interaction state such as `touched`, prevent invalid
+submission, and test both valid and invalid paths. Browser validation improves UX; the server must
+repeat all trust and business-rule validation.
 
 ## What are Angular directives?
 
 **Answer**
 
-Angular directives are special markers in the DOM that tell Angular to do something to a DOM element or even to the entire DOM structure. They are used to extend the HTML by adding new behavior to elements and components. There are three main types of directives in Angular:
-Component Directives:
-These are the most common directives and are used to create components. Components are directives with a template.
-Example: <app-my-component></app-my-component>
-Structural Directives:
-These directives change the DOM layout by adding or removing elements. They typically use the asterisk (*) prefix.
-Examples: *ngIf, *ngFor, *ngSwitch
-Attribute Directives:
-These directives change the appearance or behavior of an element, component, or another directive.
-Examples: ngClass, ngStyle, ngModel
+Directives attach Angular behavior to host elements. A component is a directive with a template.
+Attribute directives change an element's behavior or appearance, while structural directives create
+or remove embedded views. Older structural-directive shorthand uses `*ngIf` and `*ngFor`; current
+Angular also provides built-in control-flow blocks such as `@if` and `@for`.
 
 ## Which Angular feature allows you to define custom HTML elements and attributes?
 
 **Answer**
 
-In Angular, Directives are the feature that allows you to define custom HTML elements and attributes. Directives are a core feature of Angular and are used to extend the capabilities of HTML by adding new behavior to elements and components.
+Components define custom elements with templates. Attribute directives define custom attributes or
+selectors that add behavior to an existing host. Angular Elements can package a component as a
+standards-based custom element when interoperability outside Angular is required.
 
 ## What are custom directives in Angular
 
 **Answer**
 
-Custom directives in Angular are a way to extend the HTML vocabulary and create reusable components or behaviors that can be applied to DOM elements.
-Generate the Directive:
-The ng generate directive Unless command creates a new directive called UnlessDirective.
-Implement the Directive:
-The @Directive decorator is used to define the directive.
-The @Input decorator allows the directive to accept an input value (condition).
-The TemplateRef and ViewContainerRef are used to manage the template and view container.
-The appUnless setter method conditionally includes or removes the element from the DOM based on the condition.
-Use the Directive in a Component:
-The appUnless directive is applied to a <div> element, and the condition is toggled using a button.
-Component Logic:
-The AppComponent class defines the condition property and toggles it using a button click.
+A custom directive packages reusable host behavior under a selector. An attribute directive can use
+host bindings and listeners; a structural directive receives a `TemplateRef` and controls its
+embedded views through `ViewContainerRef`. Define a clear input API and prefer renderer or host
+bindings over direct DOM manipulation.
 
 ## How to Create Custom Directive
 
 **Answer**
 
-Generate the Directive: Use the Angular CLI to generate a new directive.
-ng generate directive custom
-Implement the Directive Logic: Define the behavior of the directive using the @Directive decorator and necessary methods.
-Register the Directive in a Module: Add the custom directive to the declarations array in the module file.
-Use the Custom Directive in a Template: Apply the custom directive in a component template.
+Run `ng generate directive custom`, define its selector and behavior with `@Directive`, then import the
+standalone directive into the consuming component. In a module-based application, declare and export
+it from an NgModule. The hover-color example at the end of this file shows a complete attribute
+directive.
 
 ## What is View encapsulation?
 
 **Answer**
 
-View encapsulation in Angular is a mechanism that determines how styles defined in a component affect the component's template and its children. It helps to scope styles to a specific component, preventing them from leaking out and affecting other parts of the application. Angular provides three types of view encapsulation:
-Emulated (Default): Emulates Shadow DOM behavior by adding unique attribute selectors to elements and styles, scoping styles to the component.
-None: No encapsulation; styles are global and can affect any element in the application.
-Shadow DOM: Uses the native Shadow DOM to provide true encapsulation, ensuring styles are scoped to the component and do not leak out.
+View encapsulation controls how component styles are scoped:
+
+- `Emulated`, the default, rewrites selectors with generated attributes. It scopes component rules
+  but is not a real shadow root.
+- `ShadowDom` uses the browser's native shadow DOM and its style boundary.
+- `None` emits the styles globally.
+
+Inherited CSS properties and custom properties can still cross relevant boundaries, so
+encapsulation is not complete isolation of all visual state.
 
 ## What is content projection?
 
 **Answer**
 
-Content Projection: Allows you to insert content from a parent component into a child component.
-ng-content Directive: Used in the child component's template to define where the projected content should be inserted.
-Single Slot Content Projection: Projects content into a single slot.
-Multi-Slot Content Projection: Projects content into multiple slots using selectors.
+Content projection lets a component render content supplied by its consumer. The child places
+`<ng-content>` slots in its template; slots with `select` support multi-slot projection. Projected
+content retains the binding context of the component that declared it. It is different from creating
+an embedded view from `TemplateRef`.
 
 ## What is Change detection in Angular?
 
 **Answer**
 
-Change detection in Angular is the mechanism by which the framework checks for changes in the application state and updates the DOM accordingly. Angular provides different strategies to optimize and control this process, ensuring that the application remains performant and responsive.
-Default (CheckAlways): Angular checks the entire component tree for changes on every event. Suitable for most applications.
-OnPush: Angular only checks the component and its children for changes when specific conditions are met. Suitable for performance optimization in large applications.
-Manually Triggering Change Detection: Use ChangeDetectorRef to manually trigger change detection when using the OnPush strategy.
+Change detection evaluates bindings and updates the DOM when application state changes. The default
+strategy checks a component whenever its view participates in a traversal. `OnPush` lets Angular skip
+eligible subtrees until a trigger occurs, such as a new input value, an event in the subtree, an
+observable notification consumed by `async`, a signal read by the template changing, or an explicit
+mark. Mutating an object without changing its reference is a common `OnPush` bug.
 
 ## What is an Observable in Angular? How do you subscribe to an Observable?
 
 **Answer**
 
-Observable is a lazy collection of future events. It is a data stream that can emit multiple values over time. Observers can subscribe to observables to receive emitted values. Observables are unicast by default, meaning each subscription has its own independent execution. It is a powerful tool for handling asynchronous data streams.  It's part of the RxJS library and provides a way to work with data that arrives over time, such as HTTP responses, user input events, and more
-You can subscribe to an Observable by calling the subscribe() method.
+An RxJS `Observable` describes a sequence of zero or more values followed by completion or an error.
+Many observables are lazy and cold, but hot/multicast observables also exist, so neither property is
+universal. Subscribe with the template `async` pipe when possible; otherwise call `subscribe` and
+bind cleanup to component destruction, for example with `takeUntilDestroyed`.
 
 ## What is a Subject in Angular?
 
 **Answer**
 
-Subject is a special type of observable that allows values to be multicasted to multiple observers. Subjects are both an observable and an observer, meaning they can emit values and be subscribed to. It can be used to manually control the emission of values.
-Types:
-BehaviorSubject: A subject that requires an initial value and emits its current value (last emitted item) to new subscribers. Useful for representing "current state" that can change over time
-ReplaySubject: A subject that stores a specified number of previous values and emits them to new subscribers. Useful for caching values and replaying them to new subscribers.
-AsyncSubject: A subject that emits the last value to its subscribers when the subject completes. Useful for representing a single value that will be available in the future.
+A `Subject` is both an observer and an observable, so code can push values with `next` and multicast
+them to current subscribers. A plain `Subject` has no current value or replay. `BehaviorSubject`
+requires an initial value and replays the latest value, `ReplaySubject` replays a configured buffer,
+and `AsyncSubject` emits its final value only when it completes. Hide writable subjects behind a
+read-only observable when exposing service state.
 
 ## What is the Difference between Subject and Behavior subject
 
 **Answer**
 
-Initial Value:
-Subject: Does not have an initial value.
-BehaviorSubject: Requires an initial value.
-Replay Last Value:
-Subject: Does not replay the last emitted value to new subscribers.
-BehaviorSubject: Replays the last emitted value to new subscribers.
-Use Case:
-Subject: Use when you do not need to replay the last emitted value to new subscribers.
-BehaviorSubject: Use when you need to ensure that new subscribers receive the most recent value immediately upon subscription.
+A plain `Subject` emits only events that occur after subscription. A `BehaviorSubject` requires an
+initial value, exposes the current value, and immediately emits that latest value to a new subscriber.
+Use a plain subject for transient events and a behavior subject only when the stream genuinely models
+current state.
 
 ## What is the difference between a promise and an observable?
 
 **Answer**
 
-Promises
-Eager Execution: A Promise starts executing immediately when it is created.
-Single Value: A Promise resolves or rejects with a single value or error.
-Not Cancellable: Once a Promise is initiated, it cannot be cancelled.
-Chaining: Promises use .then(), .catch(), and .finally() for chaining and handling results.
-Built-in: Promises are a built-in feature of JavaScript (ES6).
-Observables
-Lazy Execution: An Observable does not start emitting values until it is subscribed to.
-Multiple Values: An Observable can emit multiple values over time.
-Cancellable: Subscriptions to Observables can be cancelled using the unsubscribe() method.
-Operators: Observables use a wide range of operators for transforming, filtering, and combining streams.
-Library Support: Observables are not built into JavaScript but are provided by libraries like RxJS.
+A promise is a built-in JavaScript object that settles once with a value or error. Its executor starts
+when the promise is created, and the promise itself has no standard cancellation operation.
+
+An RxJS observable can emit multiple values and provides composition operators. Unsubscribing stops
+that subscription and runs teardown logic, but it cancels underlying work only if the observable's
+producer implements cancellation. Observables are often lazy, not universally so.
 
 ## What are streams in observables?
 
 **Answer**
 
-In the context of Observables, streams represent a sequence of ongoing events ordered in time. Observables are a part of Reactive Programming and are used extensively in libraries like RxJS (Reactive Extensions for JavaScript).
-Key Concepts of Streams in Observables:
-Observable: Represents the stream itself, which can emit multiple values over time.
-Observer: Consumes the values emitted by the Observable. It defines how to handle each value, errors, and completion.
-Subscription: Represents the execution of an Observable. It allows you to start and stop listening to the stream.
-Operators: Functions that enable complex asynchronous code by composing Observables together.
+"Stream" informally means values or events delivered over time. The observable defines how values
+are produced; an observer handles `next`, `error`, and `complete`; a subscription represents one
+execution and its teardown; and operators create new observables by transforming or combining
+sources. An observable need not be infinite or ongoing.
 
 ## How do you perform asynchronous operations in Angular?
 
 **Answer**
 
-Observables: Used extensively in Angular for handling asynchronous operations, especially with HTTPClient. They provide powerful operators for managing data streams.
-Promises: Used for operations that return a single value or complete once. Can be converted from Observables using .toPromise().
-async and await: Provide a more synchronous-looking way to handle Promises, making the code easier to read and write.
-HttpClientModule: Import HttpClientModule in your app module to use HttpClient for making HTTP requests.
-HttpClient: Use HttpClient in a service to perform HTTP operations such as GET, POST, PUT, DELETE.
+Use RxJS observables for router events, forms, HTTP composition, and other streams; use promises and
+`async`/`await` for single-result APIs when that model is clearer. Convert an observable with
+`firstValueFrom` or `lastValueFrom` only when completion semantics are understood. `toPromise` was
+removed from current RxJS.
+
+Configure HTTP with `provideHttpClient`, inject `HttpClient`, and compose its returned observables.
+Use template `async`, signals, or lifecycle-bound subscriptions so work and cleanup are explicit.
 
 ## How will you integrate Backend APIs in Angular?
 
 **Answer**
 
-Set Up HttpClientModule:
-Import HttpClientModule in your app module to use HttpClient for making HTTP requests.
-Create a Service:
-Generate a service and use HttpClient to perform HTTP operations like GET, POST, PUT, and DELETE.
-Use the Service in a Component:
-Inject the service into a component and use it to make HTTP requests to the backend API.
+Register `provideHttpClient`, usually in `app.config.ts`, and isolate endpoint details in a service
+that injects `HttpClient`. Define response types, but remember a TypeScript generic does not validate
+the server payload. Handle loading, empty, error, cancellation, retry, and caching behavior according
+to the operation. Use interceptors for cross-cutting concerns, not hidden business logic, and enforce
+authentication and authorization on the server.
 
 ## What are different loading strategies in Angular?
 
 **Answer**
 
-Eager Loading: Loads all modules upfront when the application starts. Suitable for small applications or critical modules.
-Lazy Loading: Delays loading of feature modules until they are needed. Ideal for large applications to improve initial load time.
-Preloading: Loads lazy-loaded modules in the background after the initial load. Balances initial load time and subsequent navigation speed.
-PreloadAllModules: Preloads all lazy-loaded modules.
-Custom Preloading Strategy: Allows selective preloading based on custom logic.
+- **Eager loading** includes code in the initial route's dependency graph.
+- **Lazy loading** downloads a route's component or children when navigation needs them.
+- **Preloading** fetches selected lazy routes after initial navigation to reduce later latency;
+  `PreloadAllModules` and custom strategies are available.
+- **Deferred template loading** with `@defer` splits eligible template dependencies and loads them on
+  triggers such as viewport or interaction.
 
 ## How to implement lazy loading in Angular?
 
 **Answer**
 
-To implement lazy loading in Angular, follow these steps:
-Create a Feature Module: Generate a new module for the feature you want to lazy load.
-Configure Routes: Set up the routes to load the feature module lazily.
-Update App Routing Module: Use the loadChildren property to lazy load the module.
+Use `loadComponent` for a standalone component or `loadChildren` for child routes:
+
+```typescript
+export const routes: Routes = [
+  {
+    path: 'admin',
+    loadComponent: () => import('./admin/admin.component')
+      .then(module => module.AdminComponent),
+  },
+];
+```
+
+Confirm the feature becomes a separate chunk and avoid importing it eagerly elsewhere.
 
 ## How will you optimize and improve the performance of an Angular Application?
 
 **Answer**
 
-Lazy loading: It is a technique that allows you to load only the components that are needed at a given time. This can help to improve performance by reducing the size of the initial bundle that is downloaded by the browser.
-To use lazy loading, you need to create a separate module for each lazy-loaded component. Then, you can use the router to load the module when the component is needed.
-AOT compilation: It is a technique that allows Angular to compile the application code ahead of time. This can help to improve performance by reducing the amount of work that needs to be done by the browser when the application is loaded.
-Avoid using ngIf with complex expressions: Instead of using a complex ngIf expression, use ngSwitch for better performance.
-OnPush change detection strategy Angular uses change detection to track the changes to the application state. However, if change detection is used too often, this can lead to performance problems. To improve performance, you can use the OnPush change detection strategy. This strategy only checks for changes when the application state is explicitly changed.
-Use trackBy in ngFor loops: The ngFor directive is used to iterate over a collection of data and render a template for each item. However, if the collection is large, this can lead to performance problems. To improve performance, you can use the trackBy property to track the changes to the collection. This will prevent Angular from re-rendering the entire template for each item in the collection.
+Measure first with browser performance tools, Angular DevTools, bundle budgets, and real-user
+metrics. Common improvements include route lazy loading and `@defer`, stable tracking keys in
+`@for`/`trackBy`, list virtualization, `OnPush` plus immutable state, avoiding repeated template work,
+canceling obsolete requests, caching deliberately, and reducing third-party JavaScript. Use SSR or
+prerendering when it improves initial delivery. Re-measure after each change; replacing a complex
+`ngIf` with `ngSwitch` is not a general performance rule.
 
 ## How will you load a large amount of data on a Web Application?
 
 **Answer**
 
-Pagination: Load data in smaller chunks with pagination controls.
-Infinite Scrolling: Load data as the user scrolls down the page.
-Virtual Scrolling: Render only the visible items in the viewport.
-Lazy Loading: Load data or modules only when needed.
-Server-Side Rendering (SSR): Render the initial view on the server for faster initial load times.
+Fetch bounded pages or cursor-based chunks from the server, cancel obsolete requests, and render long
+lists with virtualization. Infinite scrolling still needs stable ordering, deduplication, loading and
+error states, accessibility, and a way to recover position. Filtering, sorting, and aggregation
+should usually happen server-side. SSR can improve initial HTML delivery but does not replace data
+pagination.
 
 ## Where would you call an API that needs to be called once and it will store data that will be used across different modules in Angular?
 
 **Answer**
 
-In Angular, if you need to call an API once and store the data for use across different modules, the best place to do this is in a service. Services in Angular are singleton by default when provided in the root injector, making them ideal for sharing data across the application.
+Use a root- or feature-scoped service and expose cached signal or observable state. Ensure concurrent
+callers share one in-flight request, define refresh and invalidation rules, and handle errors without
+permanently caching a failed stream. A service is not inherently singleton; its provider scope
+determines the instance lifetime.
 
 ## How will you implement Authorization in Angular?
 
 **Answer**
 
-Set Up Authentication: Create an authentication service to handle login, logout, and token management.
-Protect Routes with Guards: Use route guards to protect routes and ensure only authenticated users can access certain parts of the application.
-Manage User Roles and Permissions: Decode the JWT token to manage user roles and implement role-based authorization using custom guards.
+Use an authentication service for session state, route guards for navigation UX, and an interceptor
+only when it is appropriate to attach credentials or handle common responses. Render controls based
+on capabilities, but never trust a decoded client token or hidden UI as authorization. The backend
+must validate the credential and authorize every protected operation. Prefer secure, framework-
+appropriate token storage and protect cookie sessions against CSRF.
 
 ## What are some of the new features in Angular 16?
 
 **Answer**
 
-Signal-Based Reactivity: Introduces a new reactivity model for more efficient change detection.
-Standalone Components: Allows components, directives, and pipes to be created without NgModules.
-Improved Server-Side Rendering (SSR): Enhances Angular Universal for better performance and easier setup.
-Hydration: Supports reusing server-rendered HTML on the client side for improved SSR performance.
-Enhanced Dependency Injection: Brings more flexibility and better error messages to the DI system.
-Improved Error Handling: Provides more informative error messages and stack traces for easier debugging.
-Performance Improvements: Includes optimizations for faster compilation, better change detection, and memory management.
-Updated Angular CLI: Adds new features and improvements, including support for standalone components and better build performance.
-TypeScript 4.9 Support: Integrates the latest TypeScript features and improvements into Angular applications.
-Improved Forms: Enhances the forms module with better type safety, validation, and flexible form controls.
+Angular 16, released in 2023, introduced signals in developer preview, developer-preview hydration,
+required inputs, `DestroyRef`, and `takeUntilDestroyed`. It also expanded the functional APIs for
+dependency injection and guards and previewed an esbuild/Vite-based build path. Standalone
+components were introduced earlier, in Angular 14, although Angular 16 continued their adoption.
+Treat this as a historical release question rather than a description of current feature stability.
 
 ## What are some of the new features in Angular 18?
 
 **Answer**
 
-Zoneless Change Detection with Signals: Introduces a more efficient change detection mechanism using signals, eliminating the need for Zone.js.
-Function-based Route Redirects: Allows dynamic and flexible route redirection using functions based on application conditions.
-Improved Developer Tooling: Enhances Angular DevTools for better insights into performance, dependency management, and state changes.
-Enhanced Angular Material and CDK: Updates Angular Material and CDK for full compatibility and optimization with Angular 18.
-Server-Side Rendering (SSR) Enhancements: Improves SSR with event replay for a smoother user experience mimicking client-side behavior.
-Improved Internationalization (i18n) Support: Introduces the @angular/localize package for easier management of translations and locale-specific formatting.
-TypeScript 5.4 Support: Fully supports TypeScript 5.4, allowing the use of its latest features and improvements.
-Additional Features:
-Default Content in ng-content: Allows fallback content in ng-content projection when no projected content is available.
-Improved Build Performance: Optimizes the build process for faster build times.
-WebAssembly Support: Introduces developer preview support for WebAssembly, opening new performance optimization possibilities.
+Angular 18, released in 2024, made built-in control flow and deferrable views stable. It introduced
+experimental zoneless change detection, function-based route redirects, and developer-preview event
+replay for hydration. It also supported fallback content in `ng-content` and TypeScript 5.4. It did
+not simply eliminate Zone.js for every application, and `@angular/localize` predates Angular 18.
 
 ## How would you deploy an Angular Application
 
 **Answer**
 
-Build the Application for Production:
-Use the Angular CLI to build the application for production.
-Choose a Hosting Provider:
-Select a hosting provider such as Firebase Hosting, Netlify, GitHub Pages, Amazon S3 and CloudFront, Heroku, or Azure Static Web Apps.
-Deploy the Application:
-Follow the specific steps for your chosen hosting provider to deploy the built files.
+Choose the deployment model first: static client rendering, prerendering, or an SSR server. Run and
+test the production build, enforce bundle budgets, publish the correct output directory, configure
+TLS, caching and compression, and make the host fall back to `index.html` for client-side routes.
+SSR needs a compatible runtime and health/observability setup. Keep runtime configuration and secrets
+out of browser bundles, then smoke-test deep links and rollback behavior after deployment.
 
 ## What are signals in Angular?
 
 **Answer**
 
-Angular Signals in Angular 16 provide a powerful new way to manage state and optimize rendering updates in your application. By tracking state usage at a granular level, Signals help improve performance and make state management more intuitive.
+A signal is a reactive value read by calling it. Writable signals update with `set` or `update`;
+`computed` derives memoized state; and `effect` runs side effects when its dependencies change.
+Angular tracks signal reads in templates so affected views can be scheduled for update. Signals are
+useful for synchronous state, while RxJS remains useful for asynchronous event composition.
 
 ## How would you do state management in Angular?
 
 **Answer**
 
-State management in Angular involves managing the state of your application in a way that makes it easy to maintain, test, and scale
-Using Services: Simple and suitable for small to medium-sized applications.
-Using NgRx: Powerful state management library that implements the Redux pattern.
-Using Akita: Simple and scalable state management library.
-Using NGXS: Inspired by the Redux pattern but aims to be simpler and more intuitive.
+Start by classifying state as local UI, shared feature, server cache, URL, or persisted state. Keep
+local state in the component, lift shared state to the nearest owner, and use a scoped service with
+signals or RxJS for a feature. Adopt a store such as NgRx when the application needs coordinated
+effects, normalized shared state, replayable events, or strict conventions. Avoid duplicating server
+state across unrelated stores without clear refresh and invalidation rules.
 
 ## Can we use angular signal in place of Input decorator?
 
 **Answer**
 
-@Input Decorator: Used for passing data from a parent component to a child component.
-Signals: Used for managing local state within a component or service, providing a reactive way to trigger change detection.
-Combination: While signals are not a direct replacement for @Input, they can be used together to manage state and pass data between components.
+Yes, current Angular supports signal inputs with `input()` and `input.required()`. They replace an
+`@Input` declaration for that property while preserving parent-to-child binding semantics. A plain
+`signal()` is only local state and does not receive a parent binding. Use a model input when the child
+must expose two-way binding.
 
 ## What is Angular Gauge?
 
 **Answer**
 
-An Angular Gauge is a type of data visualization component that represents data in a circular or semi-circular format, similar to a speedometer or a dial. It is commonly used to display a single value within a range, providing a quick visual representation of performance metrics, progress, or other key indicators.
+"Angular gauge" is not an Angular framework feature. It usually means a gauge chart implemented by a
+third-party Angular component library. Evaluate accessibility, bundle size, SSR support, theming,
+license, maintenance, and whether a simpler progress visualization communicates the value better.
 
 ## How will you create a reactive form for login in Angular?
 
 **Answer**
 
-Set Up Angular Project: Ensure you have an Angular project set up. If not, create a new Angular project using the Angular CLI.
-Import ReactiveFormsModule: Import ReactiveFormsModule in your Angular module (e.g., app.module.ts).
-Create a Login Component: Generate a new component for the login form using the Angular CLI.
-Define the Form Model: In the login component, define the form model using FormBuilder and FormGroup.
-Create the Form Template: In the login component's template, create the form using Angular's reactive form directives (formGroup, formControlName).
-Add Form Controls: Add form controls for the username and password fields in the form model.
-Add Validation: Add validation rules to the form controls (e.g., required, minLength, maxLength).
-Handle Form Submission: Implement a method to handle form submission and process the form data.
-Display Validation Messages: Add logic in the template to display validation messages based on the form control's state.
-Style the Form: Optionally, add CSS styles to make the form look presentable.
+Import `ReactiveFormsModule`, create typed controls with validation, bind the `FormGroup`, show
+accessible validation errors, and submit only valid values. Disable duplicate submission while the
+request is pending and map server errors back to the form without revealing whether a sensitive
+account exists.
+
+```typescript
+readonly loginForm = this.formBuilder.nonNullable.group({
+  email: ['', [Validators.required, Validators.email]],
+  password: ['', Validators.required],
+});
+```
 
 ## What are some common testing frameworks in Angular?
 
@@ -643,10 +653,13 @@ Reference: [Angular testing overview](https://angular.dev/guide/testing) and
 
 **Answer**
 
-Using jest.fn(): Create a new, unused mock function.
-Using jest.mock(): Automatically mock a module.
-Using jest.spyOn(): Create a mock function that spies on a method of an object.
-Using Manual Mocks: Create manual mocks in a __mocks__ directory.
+- `jest.fn()` creates a controllable mock function.
+- `jest.spyOn(object, 'method')` observes or replaces one existing method; restore it after the test.
+- `jest.mock('module')` replaces a module, subject to Jest's module-hoisting and ESM rules.
+- A `__mocks__` directory can provide a manual module mock.
+
+Prefer injecting a small fake or spy through Angular's test provider configuration when that keeps
+the test explicit. Mock behavior at the boundary being tested, not every implementation detail.
 
 ## How can you add support for human languages in Angular?
 
@@ -731,15 +744,15 @@ subscription cleanup automatically.
   selector: '[appHoverColor]'
 })
 export class HoverColorDirective {
-  @Input('appHoverColor') hoverColor: string;
+  @Input('appHoverColor') hoverColor = 'blue';
   constructor(private el: ElementRef, private renderer: Renderer2) {}
   @HostListener('mouseenter') onMouseEnter() {
-    this.changeColor(this.hoverColor || 'blue');
+    this.changeColor(this.hoverColor);
   }
   @HostListener('mouseleave') onMouseLeave() {
-    this.changeColor(null);
+    this.renderer.removeStyle(this.el.nativeElement, 'backgroundColor');
   }
-  private changeColor(color: string) {
+  private changeColor(color: string): void {
     this.renderer.setStyle(this.el.nativeElement, 'backgroundColor', color);
   }
 }
@@ -752,3 +765,12 @@ Use the directive in a template:
   Hover over this button to change its color.
 </button>
 ```
+
+## References
+
+- [Angular documentation](https://angular.dev/overview)
+- [Component lifecycle](https://angular.dev/guide/components/lifecycle)
+- [Accepting data with input properties](https://angular.dev/guide/components/inputs)
+- [Route guards](https://angular.dev/guide/routing/route-guards)
+- [HTTP client setup](https://angular.dev/guide/http/setup)
+- [Angular version compatibility](https://angular.dev/reference/versions)

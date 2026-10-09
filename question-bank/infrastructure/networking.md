@@ -4,190 +4,169 @@ Networking, HTTP, DNS, authentication, authorization, tokens, and troubleshootin
 
 [Back to the question-bank index](../README.md)
 
-Status Codes:
-Request Acknowledgment
-🔹 100 – Client can proceed with the request body.
-🔹 101 – Server switching protocols as requested.
-🔹 102 – Request is being processed with no response yet.
-🔹 103 – Suggests preloading resources before final response.
+## What do common HTTP status codes mean?
 
-Request Successfully Processed
-🔹 200 – Request was successful with data in response.
-🔹 201 – Request succeeded, and a new resource was created.
-🔹 202 – Request accepted but still being processed.
-🔹 203 – Proxy-modified response.
-🔹 204 – Request succeeded but no content returned.
-🔹 206 – Partial response due to range request.
+**Answer**
 
-Further Action Needed
-🔹 300 – Resource has multiple representations.
-🔹 301 – Resource permanently moved to a new URL.
-🔹 304 – Resource unchanged; use cached version.
-🔹 307 – Resource temporarily moved, method unchanged.
+HTTP status codes are grouped by class:
 
-Issues With the Request
-🔹 400 – Malformed or invalid request.
-🔹 401 – Missing or incorrect authentication.
-🔹 403 – No permission to access the resource.
-🔹 404 – Resource does not exist.
+- `1xx` is informational, such as `100 Continue` and `101 Switching Protocols`.
+- `2xx` indicates successful handling: `200 OK`, `201 Created`, `202 Accepted`, `204 No Content`,
+  and `206 Partial Content`.
+- `3xx` concerns redirection or cache validation: `301 Moved Permanently`, `304 Not Modified`, and
+  `307 Temporary Redirect`. Unlike `302` in common historical client behavior, `307` preserves the
+  request method and body.
+- `4xx` reports a client-side request problem: `400 Bad Request`, `401 Unauthorized` (authentication
+  is required or failed), `403 Forbidden` (the server refuses the authenticated or understood
+  request), `404 Not Found`, `409 Conflict`, and `429 Too Many Requests`.
+- `5xx` reports server-side failure: `500 Internal Server Error`, `502 Bad Gateway`, `503 Service
+  Unavailable`, and `504 Gateway Timeout`.
+
+Choose the code from the actual outcome and API contract; do not return `200` with an error only in
+the response body.
 
 ## Explain WebSockets.
 
 **Answer**
 
-WebSocket is a bidirectional communication protocol that can send the data from the client to the server or from the server to the client by reusing the established connection channel
+WebSocket provides a persistent, full-duplex message channel between a client and server. A web
+client begins with an HTTP handshake and, when the server accepts the upgrade, both sides exchange
+WebSocket frames over the connection without making a new HTTP request for every message.
+
+It suits interactive applications such as chat and live collaboration. Production designs still
+need authentication, origin validation, message limits, heartbeat and reconnect behavior,
+backpressure, horizontal-scaling strategy, and protection from idle or abusive connections.
 
 ## What is socket programming?
 
 **Answer**
 
-Socket Programming: Enables communication between two machines over a network.
-Server: Waits for incoming connections and provides services.
-Client: Initiates a connection to request services.
-Stream Sockets (TCP): Provide reliable, connection-oriented communication.
-Datagram Sockets (UDP): Provide connectionless communication with discrete packets.
-Basic Steps: Create socket, bind/connect, communicate, close connection.
+Socket programming uses an operating-system socket API to communicate between processes, either on
+one host or across a network.
+
+A TCP server creates a socket, binds an address, listens, accepts connections, reads and writes byte
+streams, and closes resources. A TCP client creates a socket and connects. UDP uses datagrams and
+normally sends or receives without establishing a reliable stream. Real code must handle partial
+reads and writes, timeouts, concurrent clients, framing, cleanup, and network failures.
 
 ## How can 2 processors communicate?
 
 **Answer**
 
-Shared Memory: Efficient communication using a common memory space, requiring synchronization mechanisms.
-Message Passing: Suitable for distributed systems, using standardized protocols like MPI.
-Inter-Process Communication (IPC): Includes pipes, message queues, shared memory, and semaphores for communication between processes.
-Bus Communication: Common in embedded systems, using protocols like I2C and SPI.
-Network Communication: Uses standard network protocols like TCP/IP and HTTP/REST for communication over a network.
+The answer depends on what "processors" means and how they are connected:
+
+- cores or processes on one machine can communicate through shared memory, pipes, local sockets, or
+  message queues, with synchronization where state is shared;
+- processors in an embedded system may communicate over hardware interconnects such as SPI, I2C, or
+  a system bus; and
+- separate machines communicate through network protocols, direct messages, or a broker.
+
+Choose based on latency, throughput, ordering, failure isolation, consistency, and whether the
+participants share memory. Shared memory can be fast but requires careful synchronization; message
+passing provides clearer isolation but adds serialization and transport costs.
 
 ## Explain CORS, HTTPS, Rate Limiting.
 
 **Answer**
 
-Cross-Origin Resource Sharing (CORS) is a browser security feature that allows web applications to access resources from different domains.
-It does this by overriding the same-origin policy (SOP), which usually only allows requests to come from the same origin as the resource being requested.
-Hypertext Transfer Protocol Secure (HTTPS) is a security protocol that encrypts data sent between a web browser and a website. It's a more secure version of HTTP, the primary protocol used for this communication. HTTPS uses encryption to protect data, especially when users are sending sensitive information.
-Rate limiting is a strategy that limits the number of requests that can be made to a network, server, or other resource within a given time frame. It's often used to prevent systems, networks, and applications from becoming overloaded and is a key part of a modern cybersecurity strategy
+- **CORS** is an HTTP-header mechanism that lets a server relax a browser's same-origin read
+  restrictions for selected origins, methods, and headers. The browser enforces it; CORS is not API
+  authentication and does not stop non-browser clients.
+- **HTTPS** is HTTP over TLS. It provides confidentiality and integrity in transit and authenticates
+  the server when certificate validation succeeds.
+- **Rate limiting** restricts accepted operations by an identity, client, resource, or other key over
+  time. It protects capacity and reduces abuse, but it is only one layer of denial-of-service
+  defense.
 
 ## What is HTTPS?
 
 **Answer**
 
-HTTPS (HyperText Transfer Protocol Secure) is an extension of HTTP (HyperText Transfer Protocol) that provides secure communication over a computer network, primarily the Internet. HTTPS ensures that data transmitted between a client (such as a web browser) and a server is encrypted and secure from eavesdropping, tampering, and man-in-the-middle attacks.
-Encryption: Data Protection: HTTPS uses Transport Layer Security (TLS) or its predecessor, Secure Sockets Layer (SSL), to encrypt data transmitted between the client and server. Encryption ensures that even if data is intercepted, it cannot be read or altered by unauthorized parties.
-Authentication: Server Identity Verification: HTTPS uses digital certificates issued by trusted Certificate Authorities (CAs) to verify the identity of the server. This helps ensure that clients are communicating with the legitimate server and not an imposter.
-Data Integrity: Tamper Prevention: HTTPS ensures that data cannot be modified or corrupted during transmission without being detected. This protects against tampering and ensures that the data received by the client is the same as the data sent by the server.
-How HTTPS Works:
-SSL/TLS Handshake: When a client connects to a server using HTTPS, an SSL/TLS handshake is performed to establish a secure connection. During this handshake, the client and server agree on encryption algorithms and exchange cryptographic keys.
-Certificate Exchange: The server presents its digital certificate to the client. The client verifies the certificate against a list of trusted Certificate Authorities (CAs). If the certificate is valid, the client proceeds with the connection.
-Session Key Generation: The client and server generate a session key, which is used to encrypt and decrypt data during the session. This session key is unique to the session and ensures secure communication.
-Encrypted Communication: Once the secure connection is established, all data transmitted between the client and server is encrypted using the session key. This ensures that the data is protected from eavesdropping and tampering.
+HTTPS is HTTP carried over TLS. During the TLS handshake, the client validates the server certificate
+and both peers negotiate protocol parameters and derive session keys. HTTP data is then encrypted
+and integrity-protected in transit.
+
+HTTPS protects the connection, not the endpoints. It does not make application input trustworthy,
+prevent an authorized server from mishandling data, or replace authentication and authorization.
+Modern deployments should disable obsolete SSL/TLS versions, automate certificate renewal, redirect
+HTTP deliberately, and use HSTS only after understanding its operational effect.
 
 ## What are TCP/IP and UDP?
 
 **Answer**
 
-TCP (Transmission Control Protocol):
-Connection-Oriented: TCP is a connection-oriented protocol, meaning it establishes a connection between the sender and receiver before data transmission begins.
-Reliable: TCP ensures reliable data transfer by using acknowledgments, retransmissions, and error-checking mechanisms. If a packet is lost or corrupted, TCP will retransmit it.
-Ordered: TCP guarantees that data packets are delivered in the same order they were sent.
-Flow Control: TCP uses flow control to manage the rate of data transmission between the sender and receiver, preventing network congestion.
-Use Cases: TCP is used for applications that require reliable and ordered data delivery, such as web browsing (HTTP/HTTPS), email (SMTP), file transfer (FTP), and remote access (SSH).
-IP (Internet Protocol):
-Addressing and Routing: IP is responsible for addressing and routing packets of data so they can travel across networks and reach the correct destination.
-Packet Switching: IP uses packet switching to break data into smaller packets, which are transmitted independently and reassembled at the destination.
-IPv4 and IPv6: IP exists in two versions: IPv4 (32-bit addresses) and IPv6 (128-bit addresses) to accommodate the growing number of devices on the internet.
-UDP (User Datagram Protocol):
-Connectionless: UDP is a connectionless protocol, meaning it does not establish a connection before data transmission. Each packet (datagram) is sent independently.
-Unreliable: UDP does not guarantee reliable data transfer. There are no acknowledgments, retransmissions, or error-checking mechanisms. Packets may be lost, duplicated, or delivered out of order.
-Low Overhead: UDP has lower overhead compared to TCP because it lacks the mechanisms for reliability and ordering. This makes UDP faster and more efficient for certain applications.
-Use Cases: UDP is used for applications that require fast, efficient, and real-time data transmission, such as video streaming, online gaming, VoIP (Voice over IP), and DNS (Domain Name System) queries.
+- **IP** addresses and routes packets between networks. It is best-effort and does not guarantee
+  delivery, ordering, or uniqueness. IPv4 uses 32-bit addresses and IPv6 uses 128-bit addresses.
+- **TCP** provides an ordered, reliable byte stream between two endpoints. It uses connection setup,
+  acknowledgments, retransmission, flow control, and congestion control. Applications must define
+  their own message framing on top of the byte stream.
+- **UDP** sends independent datagrams without built-in connection establishment, retransmission, or
+  ordering. It has lower protocol overhead and lets an application choose any reliability behavior
+  it needs.
+
+"UDP is faster" is not a universal rule. Protocol choice depends on loss tolerance, latency goals,
+message boundaries, congestion behavior, and whether a higher-level protocol such as QUIC supplies
+reliability over UDP.
 
 ## What is Authentication and Authorization?
 
 **Answer**
 
-Authentication verifies a user's identity by logging in or checking if the user’s ID and password are correct or not.
-Definition: Verifies the identity of a user or system.
-Purpose: To confirm the identity.
-Common Methods: Username and password, MFA, biometric authentication, OAuth/OpenID Connect, token-based authentication.
-Example: User logs in with a username and password.
-Authorization determines what level of access the user has and grants access based on that level.
-Authentication is often used in conjunction with authorization, and Authentication is a prerequisite to authorization.
-Definition: Determines whether an authenticated user has permission to access a resource or perform an action.
-Purpose: To control access based on permissions.
-Common Methods: Role-Based Access Control (RBAC), Attribute-Based Access Control (ABAC), Access Control Lists (ACLs), policy-based access control.
-Example: Checking if a user has the role of "ADMIN" to access the admin dashboard.
+**Authentication** establishes which principal is making a request, using evidence such as a
+password plus MFA, a certificate, a session, or a signed assertion.
+
+**Authorization** decides whether that principal may perform a particular action on a particular
+resource in the current context. RBAC, ABAC, ACLs, and policy engines are authorization mechanisms.
+
+Authentication normally precedes user-specific authorization, but a system can also authorize
+anonymous public access. A valid identity must never be treated as permission to do everything.
 
 ## What are the different types of Authentication Techniques?
 
 **Answer**
 
-Password-Based Authentication: Simple but vulnerable.
-Multi-Factor Authentication (MFA): Combines multiple factors for enhanced security.
-Biometric Authentication: Uses unique biological characteristics.
-Token-Based Authentication: Uses physical or digital tokens.
-Certificate-Based Authentication: Uses digital certificates.
-Single Sign-On (SSO): Allows access to multiple systems with one login.
-OAuth and OpenID Connect: Secure frameworks for web and mobile authentication.
-Knowledge-Based Authentication (KBA): Uses security questions.
-Behavioral Authentication: Analyzes behavioral patterns.
-Contextual Authentication: Uses contextual information.
+Authentication factors are commonly grouped as something the user **knows** (password or PIN),
+**has** (security key or device), or **is** (biometric). MFA combines independent factors; two
+passwords are not MFA.
+
+Systems may use passwords, passkeys/WebAuthn, one-time passwords, client certificates, federated
+OpenID Connect or SAML assertions, Kerberos tickets, or device identities. SSO is an authentication
+experience across services, not a factor. OAuth 2.0 is primarily an authorization framework;
+OpenID Connect adds an authentication layer.
+
+Security questions are weak because answers are often guessable or discoverable. Risk signals such
+as device and location can inform step-up authentication but should not silently become the only
+proof of identity.
 
 ## What is an Auth Token and what does it contain?
 
 **Answer**
 
-Auth Token:
-A piece of data used to verify the identity of a user or service and grant access to resources.
-Key Components:
-Header: Metadata about the token (e.g., type, algorithm).
-Payload: Claims or statements about the user or service.
-Signature: Cryptographic signature to ensure integrity and authenticity.
-Types of Auth Tokens:
-JSON Web Token (JWT): Compact, URL-safe token format.
-OAuth 2.0 Access Token: Token issued to grant access to protected resources.
-Refresh Token: Long-lived token used to obtain new access tokens.
-Common Claims:
-Standard Claims: iss, sub, aud, exp, iat, nbf.
-Custom Claims: Application-specific claims (e.g., roles, email).
+An authentication or authorization token is a credential issued after an identity or grant has been
+validated. Its contents depend on its type. An opaque token may be only a random identifier whose
+state lives on the server. A JWT may carry protected metadata and claims such as issuer (`iss`),
+subject (`sub`), audience (`aud`), expiry (`exp`), and scopes.
+
+Not every token has a JWT header, payload, and signature, and a token should not contain unnecessary
+personal or secret data. The receiving service must validate the token according to the protocol and
+authorize the requested operation; merely decoding it is not validation.
 
 ## What is the difference between access tokens and refresh tokens?
 
 **Answer**
 
-Purpose:
-Access Tokens: Grant access to protected resources.
-Refresh Tokens: Obtain new access tokens.
-Lifespan:
-Access Tokens: Short-lived (minutes to hours).
-Refresh Tokens: Long-lived (days to months).
-Bearer Tokens:
-Access Tokens: Yes.
-Refresh Tokens: No.
-Scope:
-Access Tokens: Can have specific scopes.
-Refresh Tokens: Typically not scoped.
-Usage:
-Access Tokens: Included in the Authorization header of API requests.
-Refresh Tokens: Sent to the authorization server to obtain new access tokens.
-Storage:
-Access Tokens: Typically stored in memory or local storage.
-Refresh Tokens: Stored securely (e.g., secure HTTP-only cookies, secure storage).
-Sent with Every Request:
-Access Tokens: Yes.
-Refresh Tokens: No.
-Workflow:
-User Authentication:
-User authenticates with the authorization server.
-Authorization server issues an access token and a refresh token.
-Accessing Protected Resources:
-Client includes the access token in the Authorization header of API requests.
-Token Expiration:
+An **access token** is presented to a resource server and represents delegated authorization. It is
+normally short-lived and restricted by audience and scope. Although bearer tokens are common, sender-
+constrained access tokens also exist.
 
-**When the access token expires, the client uses the refresh token to request a new access token.**
+A **refresh token** is presented only to the authorization server to obtain a new access token. It is
+usually longer-lived, more sensitive, and may be rotated after use. A client does not send it to
+ordinary API endpoints.
 
-Refreshing the Access Token:
-Client sends the refresh token to the authorization server's token endpoint.
-Authorization server validates the refresh token and issues a new access token (and optionally a new refresh token).
+Token format, lifetime, and scope are authorization-server policies rather than universal fixed
+values. Browser applications should not default to `localStorage` for either credential; choose a
+backend-for-frontend, protected cookie, memory, or platform secure storage based on the client and
+threat model.
 
 ## What is JWT?
 
@@ -201,18 +180,20 @@ unencrypted JWT can decode its header and payload.
 JWT is a format, not an authentication protocol. OAuth 2.0 access tokens may be JWTs or opaque
 tokens, and OpenID Connect ID tokens are JWTs.
 
-## How the Server Creates the JWT for the First Time
+## How does a server create a signed JWT?
 
 **Answer**
 
-User Authentication: The user authenticates with the server using credentials (e.g., username and password).
-Create Header: The server creates a JSON object for the header and encodes it using Base64Url.
-Create Payload: The server creates a JSON object for the payload containing claims and encodes it using Base64Url.
-Create Signature: The server concatenates the encoded header and payload with a dot, signs it using the specified algorithm and secret key, and encodes the result using Base64Url.
-Combine Parts: The server combines the encoded header, payload, and signature with dots to form the JWT.
-Send JWT: The server sends the JWT to the client.
+After the relevant authentication or authorization flow succeeds, the issuer constructs a protected
+header and a minimal claims set. It includes appropriate issuer, subject, audience, issue and expiry
+times, and any required authorization claims. A maintained JOSE library Base64URL-encodes the parts
+and signs them with an approved key and algorithm.
 
-## How the Server Verifies the JWT When the Client Sends It
+The issuer should manage key rotation, publish verification keys where appropriate, use short
+lifetimes, and never place secrets in an unencrypted JWT payload. Application code should not
+implement signing or JSON serialization by hand.
+
+## How does a server verify a JWT?
 
 **Answer**
 
@@ -222,14 +203,22 @@ not-before time, issuer, and audience as required by the application. Validate t
 or roles separately before authorizing the operation. Reject malformed, unsigned, expired, wrong-
 issuer, wrong-audience, or otherwise invalid tokens.
 
-## What are the Disadvantages of JWT
+## What are the disadvantages of JWTs?
 
 **Answer**
 
-Token Size: JWTs can become large, especially if they contain many claims. This can lead to increased bandwidth usage and slower performance, particularly in mobile or low-bandwidth environments.
-Sensitive Data Exposure: Storing sensitive information in the payload can be risky, even though the payload is base64-encoded and not encrypted. If the token is intercepted, the information can be decoded.
-No Built-in Revocation: Once a JWT is issued, it cannot be easily revoked. If a token is compromised, there is no straightforward way to invalidate it before its expiration time, unless you maintain a blacklist, which can be complex and resource-intensive.
-Replay Attacks: Since JWTs are often stored on the client side (e.g., in local storage or cookies), they can be susceptible to replay attacks if intercepted. Proper use of HTTPS and secure storage mechanisms are essential to mitigate this risk.
+- Claims make JWTs larger than opaque identifiers and are sent on every request that carries them.
+- Signed payloads are readable, so sensitive data can be exposed to anyone who obtains the token.
+- Authorization data can become stale until expiry because a self-contained token does not require a
+  server lookup.
+- Immediate revocation needs short lifetimes, a deny list, key or session state, introspection, or
+  another design that reduces the stateless advantage.
+- A stolen bearer token can be replayed until it expires or is rejected.
+- Algorithm selection, key rotation, issuer and audience validation, and claim interpretation add
+  security complexity.
+
+Use a JWT only when its distributed verification or claims portability solves a real requirement.
+An opaque session identifier is often simpler for a first-party web application.
 
 ## Where do you store a JWT Token?
 
@@ -253,79 +242,78 @@ and plan revocation or session termination.
 - [OWASP JSON Web Token Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_Cheat_Sheet.html)
 - [OWASP Session Management Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Session_Management_Cheat_Sheet.html)
 
-## How to use JWTs to protect their endpoints?
+## How do you use JWTs to protect API endpoints?
 
 **Answer**
 
-Set Up Your Project: Create a new Spring Boot project.
-Add Dependencies: Include Spring Security and JWT dependencies.
-Create JWT Utility Class: Implement methods to generate and validate JWTs.
-Create Authentication Controller: Implement an endpoint to authenticate users and issue JWTs.
-Configure Spring Security: Set up Spring Security to use JWTs for authentication and authorization.
-Create JWT Request Filter: Intercept requests and validate the JWT.
-Protect Endpoints: Secure your endpoints using JWTs.
+Use a maintained framework integration rather than a custom token parser. For each request, extract
+the expected bearer credential, verify its signature with a trusted key and pinned algorithm, and
+validate issuer, audience, expiry, not-before time, and token type. Map validated scopes or claims to
+the endpoint's authorization policy.
 
-## What is DDOS Attack?
+Return `401` when authentication is absent or invalid and `403` when a valid principal lacks
+permission. Keep authorization checks server-side, use TLS, avoid logging tokens, and test malformed,
+expired, wrong-audience, insufficient-scope, and rotated-key cases. Token issuance belongs to a
+trusted authorization service, not every resource endpoint.
+
+## What is a DDoS attack?
 
 **Answer**
 
-DDoS Attack: A malicious attempt to disrupt the normal traffic of a targeted server, service, or network by overwhelming it with a flood of internet traffic.
-Distributed Nature: Involves multiple sources, typically using a botnet of compromised devices.
-Overwhelming Traffic: Consumes the target's resources, rendering it unavailable to legitimate users.
-Types of DDoS Attacks: Include volume-based attacks, protocol attacks, and application layer attacks.
-Impact: Can cause service disruption, financial loss, and reputation damage.
-Mitigation Strategies: Include traffic filtering, rate limiting, content delivery networks (CDNs), and DDoS protection services..
+A distributed denial-of-service attack uses many sources to exhaust network bandwidth, protocol
+state, compute, dependencies, or application capacity so legitimate users cannot be served. Attacks
+may be volumetric, target network or transport behavior, or resemble valid application requests.
+
+Mitigation is layered: provider-level scrubbing and anycast capacity, CDN or edge filtering,
+rate and concurrency limits, caching, bounded queues, timeouts, load shedding, autoscaling with cost
+controls, and tested incident procedures. Application rate limiting alone cannot absorb an attack
+that saturates the upstream network link.
 
 ## How will you secure Web APIs?
 
 **Answer**
 
-Authentication: Use API keys, OAuth 2.0, or JWTs to authenticate clients.
-Authorization: Implement RBAC or ABAC to control access to resources.
-Encryption: Use HTTPS for data in transit and encrypt sensitive data at rest.
-Input Validation and Sanitization: Validate and sanitize input to prevent malicious input.
-Rate Limiting and Throttling: Control the number of requests to prevent abuse.
-Logging and Monitoring: Log and monitor API traffic for security incidents.
-Security Headers: Use security headers like CSP, HSTS, and X-Content-Type-Options.
-API Gateway: Use an API gateway for centralized security controls and management.
+- authenticate callers with a protocol appropriate to the client, then authorize every operation and
+  object using least privilege;
+- require TLS and protect credentials and sensitive data in storage and logs;
+- validate request shape, size, type, and allowed values; use parameterized data access and safe
+  output encoding at the relevant sink;
+- set body, concurrency, rate, and time limits and use bounded resource consumption;
+- manage secrets and signing keys outside source code and rotate them safely;
+- return deliberate errors without leaking internals;
+- log security-relevant decisions with correlation identifiers while redacting sensitive content;
+  and
+- test dependency vulnerabilities, authorization boundaries, abuse cases, and failure behavior.
+
+An API gateway can centralize some controls, but it cannot replace authorization and validation in
+the service that understands the business resource.
 
 ## How can you implement SSO?
 
 **Answer**
 
-Choose an SSO Protocol: Decide whether to use OAuth 2.0, OpenID Connect, SAML, or another protocol.
-Set Up an Identity Provider (IdP): Configure an IdP like Okta, Auth0, Google Identity Platform, or Microsoft Azure AD.
-Configure Service Providers (SPs): Configure each SP to trust the IdP and accept authentication tokens or assertions.
-Implement Authentication Flow: Implement the authentication flow based on the chosen protocol, handling redirects, token exchanges, and validation.
+Use a trusted identity provider and a standard authentication protocol, normally OpenID Connect for
+modern applications or SAML for an existing enterprise federation requirement. Register each relying
+party with exact redirect URIs, establish trust and keys, and use a maintained protocol library.
+
+The application must validate the issuer, audience, signature, nonce or request correlation, time
+claims, and redirect state required by the protocol, then create its own appropriately protected
+session. Plan logout, account linking, provisioning, MFA, key rotation, and emergency access.
+OAuth 2.0 alone delegates access and is not an SSO authentication protocol.
 
 ## What are the different protocols you can use to implement SSO?
 
 **Answer**
 
-OAuth 2.0:
-Description: Authorization framework for granting access to resources.
-Use Case: Access to APIs and web services.
-Example: Logging into a third-party app using Google.
-OpenID Connect (OIDC):
-Description: Identity layer on top of OAuth 2.0 for authentication.
-Use Case: User authentication and profile information.
-Example: Logging into a web app using Google and getting profile info.
-SAML (Security Assertion Markup Language):
-Description: XML-based protocol for exchanging authentication data.
-Use Case: Enterprise SSO across multiple applications.
-Example: Logging into enterprise apps using Okta.
-Kerberos:
-Description: Network authentication protocol using secret-key cryptography.
-Use Case: Secure environments like corporate networks.
-Example: Logging into a Windows domain.
-WS-Federation:
-Description: Protocol for identity federation and SSO.
-Use Case: Federated identity management across organizations.
-Example: Accessing partner apps using your organization's credentials.
-LDAP (Lightweight Directory Access Protocol):
-Description: Protocol for accessing directory information services.
-Use Case: Centralized authentication and directory services.
-Example: Authenticating users against Microsoft Active Directory.
+- **OpenID Connect:** authentication and identity federation built on OAuth 2.0; common for modern
+  web, mobile, and API ecosystems.
+- **SAML 2.0:** XML-based federation widely used for enterprise browser SSO.
+- **Kerberos:** ticket-based network authentication common inside managed enterprise domains.
+- **WS-Federation:** older web identity-federation protocol still present in some enterprise systems.
+
+OAuth 2.0 supports delegated authorization and often participates in an OpenID Connect SSO flow, but
+it is not authentication by itself. LDAP is a directory access protocol; it can support credential
+validation or identity lookup but is not itself a browser SSO protocol.
 
 ## How can you implement OAuth2? What challenges might you face in its implementation?
 
@@ -354,224 +342,136 @@ User Experience: Providing a seamless authorization flow.
 
 **Answer**
 
-OAuth is an open standard for access delegation, commonly used to grant websites or applications limited access to a user's information without exposing their credentials. It is primarily used for authorization.
-SSO is an authentication process that allows a user to access multiple applications or services with a single set of login credentials. It is primarily used for authentication.
-Purpose:
-OAuth: Primarily used for authorization, allowing third-party applications to access user resources without exposing credentials.
-SSO: Primarily used for authentication, allowing users to access multiple applications with a single set of login credentials.
-Tokens:
-OAuth: Uses access tokens to grant limited access to resources.
-SSO: Uses authentication tokens to provide access to multiple applications.
-Roles:
-OAuth: Involves resource owner, client, authorization server, and resource server.
-SSO: Involves identity provider (IdP) and service providers (SPs).
-User Experience:
-OAuth: Users authorize third-party applications to access specific resources.
-SSO: Users authenticate once and gain access to multiple applications without re-entering credentials.
-Example Use Cases
-OAuth:
-A user authorizes a fitness app to access their health data stored on a cloud service.
-A user grants a social media app access to their photo library.
-SSO:
-An employee logs in to their corporate network and accesses email, file storage, and HR systems without additional logins.
-A student logs in to their university portal and accesses course materials, grades, and library resources with a single login.
+OAuth 2.0 is an authorization framework: a client obtains an access token representing delegated
+permission to call a resource server. SSO is a user experience in which one identity-provider session
+authenticates the user to multiple applications.
+
+They are not alternatives at the same layer. OpenID Connect adds authentication to OAuth 2.0 and can
+provide SSO. SAML can also provide SSO without OAuth. A button labeled "Sign in with ..." should use
+an authentication protocol such as OpenID Connect, not infer identity from an OAuth access token
+intended for another API.
 
 ## What is RBAC?
 
 **Answer**
 
-RBAC (Role-Based Access Control):
-A method of regulating access to resources based on user roles.
-Simplifies permission management by associating users with roles and roles with permissions.
-Key Concepts:
-Roles: Collections of permissions based on job functions or responsibilities.
-Permissions: Rights or privileges to perform specific actions on resources.
-Users: Individuals assigned to roles, inheriting the associated permissions.
-Resources: Objects or entities that users need to access.
-How RBAC Works:
+Role-based access control assigns permissions to roles and roles to principals. A permission should
+describe an action on a resource, while a role groups permissions around a job function or service
+responsibility.
 
-**Define roles based on job functions.**
+RBAC reduces per-user permission management but can produce role explosion when decisions depend on
+resource ownership, tenant, location, time, or other attributes. In those cases, combine coarse roles
+with resource-level or attribute-based policy. Enforce authorization on the server and default to
+deny when no policy grants access.
 
-Assign permissions to roles.
-Assign roles to users.
-Control access based on user roles and permissions.
-Example:
-
-**Define roles (Admin, Manager, Employee) and permissions (View, Edit, Delete).**
-
-Assign permissions to roles and roles to users.
-Check permissions based on user roles.
-
-## A non-technical family member contacts you to say they cannot access the Internet. How would you remotely troubleshoot your parents Internet connection?
+## How would you remotely troubleshoot a non-technical user's Internet connection?
 
 **Answer**
 
-Verify Basic Connectivity
-Ask: "Is the modem/router powered on and are all cables securely connected?"
-Check: Ensure the power, DSL, and Internet lights on the modem/router are on.
-Restart Devices
-Instruct: "Please turn off the modem/router, wait for 30 seconds, and then turn it back on."
-Ask: "Can you also restart your computer or device?"
-Check Wi-Fi Connection
-Ask: "Are you connected to the correct Wi-Fi network?"
-Instruct: "Try disconnecting and reconnecting to the Wi-Fi network."
-Test with Another Device
-Ask: "Can you try accessing the Internet on another device (e.g., smartphone, tablet)?"
-Determine: If other devices can connect, the issue may be with the original device.
-Check for Service Outages
-Instruct: "Visit your ISP's website or call their support line to check for any reported outages in your area."
-Run Network Diagnostics
-Instruct: "On your computer, run the network troubleshooter (e.g., Windows: 'Troubleshoot problems' in Network settings)."
-Ask: "What does the troubleshooter report?"
-Verify IP Address and DNS Settings
-Instruct: "Open Command Prompt (Windows) or Terminal (Mac), and type ipconfig (Windows) or ifconfig (Mac)."
-Check: Ensure the device has a valid IP address (not starting with 169.254).
-Instruct: "Type ping 8.8.8.8 to check if you can reach Google's DNS server."
-Reset Network Settings
-Instruct: "On your device, reset the network settings (e.g., Windows: 'Network reset' in Network settings, Mac: 'Renew DHCP Lease' in Network settings)."
-Contact ISP Support
-Instruct: "If none of the above steps work, contact your ISP's technical support for further assistance."
-Key Points
-Ensure all devices are powered on and properly connected.
-Restart the modem/router and the device.
-Verify Wi-Fi connection and test with another device.
-Check for service outages and run network diagnostics.
-Verify IP address and DNS settings.
-Reset network settings if necessary.
-Contact ISP support if the issue persists.
+Use simple questions to isolate the failing layer, changing one thing at a time:
 
-## A non-technical family member contacts you to say they cannot access the Internet. Some websites they can open, but some they cannot. How would you remotely troubleshoot their Internet connection?
+1. Establish scope: does the problem affect one website, one application, one device, or every
+   device on the home network?
+2. Check physical state: power and provider-status lights, cables, airplane mode, and connection to
+   the expected Wi-Fi network.
+3. Compare another device on the same Wi-Fi and the same device on mobile data. This separates a
+   device problem from a router or provider problem.
+4. Check the provider's outage status. If there is no outage, restart the affected device and then
+   power-cycle the modem or router using the vendor's normal procedure.
+5. On a computer, inspect whether it received a plausible local address, gateway, and DNS server.
+   Test the gateway, then a known IP address, then a hostname to distinguish local, upstream, and DNS
+   failures. Remember that some hosts block ping.
+6. Record exact error messages and escalate to the provider when the external link or modem remains
+   unhealthy.
+
+Avoid immediately factory-resetting the router; that erases provider and Wi-Fi configuration and can
+make remote recovery harder.
+
+## How would you troubleshoot when some websites open but others do not?
 
 **Answer**
 
-Check Internet Connection:
-Verify Connectivity: Ask them to open a few different websites (e.g., google.com, bbc.com, amazon.com) to confirm that the Internet connection is working but some specific sites are not accessible.
-Clear Browser Cache:
-Clear Cache and Cookies: Guide them to clear the browser cache and cookies, as corrupted cache data can sometimes cause issues with loading specific websites.
-For Chrome: Settings > Privacy and Security > Clear browsing data > Select "Cookies and other site data" and "Cached images and files" > Clear data.
-Try a Different Browser:
-Switch Browsers: Ask them to try accessing the problematic websites using a different web browser (e.g., if they are using Chrome, try Firefox or Edge) to see if the issue is browser-specific.
-Check DNS Settings:
-Change DNS Servers: Sometimes, DNS issues can cause certain websites to be inaccessible. Guide them to change their DNS settings to use a public DNS service like Google DNS (8.8.8.8, 8.8.4.4) or Cloudflare DNS (1.1.1.1).
-For Windows: Control Panel > Network and Sharing Center > Change adapter settings > Right-click on the active network connection > Properties > Internet Protocol Version 4 (TCP/IPv4) > Properties > Use the following DNS server addresses > Enter the preferred and alternate DNS server addresses > OK.
-Check for Firewall or Security Software:
-Disable Temporarily: Ask them to temporarily disable any firewall or security software to see if it is blocking access to specific websites. Ensure they re-enable it after testing.
-Restart Router and Modem:
-Power Cycle: Instruct them to restart their router and modem by unplugging them from the power source, waiting for about 30 seconds, and then plugging them back in. This can resolve many connectivity issues.
-Check for ISP Issues:
-Contact ISP: If the issue persists, there might be a problem with their Internet Service Provider (ISP). Ask them to contact their ISP to check for any known outages or issues in their area.
-Use a VPN:
-Test with VPN: If they have access to a VPN, ask them to connect to the VPN and try accessing the problematic websites. If the websites load with the VPN, it might indicate an issue with their ISP's routing.
-Check for Device-Specific Issues:
-Try Another Device: Ask them to try accessing the problematic websites from another device (e.g., smartphone, tablet) connected to the same network to determine if the issue is specific to their computer.
+Record the affected URLs and exact browser errors, then compare:
+
+- the same site in a private window or another current browser;
+- the same site from another device on the same network; and
+- the same device through a different network, such as mobile data.
+
+Check system time, DNS resolution, TLS certificate errors, browser extensions, proxy or VPN state,
+parental or security filtering, and whether IPv4 and IPv6 behave differently. Browser developer tools
+or `curl -v` can show redirects, DNS, connection, TLS, and HTTP status details.
+
+Do not broadly disable the firewall or antivirus, bypass certificate warnings, or permanently change
+DNS before evidence points there. If every local device fails only through one provider path, collect
+the failing domain and time and escalate a DNS or routing case to the provider or site operator.
 
 ## What if the issue is with the Wi-Fi itself?
 
 **Answer**
 
-Check Wi-Fi Connection:
-Verify Connection: Ensure that their device is connected to the correct Wi-Fi network. Ask them to check the Wi-Fi icon on their device to confirm the connection status.
-Restart Router and Modem:
-Power Cycle: Instruct them to restart their router and modem by unplugging them from the power source, waiting for about 30 seconds, and then plugging them back in. This can resolve many connectivity issues.
-Check Wi-Fi Signal Strength:
-Signal Strength: Ask them to check the Wi-Fi signal strength on their device. If the signal is weak, suggest moving closer to the router to see if the connection improves.
-Reconnect to Wi-Fi Network:
-Forget and Reconnect: Guide them to forget the Wi-Fi network on their device and then reconnect to it.
-For Windows: Settings > Network & Internet > Wi-Fi > Manage known networks > Select the network > Forget > Reconnect to the network.
-For macOS: System Preferences > Network > Wi-Fi > Advanced > Select the network > Remove (minus button) > Reconnect to the network.
-For iOS: Settings > Wi-Fi > Select the network > Forget This Network > Reconnect to the network.
-For Android: Settings > Network & Internet > Wi-Fi > Select the network > Forget > Reconnect to the network.
-Check for Interference:
-Interference Sources: Identify and minimize potential sources of Wi-Fi interference, such as other electronic devices (microwaves, cordless phones), thick walls, or metal objects. Suggest relocating the router to a more central location.
-Update Router Firmware:
-Firmware Update: Ensure that the router's firmware is up to date. Guide them to log in to the router's admin interface (usually accessible via a web browser) and check for firmware updates.
-Change Wi-Fi Channel:
-Channel Interference: If there are many Wi-Fi networks in the area, changing the Wi-Fi channel on the router can reduce interference. Guide them to access the router's admin interface and change the Wi-Fi channel settings.
-Check Device Settings:
-Network Adapter: Ensure that the network adapter on their device is functioning correctly. For Windows, guide them to update the network adapter driver via Device Manager.
-Test with Another Device:
-Multiple Devices: Ask them to test the Wi-Fi connection with another device (e.g., smartphone, tablet) to determine if the issue is specific to one device or affects all devices on the network.
-Factory Reset Router:
-Reset Router: As a last resort, suggest performing a factory reset on the router. This will reset all settings to default, so they will need to reconfigure the Wi-Fi network afterward. Guide them to press and hold the reset button on the router for about 10 seconds.
+Confirm the device is connected to the intended SSID, then test next to the access point. Compare
+another device and, if possible, a wired connection. This distinguishes radio coverage from an
+Internet-uplink failure.
+
+For weak or intermittent Wi-Fi, inspect signal level, access-point placement, interference, band
+selection, channel congestion, and roaming between mesh nodes. Reconnect or forget and rejoin the
+network only after confirming the password is available. Apply vendor-supported firmware updates
+through a trusted local connection.
+
+A factory reset is a last resort only after recording ISP, router, SSID, security, and mesh settings
+and confirming someone can restore them locally.
 
 ## What if the issue is due to a VPN?
 
 **Answer**
 
-Disable the VPN:
-Turn Off VPN: Ask your family member to temporarily disable the VPN to see if the issue is resolved. This will help determine if the VPN is causing the problem.
-For Windows: Open the VPN application and click "Disconnect" or "Turn Off."
-For macOS: Open the VPN application and click "Disconnect" or "Turn Off."
-For iOS: Go to Settings > VPN and toggle the switch off.
-For Android: Go to Settings > Network & Internet > VPN and toggle the switch off.
-Check VPN Server Location:
-Change Server: If the VPN is causing issues, suggest changing the VPN server location to a different region or country. Sometimes, specific servers may have connectivity issues or be blocked by certain websites.
-Update VPN Software:
-Software Update: Ensure that the VPN software is up to date. Guide them to check for updates within the VPN application and install any available updates.
-Check VPN Settings:
-Configuration: Verify that the VPN settings are correctly configured. Incorrect settings can cause connectivity issues. Refer to the VPN provider's documentation for the recommended configuration.
-Test with Another VPN:
-Alternative VPN: If possible, ask them to test with a different VPN service to see if the issue persists. This can help determine if the problem is specific to the current VPN provider.
-Check for VPN Compatibility:
-Compatibility Issues: Some websites and services may block or restrict access when using a VPN. Check if the websites they are trying to access have known issues with VPNs.
-Contact VPN Support:
-Support Assistance: If the issue persists, suggest contacting the VPN provider's support team for assistance. They may have specific troubleshooting steps or be aware of any ongoing issues with their service.
-Check for DNS Leaks:
-DNS Configuration: Ensure that the VPN is properly handling DNS requests. Some VPNs may have DNS leak protection settings that need to be enabled. Use online tools to check for DNS leaks and configure the VPN accordingly.
+Compare the same request with the VPN connected and disconnected, if organizational policy permits.
+If only the VPN path fails, record the client error, selected gateway, time, and affected destination.
+
+Check tunnel status, route and DNS configuration, split-tunnel policy, proxy settings, client version,
+account or device compliance, and whether the target blocks the VPN's egress address. Changing to an
+approved gateway can distinguish one unhealthy gateway from a policy problem. For a corporate VPN,
+do not replace it with an unapproved service or weaken leak protection; provide the evidence to the
+organization's support team.
 
 ## You opened a URL and it's not opening. What could be the cause?
 
 **Answer**
 
-Network Connectivity Issues:
-Check Internet Connection: Ensure that your device is connected to the internet. Try opening other websites to verify connectivity.
-Restart Router/Modem: Restart your router or modem to resolve any temporary network issues.
-DNS Issues:
-DNS Resolution: The Domain Name System (DNS) translates domain names into IP addresses. If DNS is not resolving the domain name correctly, the URL won't open.
-Flush DNS Cache: Clear your DNS cache using the command ipconfig /flushdns (Windows) or sudo dscacheutil -flushcache (macOS).
-Change DNS Servers: Try using alternative DNS servers like Google DNS (8.8.8.8, 8.8.4.4) or Cloudflare DNS (1.1.1.1).
-Browser Issues:
-Clear Browser Cache: Clear your browser's cache and cookies to resolve any issues caused by corrupted data.
-Try a Different Browser: Open the URL in a different browser to see if the issue is browser-specific.
-Disable Extensions: Disable browser extensions or add-ons that might be interfering with the website.
-Server-Side Issues:
-Server Down: The website's server might be down or experiencing issues. Check the website's status using tools like DownDetector or IsItDownRightNow.
-Maintenance: The website might be undergoing maintenance. Check for any announcements or notifications from the website owner.
-Firewall or Security Software:
-Firewall Settings: Ensure that your firewall or security software is not blocking the website. Temporarily disable the firewall to test if it is causing the issue.
-Antivirus Software: Some antivirus programs may block certain websites. Check your antivirus settings and whitelist the URL if necessary.
-Incorrect URL:
-Typo in URL: Double-check the URL for any typos or errors. Ensure that you are entering the correct domain name and path.
-Expired Domain: The domain name might have expired or been taken down. Verify the domain's status using a WHOIS lookup tool.
-SSL/TLS Issues:
-Certificate Errors: If the website uses HTTPS, there might be issues with the SSL/TLS certificate. Look for any certificate error messages in the browser.
-Insecure Connection: Ensure that your browser and operating system are up to date to support the latest security protocols.
-Geolocation Restrictions:
-Blocked Region: Some websites restrict access based on geographic location. Use a VPN to test if the website is accessible from a different region.
+Work through the request path instead of guessing:
+
+1. Parse and verify the URL, scheme, host, port, and path.
+2. Resolve the hostname and compare the returned addresses with the expected DNS records.
+3. Test route and TCP connectivity to the destination port.
+4. Inspect the TLS handshake, certificate name, trust chain, validity, and local clock.
+5. Inspect the HTTP response, redirects, proxy behavior, and browser console or network errors.
+6. Compare another client, network, and region to separate local policy, ISP routing, CDN, and origin
+   failures.
+
+Likely causes include DNS failure, routing or firewall policy, proxy or VPN configuration, a closed
+port, TLS mismatch, server outage, redirect loop, authentication, rate limiting, geographic policy,
+or a browser extension. Preserve the exact error and request time before changing caches or settings.
 
 ## What is DNS?
 
 **Answer**
 
-DNS (Domain Name System) is a hierarchical and decentralized naming system used to translate human-readable domain names (like www.example.com) into machine-readable IP addresses (like 192.0.2.1). This translation is essential for locating and addressing devices and services on the internet.
-Domain Names and IP Addresses:
-Domain Names: Human-readable names that are easy to remember, such as www.example.com.
-IP Addresses: Numerical addresses used by computers to identify each other on the network, such as IPv4 (e.g., 192.0.2.1) and IPv6 (e.g., 2001:0db8:85a3:0000:0000:8a2e:0370:7334).
-DNS Hierarchy:
-Root Level: The top level of the DNS hierarchy, represented by a dot ("."). Managed by the root name servers.
-Top-Level Domains (TLDs): The next level below the root, such as .com, .org, .net, .edu, and country-code TLDs like .uk and .jp.
-Second-Level Domains: Directly below TLDs, such as example in www.example.com.
-Subdomains: Additional levels below the second-level domain, such as www in www.example.com.
-DNS Records:
-A Record: Maps a domain name to an IPv4 address.
-AAAA Record: Maps a domain name to an IPv6 address.
-CNAME Record: Maps a domain name to another domain name (alias).
-MX Record: Specifies the mail servers for a domain.
-TXT Record: Stores text information, often used for verification and security purposes.
-NS Record: Specifies the authoritative name servers for a domain.
-PTR Record: Maps an IP address to a domain name (reverse DNS lookup).
-DNS Resolution Process:
-Recursive Resolver: A DNS server that receives queries from client devices and performs the necessary lookups to resolve the domain name.
-Root Name Server: The first step in the DNS resolution process, directing the resolver to the appropriate TLD name server.
-TLD Name Server: Directs the resolver to the authoritative name server for the specific domain.
-Authoritative Name Server: Provides the final IP address for the requested domain name.
+DNS is a hierarchical distributed database that maps names to typed records. A client normally asks a
+recursive resolver, which uses its cache or follows referrals from root to top-level-domain and
+authoritative name servers. Answers are cached according to their TTL, including some negative
+answers.
+
+Common records include `A` for IPv4, `AAAA` for IPv6, `CNAME` for an alias, `MX` for mail exchange,
+`NS` for authoritative servers, `TXT` for text-based policies or verification, and `PTR` for reverse
+lookup. DNS can return many record types and does more than translate a hostname to one address.
+
+DNSSEC signs DNS data so a validating resolver can detect forged answers; it does not encrypt DNS
+queries. DNS-over-HTTPS and DNS-over-TLS address transport privacy to a resolver but do not replace
+DNSSEC authenticity.
+
+## References
+
+- [HTTP semantics and status codes](https://www.rfc-editor.org/rfc/rfc9110.html)
+- [WebSocket protocol](https://www.rfc-editor.org/rfc/rfc6455.html)
+- [OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/rfc/rfc9700.html)
+- [OWASP REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)

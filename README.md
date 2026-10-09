@@ -20,13 +20,15 @@ can be improved over time without maintaining repeated copies.
 | Area | Topics |
 | --- | --- |
 | Behavioral | Recruiter conversations, self-introduction, career decisions, teamwork, and STAR stories |
-| Languages | Java, JavaScript, C#, and C++ |
-| Frontend | HTML/CSS, Angular, legacy AngularJS, and React |
-| Backend | Spring/Spring Boot, Node.js, and .NET |
-| Data | SQL, relational databases, MongoDB, and Redis |
-| Architecture | Low-level design and system design |
-| Infrastructure | Cloud, Docker, Kafka, networking, and web security |
-| Testing | Selenium and browser automation |
+| Languages | Java, JavaScript, C#, and C++ fundamentals plus coding exercises |
+| Data structures | Core structures, algorithms, complexity, and implementation exercises |
+| Frontend | HTML/CSS, Angular, legacy AngularJS, React, and web analytics |
+| Backend | Spring Boot, Spring Data/JPA, REST, Node.js, and .NET |
+| Data | SQL, NoSQL, database internals, and data-processing systems |
+| Architecture | Low-level design, system design, microservices, resilience, and scalability |
+| Infrastructure | Cloud, containers, Kubernetes, Kafka, networking, CI/CD, and observability |
+| Developer tools | Git, command-line utilities, Maven, and Gradle |
+| Testing | Test design, Java mocking, Selenium, and browser automation |
 
 ## How To Use It
 
