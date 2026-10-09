@@ -1,4 +1,13 @@
-What is the difference between block-level and inline elements in HTML?
+# HTML and CSS
+
+Semantic HTML, layout, styling, browser behavior, accessibility, and responsive design.
+
+[Back to the question-bank index](../README.md)
+
+## What is the difference between block-level and inline elements in HTML?
+
+**Answer**
+
 Block-Level Elements: Used for larger sections of content, such as paragraphs, headings, lists, and sections. They help in creating the overall structure of the webpage.
 Characteristics:
 Width and Height: Block-level elements respect the width and height properties. By default, they take up the full width of their container.
@@ -14,7 +23,10 @@ Display Property: The default display property for inline elements is inline.
 Positioning: Inline elements can be positioned using position, but they do not respond to float and clear properties in the same way block-level elements do.
 Examples: <span>, <a>, <img>, <strong>, <b>, <em>, <i>, <code>, <br>, and <input>.
 
-What is z-index?
+## What is z-index?
+
+**Answer**
+
 z-index Property: Controls the stacking order of elements along the z-axis.
 Positioning Context: Works on elements with position set to relative, absolute, fixed, or sticky.
 Stacking Context: Formed when an element is positioned and has a z-index value other than auto.
@@ -22,7 +34,10 @@ Default Value: auto, meaning the element follows the default stacking order.
 Integer Values: Accepts both positive and negative integer values.
 Nested Stacking Contexts: Stacking contexts can be nested, and z-index values are relative within their respective contexts.
 
-What is the difference between display: none and visibility: hidden?
+## What is the difference between display: none and visibility: hidden?
+
+**Answer**
+
 Effect on Layout:
 display: none: Element is removed from the document flow.
 visibility: hidden: Element remains in the document flow.
@@ -36,19 +51,31 @@ Use Cases:
 display: none: Hiding elements without affecting layout.
 visibility: hidden: Hiding elements while preserving layout.
 
-How do you display an image without using the <img> tag?
+## How do you display an image without using the <img> tag?
+
+**Answer**
+
 HTML: A <div> element with a class of image-container is used to hold the image.
 CSS: The .image-container class is styled to set the background-image property to the URL of the image. The background-size: cover property ensures that the image covers the entire container, and background-position: center centers the image within the container.
 
-What is the use of flex and grid in CSS?
+## What is the use of flex and grid in CSS?
+
+**Answer**
+
 Flexbox (Flexible Box Layout) is designed for one-dimensional layouts, either in a row or a column. It is useful for distributing space and aligning items within a container.
 Grid (CSS Grid Layout) is designed for two-dimensional layouts, allowing you to control both rows and columns. It is useful for creating complex layouts with precise control over the placement of items.
 
-How to align 2 divs horizontally?
+## How to align 2 divs horizontally?
+
+**Answer**
+
 Put both the divs in a parent div and use display: flex; on that parent div.
 Flexbox makes elements horizontal by default when you set the display property of the container to flex. This is because the default value of the flex-direction property is row, which arranges the child elements in a horizontal line.
 
-How will you ensure responsiveness in your web application?
+## How will you ensure responsiveness in your web application?
+
+**Answer**
+
 Responsiveness: The ability of a website or web application to adapt its layout, content, and functionality to different screen sizes, orientations, and devices.
 Responsive Frameworks: Use frameworks like Bootstrap or libraries like Material-UI for built-in responsive components.
 CSS Media Queries: Apply different styles based on screen size and device characteristics.
@@ -59,13 +86,19 @@ Test Responsiveness: Use developer tools and online services to test responsiven
 Responsive Units: Use relative units like percentages, em, rem, and viewport units.
 Mobile-First Design: Design for mobile devices first and enhance for larger screens.
 
-What is Material UI?
+## What is Material UI?
+
+**Answer**
+
 Material-UI (MUI): A React component library that implements Google's Material Design guidelines, providing pre-built, customizable, and accessible UI components.
 Installation: Install the core package and optional icons package using npm or yarn.
 Usage: Import and use Material-UI components in your React application, and customize the theme to match your branding.
 Components: Offers a wide range of components such as buttons, cards, dialogs, menus, and more, all built with responsive design and accessibility in mind.
 
-What are CSS precompilers?
+## What are CSS precompilers?
+
+**Answer**
+
 CSS Precompilers: Tools that extend the capabilities of standard CSS by adding features such as variables, nesting, mixins, functions, and more.
 Common Precompilers:
 Sass: Offers SCSS and Sass syntax, with features like variables, nesting, mixins, functions, inheritance, partials, and imports.
@@ -79,7 +112,10 @@ Functions: Create custom functions that return values.
 Partials and Imports: Split CSS into multiple files and import them.
 Inheritance: Share CSS properties between selectors.
 
-What is SCSS?
+## What is SCSS?
+
+**Answer**
+
 SCSS (Sassy CSS): A syntax of Sass that extends the capabilities of standard CSS by adding features such as variables, nesting, mixins, functions, and more.
 Key Features:
 Variables: Store values for reuse.
@@ -90,14 +126,20 @@ Partials and Imports: Split CSS into multiple files and import them.
 Inheritance: Share CSS properties between selectors.
 Operators: Perform mathematical operations directly in stylesheets.
 
-How do you write common CSS in SCSS?
+## How do you write common CSS in SCSS?
+
+**Answer**
+
 Variables: Store values for reuse.
 Mixins: Create reusable chunks of CSS.
 Partials and Imports: Split CSS into multiple files and import them.
 Nesting: Nest CSS selectors for better readability.
 Inheritance: Share CSS properties between selectors.
 
-What are mixins and plugins?
+## What are mixins and plugins?
+
+**Answer**
+
 Mixins:
 Definition: Reusable chunks of CSS code that can include properties and accept parameters.
 Use Case: Avoid code duplication, enhance maintainability, and centralize common styles.
@@ -106,7 +148,10 @@ Definition: Extensions or add-ons that provide additional functionality to a sof
 Use Case: Extend functionality, automate tasks, and customize behavior.
 Example (PostCSS with Autoprefixer and CSSNano):
 
-What is Bootstrap?
+## What is Bootstrap?
+
+**Answer**
+
 Bootstrap: A popular open-source front-end framework for developing responsive and mobile-first websites.
 Key Features:
 Responsive Grid System: Create responsive layouts with a flexible grid system.
@@ -116,7 +161,10 @@ Customization: Override default styles or generate a custom build.
 Cross-browser Compatibility: Works seamlessly across modern browsers and devices.
 Documentation and Community: Extensive documentation and a large community for support.
 
-How can you optimize CSS files?
+## How can you optimize CSS files?
+
+**Answer**
+
 Minification:
 Remove Unnecessary Characters: Use minification tools (e.g., CSSNano, UglifyCSS) to remove whitespace, comments, and other unnecessary characters from CSS files, reducing their size.
 Combine CSS Files:
