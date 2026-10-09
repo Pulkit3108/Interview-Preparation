@@ -1,0 +1,90 @@
+
+What are Smart pointers in C++?
+Smart pointers in C++ are objects that manage the lifetime of dynamically allocated memory. They help ensure that memory is properly deallocated when it is no longer needed, preventing memory leaks and dangling pointers. Smart pointers are part of the C++ Standard Library and are defined in the <memory> header.
+std::unique_ptr: Exclusive ownership, cannot be copied, can be moved.
+std::shared_ptr: Shared ownership, reference counting, can be copied.
+std::weak_ptr: Non-owning reference, used to break circular references
+What is a dangling pointer?
+A dangling pointer is a pointer that references a memory location that has been deallocated or freed. Accessing or dereferencing a dangling pointer can lead to undefined behavior, including program crashes, data corruption, and security vulnerabilities.
+Avoid dangling pointers by setting pointers to nullptr after deallocation, using smart pointers, and careful memory management.
+What is the difference between an integer pointer and character pointer
+Integer Pointer (int*):
+Points to an int type variable.
+Typically moves 4 bytes ahead in memory when incremented.
+Dereferencing gives the value of the integer it points to.
+Character Pointer (char*):
+Points to a char type variable.
+Moves 1 byte ahead in memory when incremented.
+Dereferencing gives the value of the character it points to.
+What is the difference between nullptr and NULL?
+NULL:
+Defined as 0 or ((void*)0).
+Integer constant with a value of zero.
+Can cause ambiguity in function overloading.
+Commonly used in C and early C++.
+nullptr:
+Introduced in C++11.
+Has its own type, std::nullptr_t.
+Preferred way to represent null pointers in modern C++.
+Eliminates ambiguity in function overloading.
+What is a mutable keyword in c++ what is it's use case?
+The mutable keyword in C++ is used to allow a member of an object to be modified even if the object is declared as const. This is particularly useful in scenarios where you want to maintain logical constness but need to allow certain members to be modified.
+It is useful for caching, lazy initialization, debugging, and logging.
+It helps maintain logical constness while allowing certain members to be updated.
+What are inline functions in c++?
+Inline functions are expanded in line at the point of call, reducing function call overhead.
+Syntax: Use the inline keyword before the function definition.
+Advantages: Reduced function call overhead, potential for better optimization.
+Disadvantages: Potential for code bloat, compiler may ignore the inline request.
+Use Cases: Small, frequently called functions, performance-critical code.
+Explain a bit about error handling and logging in c++?
+Error Handling:
+Exceptions: Use try, catch, and throw for structured error handling.
+Error Codes: Return specific codes to indicate success or failure.
+Assertions: Check for conditions that should never occur during development.
+Logging:
+Standard Output and Error Streams: Use std::cout and std::cerr for simple logging.
+File Logging: Use std::ofstream to write logs to a file.
+Logging Libraries: Use libraries like Boost.Log, spdlog, or log4cpp for advanced logging features.
+If a binary tree is fully balanced, how many nodes does it have at the 4th level? Binary tree's root level is 1
+For the 4th level: 2^{4-1} = 2^3 = 8 
+In a binary max heap containing n numbers, the smallest element can be found in what time complexity
+In a binary max heap, the smallest element can be found in ( O(n) ) time complexity. This is because the smallest element can be anywhere in the heap, and you may need to check all ( n ) elements to find it.
+In the worst case, the number of comparisons needed to search a singly linked list of length n for a given element is
+In the worst case, the number of comparisons needed to search a singly linked list of length ( n ) for a given element is ( n ). This is because you may need to traverse the entire list to find the element, resulting in ( O(n) ) time complexity.
+How many stacks are needed to implement a queue. Consider the situation where no other data structure like arrays, linked lists is available to you.
+To implement a queue using stacks, you need two stacks. Here's how it works:
+Enqueue Operation: Push the elements onto the first stack.
+Dequeue Operation: If the second stack is empty, pop all elements from the first stack and push them onto the second stack. Then, pop the top element from the second stack.
+You have a program that is parsing a web server log file. You want to count the number of requests received from each unique IP address. What data structure would be most useful for capturing and representing the hit summary?
+A dictionary (or hashmap) would be the most useful data structure for capturing and representing the hit summary. In this dictionary, the keys would be the unique IP addresses, and the values would be the count of requests received from each IP address. This allows for efficient lookups, insertions, and updates.
+
+You are given the below code which you know tell us if there are any duplicates in the string but suppose. there is possibility that I don't even know what the user is going to pass as input to this function he can string char float double null anything how would you modify the below code to handle this?
+template <typename T>
+bool isUniqueString(const T &input) {
+    // Check for nullptr
+    if constexpr (is_same_v<T, nullptr_t>) {
+        return false;
+    }
+    // Convert input to string if possible
+    string strInput;
+    if constexpr (is_same_v<T, string>) {
+        strInput = input;
+    } else if constexpr (is_same_v<T, char>) {
+        strInput = string(1, input);
+    } else if constexpr (is_arithmetic_v<T>) {
+        strInput = to_string(input);
+    } else {
+        // If input is not a string, char, or arithmetic type, return false
+        return false;
+    }
+    // Check for uniqueness in the string representation
+    unordered_map<char, int> charMap;
+    for (char ch : strInput) {
+        if (charMap.find(ch) != charMap.end()) {
+            return false;
+        }
+        charMap[ch] = 1;
+    }
+    return true;
+}

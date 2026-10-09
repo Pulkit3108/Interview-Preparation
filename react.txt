@@ -1,0 +1,23 @@
+Explain Hooks and Router in React.
+Hooks in React: Functions like useState, useEffect, useContext, and useReducer that allow you to use state and other React features in functional components.
+React Router: A library for routing in React applications, providing components like BrowserRouter, Route, Link, and Switch to manage navigation and URL paths.
+
+In React, how would you implement a higher-order component (HOC)?
+Higher-Order Component (HOC): A function that takes a component and returns a new component with additional props or behavior.
+Creating an HOC: Define a function that takes a component, enhances it with additional logic or props, and returns the new component.
+Using an HOC: Wrap your component with the HOC to add the desired functionality.
+
+In React, what is the main advantage of using the Context API over passing props?
+Avoids Prop Drilling: The Context API eliminates the need to pass props through multiple layers of components, making the code cleaner and easier to maintain.
+Simplifies State Management: Provides a more efficient way to manage and share state across the application.
+Improves Code Readability and Maintainability: Reduces the number of props passed through the component tree, resulting in cleaner and more maintainable code.
+
+In React, what is the difference between useCallback and useMemo hooks?
+useCallback:
+Purpose: Memoizes a callback function.
+Use Case: Prevents functions from being recreated on every render, useful when passing functions as props to child components.
+Syntax: const memoizedCallback = useCallback(() => { /* function logic */ }, [dependencies]);
+useMemo:
+Purpose: Memoizes the result of a computation.
+Use Case: Prevents expensive calculations from being recalculated on every render, useful for optimizing performance.
+Syntax: const memoizedValue = useMemo(() => { /* computation logic */ return computedValue; }, [dependencies]);
