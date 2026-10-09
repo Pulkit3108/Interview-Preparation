@@ -222,18 +222,18 @@ Monitor and profile threads using tools like VisualVM, JConsole, and Java Missio
 **Answer**
 
 - **Synchronized Methods or Blocks:** Use synchronized keyword to ensure mutual exclusion.
-- **Example:** public synchronized void increment() { count++; }
+- **Example:** `public synchronized void increment() { count++; }`
 - **Atomic Variables:** Use atomic variables from java.util.concurrent.atomic package.
-- **Example:** private AtomicInteger count = new AtomicInteger(0);
+- **Example:** `private final AtomicInteger count = new AtomicInteger()`
 `volatile` is enough only for an independent read/write such as publishing a flag or immutable
 snapshot. It does not make `count++` atomic. Use an atomic type or a lock when an update depends on
 the previous value or must preserve a multi-field invariant.
 java.util.concurrent Locks:
 Use explicit locks from java.util.concurrent.locks package.
-- **Example:** private final Lock lock = new ReentrantLock();
+- **Example:** `private final Lock lock = new ReentrantLock()`
 java.util.concurrent Collections:
 Use thread-safe collections from java.util.concurrent package.
-- **Example:** private ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>();
+- **Example:** `private final ConcurrentHashMap<String, Integer> map = new ConcurrentHashMap<>()`
 java.util.concurrent Utilities:
 Use higher-level concurrency utilities from java.util.concurrent package.
 - **Example:** ExecutorService, CountDownLatch, CyclicBarrier, Semaphore.
@@ -322,6 +322,19 @@ for another permit that only it could release. Java intrinsic locks and `Reentra
 so reacquiring those particular locks in the same thread does not self-deadlock. Answer from the
 specific synchronization primitive rather than asserting that every deadlock requires two threads.
 
+## Which concurrency utilities were added or significantly enhanced in Java 8?
+
+**Answer**
+
+Java 8 added `CompletionStage` and `CompletableFuture` for composing asynchronous stages,
+`StampedLock` with write, read, and optimistic-read modes, and contention-friendly counters such as
+`LongAdder`, `DoubleAdder`, `LongAccumulator`, and `DoubleAccumulator`. It also exposed the common
+`ForkJoinPool` and expanded `ConcurrentHashMap` operations.
+
+These are library and runtime-library additions, not a replacement for the Java Memory Model.
+`LongAdder`, for example, improves throughput for contended statistics but does not provide an atomic
+snapshot suitable for coordinating other state.
+
 ## What is the difference between volatile and Atomic variables?
 
 **Answer**
@@ -331,3 +344,10 @@ specific synchronization primitive rather than asserting that every deadlock req
 Atomic variables provide atomicity for compound actions (e.g., incrementing, updating).
 - **Usage:** Use volatile for simple flags and state variables where only individual read/write operations are needed.
 Use atomic variables for counters, sequence numbers, and other variables where atomic operations are required.
+
+## References
+
+- [Java SE 8 concurrency utilities enhancements](https://docs.oracle.com/javase/8/docs/technotes/guides/concurrency/changes8.html)
+- [`CompletableFuture` API](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/CompletableFuture.html)
+- [`StampedLock` API](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/locks/StampedLock.html)
+- [`LongAdder` API](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/LongAdder.html)

@@ -1,5 +1,18 @@
 # Contributing
 
+## Where A Question Belongs
+
+- Language syntax, runtimes, and standard libraries: **Programming Languages**
+- Framework-specific application questions: **Frontend** or **Backend**
+- Queries, data modeling, transactions, and indexes: **Data**
+- Object collaboration and design patterns: **Low-Level Design**
+- Distributed-system trade-offs and architecture exercises: **System Design**
+- Deployment and platform concerns: **Infrastructure**
+- Test design, automation, and testing tools: **Testing**
+
+For a question that crosses areas, keep the answer with its primary topic and link to it from the
+secondary topic instead of copying it.
+
 ## Add A Question
 
 Add the question to the most specific existing topic. Create a new file only when the subject is

@@ -190,6 +190,8 @@ explicitly represented.
 
 **Answer**
 
+Group rows by gender and aggregate salary within each group. `SUM` ignores `NULL` salary values.
+
 ```sql
 SELECT gender, SUM(salary) AS total_salary
 FROM Employee
@@ -200,6 +202,8 @@ GROUP BY gender;
 
 **Answer**
 
+An inner join naturally excludes passengers without a matching seat assignment.
+
 ```sql
 SELECT p.passenger_id, p.passenger_name, s.seat_number
 FROM Passengers p
@@ -209,6 +213,9 @@ INNER JOIN Seats s ON p.passenger_id = s.passenger_id;
 ## How do you identify duplicate records in a table?
 
 **Answer**
+
+Define which columns make a row a duplicate, group by those columns, and keep groups with more than
+one row.
 
 ```sql
 SELECT column1, column2, COUNT(*)
@@ -316,6 +323,8 @@ non-nullable column from the right table.
 
 **Answer**
 
+Use `DENSE_RANK` when employees tied at the same salary should share a rank without creating gaps.
+
 ```sql
 SELECT department, salary
 FROM (
@@ -326,9 +335,14 @@ FROM (
 WHERE rank = 2;
 ```
 
+Join the result back to the employee table, or include employee identifiers in the inner query, when
+the required output is employees rather than salary levels.
+
 ## How do you find employees earning more than their manager?
 
 **Answer**
+
+Self-join each employee to the row identified by `manager_id`, then compare their salaries.
 
 ```sql
 SELECT e.employee_id, e.employee_name, e.salary, m.employee_name AS manager_name, m.salary AS manager_salary
@@ -382,6 +396,9 @@ TRUNCATE TABLE Employees;
 ## How would you update a table to swap gender values?
 
 **Answer**
+
+A single `CASE` expression avoids one update overwriting values needed by a later update. Use the
+actual domain values and constraints from the target schema.
 
 ```sql
 UPDATE your_table
@@ -442,6 +459,9 @@ unused joins to avoid accidental row multiplication and needless work.
 
 **Answer**
 
+The query is syntactically straightforward, but averaging an identifier is rarely meaningful. In an
+interview, confirm whether `id` is really a measure such as price, score, or duration.
+
 ```sql
 SELECT type, AVG(id) AS average_id
 FROM categories
@@ -451,6 +471,9 @@ GROUP BY type;
 ## Find the count of employees in each city?
 
 **Answer**
+
+Grouping by city returns one row per city. Decide whether `NULL` should form its own group or be
+excluded.
 
 ```sql
 SELECT city, COUNT(*) AS employee_count
@@ -512,6 +535,9 @@ Add `DISTINCT` if each toy should appear only once rather than once per request.
 
 **Answer**
 
+Join requests to toy prices and aggregate the price by child. This assumes each request contributes
+one unit; add quantity when the schema supports it.
+
 ```sql
 SELECT c.child_name, SUM(t.price) AS total_amount_spent
 FROM RequestedToy l
@@ -523,6 +549,9 @@ GROUP BY c.child_name;
 ## Who are the children spending over 200?
 
 **Answer**
+
+Use `HAVING` because the threshold applies to each child's aggregate rather than to an individual
+toy row.
 
 ```sql
 SELECT c.child_name, SUM(t.price) AS total_amount_spent

@@ -872,9 +872,12 @@ This demonstrates argument binding, return-value preservation, and constructor c
 native-equivalent polyfill must also reproduce details such as `length`, `name`, and exotic function
 behavior, so production code should use the built-in `bind`.
 
-## Write an implementation to Reverse an array.
+## How do you reverse an array without mutating the input?
 
 **Answer**
+
+Traverse from the last element to the first and build a new array. Native `toReversed()` provides
+the same non-mutating intent in current runtimes.
 
 ```javascript
 function reverseArray(array) {
@@ -886,9 +889,12 @@ function reverseArray(array) {
 }
 ```
 
-## Write an implementation of debounce function.
+## How do you implement a debounce function?
 
 **Answer**
+
+Reset the timer after each call so the function runs only after calls have stopped for `delay`
+milliseconds. This is a trailing-only debounce.
 
 ```javascript
 function debounce(fn, delay) {
@@ -923,9 +929,12 @@ function throttle(fn, interval) {
 
 This is a leading-only throttle. State explicitly if trailing execution or cancellation is required.
 
-## Write an implementation to Flatten an array.
+## How do you recursively flatten an array?
 
 **Answer**
+
+Recursively expand nested arrays and append non-array values in encounter order. This implementation
+does not preserve sparse holes.
 
 ```javascript
 function flattenArray(array) {
@@ -986,9 +995,11 @@ function flattenObject(object, prefix = '', result = {}) {
 This contract treats arrays as leaf values. Production code must define escaping for keys containing
 dots and behavior for cycles, dates, maps, and other non-plain objects.
 
-## Write a function for sum(1)(2)(3)....(n)() which return sum of n numbers
+## How do you implement `sum(1)(2)(3)()`?
 
 **Answer**
+
+Return another function after each number and use an empty call as the termination signal.
 
 ```javascript
 const sum = (total = 0) => (value) =>
@@ -997,19 +1008,17 @@ const sum = (total = 0) => (value) =>
 sum(1)(2)(3)(); // 6
 ```
 
-## Write a program to count occurrence of character in a string
+## How do you count character occurrences in a string?
 
 **Answer**
 
+Iterating a string with `for...of` counts Unicode code points, not user-perceived grapheme clusters.
+
 ```javascript
 function countCharacterOccurrences(str) {
-  const charCount = {};
-  for (let char of str) {
-      if (charCount[char]) {
-          charCount[char]++;
-      } else {
-          charCount[char] = 1;
-      }
+  const charCount = new Map();
+  for (const character of str) {
+    charCount.set(character, (charCount.get(character) ?? 0) + 1);
   }
   return charCount;
 }
@@ -1031,9 +1040,11 @@ For example, `[[{ key: 'id', value: 1 }, { key: 'name', value: 'A' }]]` becomes
 `[{ id: 1, name: 'A' }]`. If each pair is already `[key, value]`, use
 `groups.map(Object.fromEntries)`.
 
-## Write a code for calculator where you perform chaining?
+## How do you implement a chainable calculator?
 
 **Answer**
+
+Return `this` from each operation so the next operation can continue on the same instance.
 
 ```javascript
 class Calculator {
@@ -1091,9 +1102,12 @@ Retries require functions that create a fresh attempt, not already-started promi
 retry only transient, idempotent operations and add bounded exponential backoff, jitter, cancellation,
 and observability. This composes the native `Promise.all`; it is not a `Promise.all` polyfill.
 
-## Implement Browser history feature
+## How do you implement simplified browser history?
 
 **Answer**
+
+Keep an array plus a current index. Visiting after going back discards the abandoned forward branch,
+matching browser-history behavior.
 
 ```javascript
 class BrowserHistory {
@@ -1141,9 +1155,12 @@ targetElement.dispatchEvent(myEvent);
 Register listeners before dispatch. `dispatchEvent` is synchronous; `bubbles`, `cancelable`, and
 `composed` must be enabled explicitly when the event contract requires them.
 
-## Implement auto-retry promises
+## How do you retry a promise-returning operation?
 
 **Answer**
+
+Accept a function that creates a fresh attempt. Retrying an already-created promise would only await
+the same settled result again.
 
 ```javascript
 async function autoRetry(task, maxRetries = 3, delayMs = 0) {
@@ -1161,7 +1178,10 @@ async function autoRetry(task, maxRetries = 3, delayMs = 0) {
 function simulateAPICall() {
   return new Promise((resolve, reject) => {
     const isSuccessful = Math.random() > 0.5;
-    setTimeout(() => (isSuccessful ? resolve("Success!") : reject("Failed!")), 500);
+    setTimeout(
+      () => (isSuccessful ? resolve('Success!') : reject(new Error('Failed!'))),
+      500,
+    );
   });
 }
 // Using autoRetry with 5 retries and a 1-second delay between attempts.
@@ -1269,28 +1289,28 @@ equality does not coerce or apply that special equivalence, so different types a
 
 **Answer**
 
+`Set` stores each value once using SameValueZero equality, so the duplicate `3` is ignored.
+
 ```javascript
 const set = new Set([1, 2, 3, 3]);
 console.log(set); // Set(3) { 1, 2, 3 }
 ```
 
-## Write a code to find the first non repeat character in a string
+## How do you find the first non-repeating character in a string?
 
 **Answer**
+
+Count characters in one pass, then scan the original order for the first count of one.
 
 ```javascript
 function firstNonRepeatingCharacter(str) {
   const charCount = new Map();
-  for (let char of str) {
-    if (charCount.has(char)) {
-      charCount.set(char, charCount.get(char) + 1);
-    } else {
-      charCount.set(char, 1);
-    }
+  for (const character of str) {
+    charCount.set(character, (charCount.get(character) ?? 0) + 1);
   }
-  for (let char of str) {
-    if (charCount.get(char) === 1) {
-      return char;
+  for (const character of str) {
+    if (charCount.get(character) === 1) {
+      return character;
     }
   }
   return null;

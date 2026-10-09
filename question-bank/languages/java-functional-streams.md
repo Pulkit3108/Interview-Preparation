@@ -116,46 +116,51 @@ forEach Method:
 - **Consumer Interface:** Functional Interface: Represents an operation that takes a single input argument and returns no result.
 - **Method:** void accept(T t)
 - **Usage:** Commonly used in lambda expressions and method references.
-- **Example:** Consumer<String> printName = name -> System.out.println("Name: " + name);
+- **Example:** `Consumer<String> printName = name -> System.out.println("Name: " + name)`
 
 - **Predicate Interface:** A functional interface that represents a single argument function returning a boolean value.
 - **Method:** boolean test(T t) evaluates the predicate on the given argument.
 - **Default Methods:** Includes methods for combining predicates (and, or, negate).
 - **Usage:** Commonly used in lambda expressions, method references, and with the Stream API for filtering and matching operations.
-- **Example:** Predicate<Integer> isEven = number -> number % 2 == 0;
+- **Example:** `Predicate<Integer> isEven = number -> number % 2 == 0`
 - **Supplier Interface:** Represents a supplier of results. It does not take any arguments and returns a result of a specified type.
 - **Method:** T get() - Gets a result.
 - **Default Methods:** The Supplier interface does not have any default methods.
 - **Usage:** Commonly used in lambda expressions, method references, and with the Stream API for generating or providing values.
-- **Example:** Supplier<Double> randomSupplier = () -> Math.random();
+- **Example:** `Supplier<Double> randomSupplier = Math::random`
 - **Function Interface:** A functional interface that represents a function taking one argument and producing a result.
 - **Method:** R apply(T t) applies the function to the given argument and returns the result.
 - **Default Methods:** Includes methods for composing functions (andThen, compose).
 - **Usage:** Commonly used in lambda expressions, method references, and with the Stream API for mapping and transforming data.
-- **Example:** Function<String, Integer> stringLengthFunction = str -> str.length();
+- **Example:** `Function<String, Integer> stringLengthFunction = String::length`
 - **Runnable Interface:** A functional interface that represents a task that can be executed by a thread. It does not take any arguments and does not return a result.
 - **Method:** void run() - Executes the task.
 - **Default Methods:** The Runnable interface does not have any default methods.
 - **Usage:** Commonly used to define tasks that can be executed by threads, often in lambda expressions and method references.
-- **Example:** Runnable task = () -> System.out.println("Task is running");
+- **Example:** `Runnable task = () -> System.out.println("Task is running")`
 - **Comparator Interface:** A functional interface that represents a comparison function, which imposes a total ordering on some collection of objects.
 - **Method:** int compare(T o1, T o2) - Compares its two arguments for order. Returns a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
 - **Default Methods:** Includes methods for composing comparators (thenComparing, reversed).
 - **Usage:** Commonly used to define custom sorting orders for collections, often in lambda expressions and method references.
-- **Example:** Comparator<String> stringLengthComparator = (str1, str2) -> Integer.compare(str1.length(), str2.length());
+- **Example:** `Comparator<String> byLength = Comparator.comparingInt(String::length)`
 
-## You need to check if an invoice is overdue, updates status, print the invoice details and supply new invoice instances?
+## Which functional interfaces fit common invoice operations?
 
 **Answer**
 
-- **Check if an invoice is overdue:** Functional Interface: Predicate<Invoice>
-Predicate<Invoice> isOverdue = inv -> inv.getDueDate().isBefore(LocalDate.now());
-- **Update the status of an invoice:** Functional Interface: Consumer<Invoice>
-Consumer<Invoice> updateStatus = inv -> inv.setStatus("Overdue");
-- **Print the invoice details:** Functional Interface: Consumer<Invoice>
-Consumer<Invoice> printInvoice = inv -> System.out.println(inv);
-- **Supply new invoice instances:** Functional Interface: Supplier<Invoice>
-Supplier<Invoice> invoiceSupplier = () -> new Invoice("INV001", 1500.0, "Pending", LocalDate.now().plusDays(30));
+Use `Predicate` for a test, `Consumer` for a side effect, and `Supplier` for deferred creation:
+
+```java
+Predicate<Invoice> isOverdue =
+    invoice -> invoice.getDueDate().isBefore(LocalDate.now());
+Consumer<Invoice> updateStatus = invoice -> invoice.setStatus("Overdue");
+Consumer<Invoice> printInvoice = System.out::println;
+Supplier<Invoice> invoiceSupplier =
+    () -> new Invoice("INV001", 1500.0, "Pending", LocalDate.now().plusDays(30));
+```
+
+Mutable consumers are easy to misuse in parallel streams. Keep state changes deliberate and avoid
+using side effects merely to work around a missing transformation.
 
 ## What is GroupBy & PartitioningBy?
 

@@ -79,9 +79,36 @@ fields. The key type must be serializable for portable JPA use and implement sta
 care.
 
 ```java
+// EnrollmentId.java
 @Embeddable
-public record EnrollmentId(Long studentId, Long courseId) implements Serializable {}
+public class EnrollmentId implements Serializable {
+    private Long studentId;
+    private Long courseId;
 
+    protected EnrollmentId() {}
+
+    public EnrollmentId(Long studentId, Long courseId) {
+        this.studentId = studentId;
+        this.courseId = courseId;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof EnrollmentId that)) return false;
+        return Objects.equals(studentId, that.studentId)
+            && Objects.equals(courseId, that.courseId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(studentId, courseId);
+    }
+}
+```
+
+```java
+// Enrollment.java
 @Entity
 public class Enrollment {
     @EmbeddedId

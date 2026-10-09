@@ -6,9 +6,11 @@ Stream, collection, object-model, exception, and concurrency exercises.
 
 [Back to the question-bank index](../README.md)
 
-## Create a list of Employees object from a hashmap whose key is string id and value is an basicinfo object
+## How do you create employees from a map of IDs to basic information?
 
 **Answer**
+
+Iterate over the entries so both the employee ID and its associated information are available.
 
 ```java
 Map<String, BasicInfo> basicInfoMap = new HashMap<>();
@@ -19,27 +21,36 @@ List<Employee> employees = new ArrayList<>();
 for (Map.Entry<String, BasicInfo> entry : basicInfoMap.entrySet()) {
     String id = entry.getKey();
     BasicInfo basicInfo = entry.getValue();
-    Employee employee = new Employee(id, basicInfo.getName(), basicInfo.getSalary(), basicInfo.getDepartment());
+    Employee employee = new Employee(
+        id,
+        basicInfo.getName(),
+        basicInfo.getSalary(),
+        basicInfo.getDepartment()
+    );
     employees.add(employee);
 }
 employees.forEach(System.out::println);
 ```
 
-## How to find the highest salary employee?
+## How do you find the employee with the highest salary?
 
 **Answer**
 
+`max` returns an `Optional` because the source list may be empty.
+
 ```java
 Optional<Employee> maxSalaryEmployee = employees.stream()
-    .max((e1, e2) -> Double.compare(e1.getSalary(), e2.getSalary()));
+    .max(Comparator.comparingDouble(Employee::getSalary));
 maxSalaryEmployee.ifPresent(employee ->
     System.out.println("Employee with the highest salary: " + employee.getName())
 );
 ```
 
-## Create a map object from a list of salesperson object, the key of map is city and value is the count of employees in that city the map should be sorted by key in ascending order
+## How do you count salespeople by city and sort the result by city?
 
 **Answer**
+
+Supply `TreeMap::new` to `groupingBy` so the collected keys remain in ascending order.
 
 ```java
 List<Salesperson> salespeople = Arrays.asList(
@@ -50,19 +61,20 @@ List<Salesperson> salespeople = Arrays.asList(
         new Salesperson("Eve", "Los Angeles")
 );
 Map<String, Long> cityCountMap = salespeople.stream()
-        .collect(Collectors.groupingBy(Salesperson::getCity, Collectors.counting()))
-        .entrySet().stream()
-        .sorted(Map.Entry.comparingByKey())
-        .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                Map.Entry::getValue,
-                (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+    .collect(Collectors.groupingBy(
+        Salesperson::getCity,
+        TreeMap::new,
+        Collectors.counting()
+    ));
 cityCountMap.forEach((city, count) -> System.out.println(city + ": " + count));
 ```
 
-## Create a map from the list of Integer where key is MAX and MIN String and value is max and min value of the list
+## How do you create a map containing the minimum and maximum integers?
 
 **Answer**
+
+The following form represents an empty input with `null`. In production code, returning an
+`Optional`, rejecting an empty list, or using a result type is usually clearer.
 
 ```java
 Integer max = numbers.stream().max(Integer::compareTo).orElse(null);
@@ -73,9 +85,11 @@ resultMap.put("MIN", min);
 resultMap.forEach((key, value) -> System.out.println(key + ": " + value));
 ```
 
-## How will I sort a list of employees by age?
+## How do you sort employees by age?
 
 **Answer**
+
+Use a comparator that expresses the field being sorted.
 
 ```java
 List<Employee> employees = Arrays.asList(
@@ -85,29 +99,32 @@ List<Employee> employees = Arrays.asList(
     new Employee("David", 28)
 );
 List<Employee> sortedEmployees = employees.stream()
-    .sorted((e1, e2) -> Integer.compare(e1.getAge(), e2.getAge()))
-    .collect(Collectors.toList());
+    .sorted(Comparator.comparingInt(Employee::getAge))
+    .toList();
 sortedEmployees.forEach(System.out::println);
 ```
 
-## Write a stream api code to remove duplicates from list of strings
+## How do you remove duplicate strings with the Stream API?
 
 **Answer**
+
+`distinct` keeps the first occurrence of each value according to `equals` and preserves encounter
+order for an ordered stream.
 
 ```java
 List<String> strings = Arrays.asList("apple", "banana", "apple", "orange", "banana", "grape");
 List<String> uniqueStrings = strings.stream()
-                                            .distinct()
-                                            .collect(Collectors.toList());
+    .distinct()
+    .toList();
 ```
 
-You are given an array String scores[][] where each element scores[i] represents a student's name and their scores in various subjects. Specifically:
-1. scores[i][0] is the student's name.
-2. scores[i][1] to scores[i][n] are the scores , where each student may have a different number of scores.
-3. Scores may be positive or negative integers.
-- **Additionally:** 4. The same student may appear multiple times in the array with different scores.
-5. You may assume names contain only alphabetic characters.
-Write a function to find the student with the highest average score. If multiple students have the same average score, return the name that appears first in lexicographical (alphabetical) order.
+## How do you find the student with the highest average score?
+
+**Answer**
+
+Each row contains a name followed by one or more integer scores. A student may appear in multiple
+rows. Accumulate the total and count per student, then choose the highest average and use the name as
+the tie-breaker.
 
 ```java
 public static String findStudentWithHighestAverage(String[][] scores) {
@@ -127,7 +144,9 @@ public static String findStudentWithHighestAverage(String[][] scores) {
         String name = entry.getKey();
         int[] scoreData = entry.getValue();
         double average = (double) scoreData[0] / scoreData[1];
-        if (average > highestAverage || (average == highestAverage && (topStudent == null || name.compareTo(topStudent) < 0))) {
+        if (average > highestAverage
+                || (Double.compare(average, highestAverage) == 0
+                    && (topStudent == null || name.compareTo(topStudent) < 0))) {
             highestAverage = average;
             topStudent = name;
         }
@@ -136,12 +155,20 @@ public static String findStudentWithHighestAverage(String[][] scores) {
 }
 ```
 
-## Write code to encode the string?
+## How do you run-length encode a string?
 
 **Answer**
 
+Count consecutive equal characters and emit each character followed by its run length. Define the
+empty-input behavior explicitly.
+
 ```java
 public static String encodeString(String input) {
+    Objects.requireNonNull(input, "input");
+    if (input.isEmpty()) {
+        return "";
+    }
+
     StringBuilder encoded = new StringBuilder();
     int[] count = {1};
     IntStream.range(1, input.length())
@@ -153,15 +180,17 @@ public static String encodeString(String input) {
                      count[0] = 1;
                  }
              });
-    // Append the last character and its count
+    // The loop emits completed runs; append the final run here.
     encoded.append(input.charAt(input.length() - 1)).append(count[0]);
     return encoded.toString();
 }
 ```
 
-## Write a program to find the top 3 most occuring words in a list of strings?
+## How do you find the three most frequently occurring words?
 
 **Answer**
+
+Count each word, then sort by descending frequency and ascending word for deterministic ties.
 
 ```java
 List<String> words = Arrays.asList(
@@ -177,45 +206,65 @@ List<Map.Entry<String, Long>> topWords = words.stream()
     .toList();
 ```
 
-## Find the sum of first n prime numbers?
+## How do you sum the first `n` prime numbers?
 
 **Answer**
+
+Generate candidate integers, keep primes, limit the stream to `n`, and sum it. Validate that `n` is
+non-negative before using this snippet.
 
 ```java
-int n = 10; // Change this value to find the sum of the first n prime numbers
-int sum = IntStream.iterate(2, i -> i + 1) // Start with 2 and generate an infinite stream of integers
-                .filter(number -> IntStream.rangeClosed(2, (int) Math.sqrt(number))
-                .allMatch(divisor -> number % divisor != 0)) // Filter to include only prime numbers
-                .limit(n) // Limit to the first n prime numbers
-                .sum(); // Sum the prime numbers
+int n = 10;
+int sum = IntStream.iterate(2, candidate -> candidate + 1)
+    .filter(candidate -> IntStream.rangeClosed(2, (int) Math.sqrt(candidate))
+        .allMatch(divisor -> candidate % divisor != 0))
+    .limit(n)
+    .sum();
 ```
 
-## Find the factorial of a number using Stream API?
+## How do you calculate a factorial with the Stream API?
 
 **Answer**
 
+For a non-negative `number`, multiply the integers from 1 through that value. `long` only delays
+overflow, so use `BigInteger` for larger inputs.
+
+```java
 IntStream.rangeClosed(1, number) // Create a stream of integers from 1 to the given number
          .reduce(1, (a, b) -> a * b); // Reduce the stream to calculate the product
+```
 
-## Merge 2 sorted arrays into 1 sorted array using Stream API?
+## How do you merge two sorted arrays with the Stream API?
 
 **Answer**
 
+This concise solution sorts all values and costs `O((n + m) log(n + m))`. A two-pointer merge can
+preserve the existing order in `O(n + m)` time.
+
+```java
 IntStream.concat(Arrays.stream(array1), Arrays.stream(array2))
-                        .sorted()
-                        .toArray();
+    .sorted()
+    .toArray();
+```
 
-## Using Stream API find sum of squares of n numbers?
+## How do you sum the squares of the integers from 1 through `n`?
 
 **Answer**
 
+Map each integer to its square before applying the terminal sum operation. Use `LongStream` or
+`BigInteger` when the result may exceed the `int` range.
+
+```java
 IntStream.rangeClosed(1, n) // Create a stream of numbers from 1 to n
-               .map(x -> x * x)   // Map each number to its square
-               .sum();
+    .map(x -> x * x)
+    .sum();
+```
 
-## Write a code in Stream API to find the name of the employee with the second highest salary?
+## How do you find employees with the second-highest distinct salary?
 
 **Answer**
+
+First find the second-highest distinct salary, then return every employee tied at that salary.
 
 ```java
 OptionalDouble secondHighestSalary = employees.stream()
@@ -254,7 +303,12 @@ List<Integer> result = Arrays.stream(array)
     .collect(Collectors.toList());
 ```
 
-Generate the first `n` Fibonacci numbers, remove duplicates, keep the even values, and sum them.
+## How do you sum the distinct even values among the first `n` Fibonacci numbers?
+
+**Answer**
+
+The stream carries each pair of consecutive Fibonacci numbers. Mapping to the first value produces
+the sequence before filtering and summing it.
 
 ```java
 int sum = Stream.iterate(new int[]{0, 1}, x -> new int[] {x[1], x[0] + x[1]})
@@ -269,6 +323,9 @@ int sum = Stream.iterate(new int[]{0, 1}, x -> new int[] {x[1], x[0] + x[1]})
 ## Does the raw `ArrayList<Generic>` example compile, and why?
 
 **Answer**
+
+No. The raw list erases the element type, so `getValue()` is seen as returning `Object`; assigning
+that result directly to `int` or `String` fails. The snippet intentionally contains those errors.
 
 ```java
 class Generic<T> {
@@ -291,11 +348,8 @@ System.out.println(s);
 System.err.println(i);
 ```
 
-- **Creating Generic Objects:** Generic<?> g1 = new Generic<>(10); creates a generic object with an Integer value.
-Generic<?> g2 = new Generic<>("Hello"); creates a generic object with a String value.
-- **Adding to ArrayList:** Both g1 and g2 are added to the ArrayList<Generic>.
-- **Retrieving Values:** int i = g.get(0).getValue(); will cause a compile-time error because getValue() returns an Object, and it cannot be directly assigned to an int.
-String s = g.get(1).getValue(); will cause a compile-time error for the same reason.
+Use a typed collection when all elements share a type. If heterogeneous values are intentional,
+model that explicitly and inspect the runtime type before casting.
 
 ## Which `drive()` implementation is invoked through the `Car` reference?
 
@@ -326,17 +380,20 @@ public class ElectricCar extends Car {
 
 Driving an electric car.
 
+The private method in `Automobile` is not inherited or overridden. The accessible `drive` method
+declared by `Car` is overridden by `ElectricCar`, so normal dynamic dispatch selects the latter.
+
 ## Which access modifiers can the overriding `display()` method use?
 
 **Answer**
 
 ```java
-public class Shape {
+class Shape {
     protected void display() {
         System.out.println("Display-base");
     }
 }
-public class Circle extends Shape {
+class Circle extends Shape {
     @Override
     public void display() {
         System.out.println("Display-derived");
@@ -344,8 +401,8 @@ public class Circle extends Shape {
 }
 ```
 
-public and protected both can be used.
-In Java, when you override a method in a subclass, you can only use an access modifier that is less restrictive or the same as the access modifier of the method in the superclass.
+The overriding method can be `protected` or `public`; it cannot reduce the inherited method's
+visibility.
 
 ## In what order do the constructors execute?
 
@@ -374,10 +431,13 @@ public class Test {
 }
 ```
 
+```text
 Base
 Derived
 DeriDerived
-In Java, the constructor of the base class is called first, followed by the constructor of the derived class, and so on up the inheritance hierarchy.
+```
+
+Construction initializes the superclass portion before the subclass portion.
 
 ## Why does the constructor with two `super` calls fail to compile?
 
@@ -406,13 +466,16 @@ class Test {
 }
 ```
 
-Removing Stmt-1 will make the program compilable and it will print the following: Base: Hello Derived.
-Removing Stmt-2 will make the program compilable and it will print the following: Base Derived.
-Removing both Stmt-1 and Stmt-2 will make the program compilable and it will print the following: Base Derived.
-No, the program will not be compilable if you don't remove any statement. The reason is that a constructor in Java can only call one superclass constructor, and it must be the first statement in the constructor. Having both super(); and super(s); in the constructor of the Derived class violates this rule and will result in a compilation error.
+The constructor does not compile because it may invoke exactly one superclass constructor and that
+invocation must be its first statement. Keep `super()` for `Base Derived`, keep `super(s)` for
+`Base: Hello Derived`, or remove both and let the compiler insert `super()`.
+
 ## How do you check whether a string is a palindrome?
 
 **Answer**
+
+Normalize the input, then compare it with its reverse. This version ignores case and non-alphanumeric
+characters; decide whether that matches the interviewer's definition of a palindrome.
 
 ```java
 public boolean isPalindrome(String s) {
@@ -430,9 +493,12 @@ public boolean isPalindrome(String s) {
 }
 ```
 
-## Write a Java Program to reverse each individual word of a given String.
+## How do you reverse each word in a string?
 
 **Answer**
+
+Split on whitespace, reverse each word, and join the result. The simple version below normalizes
+multiple spaces to one space.
 
 ```java
 public static String reverseWords(String str) {
@@ -458,7 +524,15 @@ public class MyCustomException extends Exception {
 }
 ```
 
-- **There are two threads:** one has to print odd numbers, one has to print even numbers. It should be sequential from the common list.
+Throw the exception at the point where the violated domain condition is detected, and either handle
+it or declare it to the caller.
+
+## How can two threads print odd and even numbers in sequence?
+
+**Answer**
+
+Both threads share an index and wait while the next value belongs to the other thread. Every state
+change calls `notifyAll` so a waiting thread can re-check the condition.
 
 ```java
 public class OddEvenPrinter {
@@ -480,12 +554,13 @@ public class OddEvenPrinter {
                     if (numbers.get(index) % 2 != 0) {
                         System.out.println("Odd: " + numbers.get(index));
                         index++;
-                        lock.notify();
+                        lock.notifyAll();
                     } else {
                         try {
                             lock.wait();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
+                            return;
                         }
                     }
                 }
@@ -501,12 +576,13 @@ public class OddEvenPrinter {
                     if (numbers.get(index) % 2 == 0) {
                         System.out.println("Even: " + numbers.get(index));
                         index++;
-                        lock.notify();
+                        lock.notifyAll();
                     } else {
                         try {
                             lock.wait();
                         } catch (InterruptedException e) {
                             Thread.currentThread().interrupt();
+                            return;
                         }
                     }
                 }
@@ -520,6 +596,9 @@ public class OddEvenPrinter {
 
 **Answer**
 
+The two threads deliberately acquire the locks in opposite orders. Each can hold one lock while
+waiting forever for the other; production code should enforce one global lock order.
+
 ```java
 public class DeadlockExample {
     public static void main(String[] args) {
@@ -528,7 +607,7 @@ public class DeadlockExample {
         Thread thread1 = new Thread(() -> {
             synchronized (lock1) {
                 System.out.println("Thread 1: Holding lock 1...");
-                try { Thread.sleep(100); } catch (InterruptedException e) {}
+                pauseBriefly();
                 System.out.println("Thread 1: Waiting for lock 2...");
                 synchronized (lock2) {
                     System.out.println("Thread 1: Holding lock 1 & 2...");
@@ -538,7 +617,7 @@ public class DeadlockExample {
         Thread thread2 = new Thread(() -> {
             synchronized (lock2) {
                 System.out.println("Thread 2: Holding lock 2...");
-                try { Thread.sleep(100); } catch (InterruptedException e) {}
+                pauseBriefly();
                 System.out.println("Thread 2: Waiting for lock 1...");
                 synchronized (lock1) {
                     System.out.println("Thread 2: Holding lock 1 & 2...");
@@ -547,6 +626,14 @@ public class DeadlockExample {
         });
         thread1.start();
         thread2.start();
+    }
+
+    private static void pauseBriefly() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+        }
     }
 }
 ```
@@ -565,23 +652,31 @@ public class DeadlockExample {
 ```java
 Map<String, Integer> ipCountMap = new HashMap<>();
 for (String logLine : logFile) {
-        String ip = logLine.split(",")[3];
-        ipCountMap.put(ip, ipCountMap.getOrDefault(ip, 0) + 1);
+    String[] fields = logLine.split(",", -1);
+    if (fields.length >= 4) {
+        String ip = fields[3];
+        ipCountMap.merge(ip, 1, Integer::sum);
+    }
 }
-// Step 2: Sort the IP addresses by count in descending order
-List<Entry<String, Integer>> sortedIPList = new ArrayList<>(ipCountMap.entrySet());
+List<Map.Entry<String, Integer>> sortedIPList = new ArrayList<>(ipCountMap.entrySet());
 sortedIPList.sort((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()));
-// Step 3: Output the top ten IP addresses
+
 System.out.println("RANK, IP, COUNT");
 for (int i = 0; i < Math.min(10, sortedIPList.size()); i++) {
-    Entry<String, Integer> entry = sortedIPList.get(i);
+    Map.Entry<String, Integer> entry = sortedIPList.get(i);
     System.out.println((i + 1) + ", " + entry.getKey() + ", " + entry.getValue());
 }
 ```
 
+Real log formats require a proper parser, malformed-line handling, and a tie-breaker if output must
+be deterministic. For files larger than memory, aggregate in partitions or an external store.
+
 ## Write a short code for a counter that is increment and decremented by multiple threads?
 
 **Answer**
+
+Guard every read and update with the same lock. An `AtomicInteger` is shorter for this single-value
+case, while a lock becomes useful when several values must change under one invariant.
 
 ```java
 public class Counter {
@@ -656,51 +751,63 @@ public class Counter {
 }
 ```
 
-## Write a short code using stream API to update the list of employees in which if salary is less than 5000 give them 10% increment?
+## How do you give employees earning less than 5,000 a 10% raise?
 
 **Answer**
 
-employees.stream()
-            .filter(employee -> employee.getSalary() < 5000)
-            .forEach(employee -> employee.setSalary(employee.getSalary() * 1.10));
+This mutates the existing employee objects. For immutable domain objects, map qualifying employees
+to updated copies instead.
 
-Use flatMap to convert an ‘n’ nested list into a single list.
+```java
+employees.stream()
+    .filter(employee -> employee.getSalary() < 5_000)
+    .forEach(employee -> employee.setSalary(employee.getSalary() * 1.10));
+```
+
+## How do you flatten a list by one level?
+
+**Answer**
+
+`flatMap` replaces each nested list with its stream of elements.
+
 
 ```java
 List<Integer> flatList = nestedList.stream()
-            .flatMap(List::stream)
-            .collect(Collectors.toList());
-public static List<Integer> flatten(List<?> nestedList) {
-    return nestedList.stream()
-        .flatMap(element -> {
-            if (element instanceof List) {
-                return flatten((List<?>) element).stream();
-            } else {
-                return Arrays.asList((Integer) element).stream();
-            }
-        })
-        .collect(Collectors.toList());
-}
+    .flatMap(List::stream)
+    .toList();
 ```
 
-## Find Output?
+## How do you recursively flatten an arbitrarily nested list?
 
 **Answer**
 
-Class A {
-    AB(String)
-    AB(Integer)
-}
-Class B {
-    BA(String)
-    BA(Object)
-}
-AB(null)
-BA(null)
-Calling AB(null)
-When you call AB(null), the compiler cannot determine whether to call AB(String) or AB(Integer) because both are equally specific in this context. This results in a compilation error due to ambiguity.
-Calling BA(null)
+Use recursion when elements may themselves contain lists. This returns `Object` values because a
+heterogeneous nested input has no more specific safe element type.
 
-**When you call BA(null), the compiler chooses BA(String) over BA(Object) because String is a subclass of Object, making BA(String) more specific.**
+```java
+public static List<Object> flatten(List<?> nestedList) {
+    return nestedList.stream()
+        .flatMap(element -> element instanceof List<?> nested
+            ? flatten(nested).stream()
+            : Stream.of(element))
+        .toList();
+}
+```
 
-The term "more specific" refers to the method whose parameter type is a subclass of the other possible parameter types.
+## Which overloaded method is selected for a `null` argument?
+
+**Answer**
+
+```java
+static void choose(String value) {}
+static void choose(Integer value) {}
+
+static void select(String value) {}
+static void select(Object value) {}
+
+choose(null); // Does not compile: String and Integer are unrelated.
+select(null); // Calls select(String), the more specific overload.
+```
+
+`null` can match any reference type. Overload resolution selects the most specific applicable method;
+if two applicable parameter types are unrelated, the call is ambiguous.

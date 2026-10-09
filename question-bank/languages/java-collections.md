@@ -70,8 +70,8 @@ are rearranged. Algorithm details are implementation notes, not API contracts.
 - **ArrayList:** Slightly slower due to dynamic resizing and additional methods.
 - **Flexibility:** Array: Less flexible, requires manual resizing and copying.
 - **ArrayList:** More flexible, provides built-in methods for resizing, adding, and removing elements.
-- **Syntax:** Array: int[] arr = new int[10];
-- **ArrayList:** ArrayList<Integer> list = new ArrayList<>();
+- **Syntax:** array: `int[] values = new int[10]`
+- **ArrayList:** `List<Integer> values = new ArrayList<>()`
 - **Methods:** Array: Limited to basic operations (length, indexing).
 - **ArrayList:** Rich set of methods (add, remove, get, size, etc.).
 
@@ -237,14 +237,19 @@ This can lead to improved performance for applications with high read/write oper
 - **Deletion:** Calculates hash, determines index, and removes the node.
 - **Resizing:** Doubles the array size and rehashes entries when the load factor is exceeded.
 
-## Write HashCode for Employee Class?
+## How do you implement `hashCode` for an employee?
 
 **Answer**
 
+Use the same fields used by `equals`, and do not include mutable fields when the object may be used as
+a hash-map key while those fields can change.
+
+```java
 @Override
-    public int hashCode() {
-        return Objects.hash(id, name, department, salary);
-    }
+public int hashCode() {
+    return Objects.hash(id, name, department, salary);
+}
+```
 
 ## What is the difference between treemap and hashmap?
 

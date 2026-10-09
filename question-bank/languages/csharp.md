@@ -204,6 +204,8 @@ independently.
 
 **Answer**
 
+`Console.ReadLine` may return `null` when no more input is available, so the variable is nullable.
+
 ```csharp
 string? input = Console.ReadLine();
 Console.WriteLine(input);
@@ -221,6 +223,9 @@ inner elements and can be used when modeling grouped or left-join behavior.
 
 **Answer**
 
+`Count` evaluates the predicate for each UTF-16 `char`. Counting user-perceived Unicode characters
+requires text-element handling instead.
+
 ```csharp
 char target = 'c';
 int count = text.Count(character => character == target);
@@ -229,6 +234,8 @@ int count = text.Count(character => character == target);
 ## How do you filter even numbers and sum them with LINQ?
 
 **Answer**
+
+Filter the sequence with `Where`, then aggregate the remaining values with `Sum`.
 
 ```csharp
 int sum = numbers.Where(number => number % 2 == 0).Sum();
@@ -253,5 +260,6 @@ Avoid presenting preview features as stable language behavior.
 ## References
 
 - [C# language reference](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/)
+- [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14)
 - [What's new in C# 14](https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/csharp-14/)
 - [Entity Framework Core](https://learn.microsoft.com/en-us/ef/core/)

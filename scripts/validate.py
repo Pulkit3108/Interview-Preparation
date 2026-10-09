@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 QUESTION_BANK = ROOT / "question-bank"
 errors: list[str] = []
 SECTION_HEADINGS = {
+    "Sections",
     "Questions To Ask The Interviewer",
-    "Self-Reflection Prompts",
     "References",
     "Topic Map",
 }
@@ -95,10 +95,7 @@ for markdown in ROOT.rglob("*.md"):
                     )
                 headings[normalized] = line_number
 
-        empty_answer = re.search(
-            r"\*\*(?:Answer|Answer framework)\*\*\s*(?=#{2,3}\s|\Z)",
-            text,
-        )
+        empty_answer = re.search(r"\*\*Answer\*\*\s*(?=#{2,3}\s|\Z)", text)
         if empty_answer:
             line_number = text.count("\n", 0, empty_answer.start()) + 1
             fail(markdown, f"empty answer near line {line_number}")
@@ -110,7 +107,7 @@ for markdown in ROOT.rglob("*.md"):
                 continue
             end = h2_matches[index + 1].start() if index + 1 < len(h2_matches) else len(text)
             section = text[heading.end():end]
-            if "**Answer**" not in section and "**Answer framework**" not in section:
+            if "**Answer**" not in section:
                 line_number = text.count("\n", 0, heading.start()) + 1
                 fail(markdown, f"question heading near line {line_number} has no answer marker")
 

@@ -19,7 +19,7 @@ Unit testing and asynchronous-test fundamentals.
   database, filesystem, or network behavior is part of the contract.
 - **Current API:** prefer JUnit Jupiter for new code unless the project is constrained to JUnit 4.
 
-## What are some of the important annotation you use for JUnit testing
+## What are some important annotations used in JUnit testing?
 
 **Answer**
 

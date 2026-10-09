@@ -2,6 +2,8 @@
 
 [Back to the repository overview](../README.md)
 
+Select a topic to view its questions and answers.
+
 ## Behavioral
 
 - [Behavioral interviews](behavioral/behavioral-interviews.md)
@@ -70,16 +72,3 @@
 - [Test-driven and behavior-driven development](testing/development-practices.md)
 - [Java mocking tools](testing/java-mocking.md)
 - [Selenium and browser automation](testing/selenium.md)
-
-## Choosing The Right Section
-
-- Put language syntax, runtime, and standard-library questions under **Programming Languages**.
-- Put framework-specific application questions under **Frontend** or **Backend**.
-- Put queries, relational modeling, transactions, and indexes under **Data**.
-- Put object collaboration and design patterns under **Low-Level Design**.
-- Put distributed-system trade-offs and architecture exercises under **System Design**.
-- Put deployment and platform concerns under **Infrastructure**.
-- Put test automation, test design, and testing tools under **Testing**.
-
-If a question crosses areas, keep the full answer under its primary concept and link to it from the
-secondary topic instead of copying the answer.

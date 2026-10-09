@@ -121,6 +121,8 @@ inspect the emitted bundles and budgets rather than assuming every optimization 
 
 **Answer**
 
+Both symbols are exported by Angular's core package:
+
 ```typescript
 import { Component, Input } from '@angular/core';
 ```

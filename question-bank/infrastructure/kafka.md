@@ -290,37 +290,34 @@ from broker delivery failure:
 
 ```java
 public class JsonKafkaProducer {
-    public static void main(String[] args) {
-        // Kafka producer configuration settings
+    public static void main(String[] args) throws Exception {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        // Create a Kafka producer
-        KafkaProducer<String, String> producer = new KafkaProducer<>(props);
-        // Create a JSON object
+
         Map<String, Object> jsonMessage = new HashMap<>();
         jsonMessage.put("id", 1);
         jsonMessage.put("name", "John Doe");
         jsonMessage.put("email", "john.doe@example.com");
-        try {
-            // Convert the JSON object to a string
+
+        try (KafkaProducer<String, String> producer = new KafkaProducer<>(props)) {
             ObjectMapper objectMapper = new ObjectMapper();
             String jsonString = objectMapper.writeValueAsString(jsonMessage);
-            // Create a producer record
             ProducerRecord<String, String> record = new ProducerRecord<>("json-topic", jsonString);
-            // Send the JSON message to the Kafka topic
-            producer.send(record);
-            System.out.println("Sent message: " + jsonString);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Close the producer
-            producer.close();
+
+            // Waiting on the Future makes broker acknowledgment or failure visible in this example.
+            RecordMetadata metadata = producer.send(record).get();
+            System.out.printf("Sent to partition %d at offset %d%n",
+                metadata.partition(), metadata.offset());
         }
     }
 }
 ```
+
+Production code normally uses an asynchronous callback or composes the returned future rather than
+blocking each send. Configure acknowledgments, idempotence, retries, delivery timeout, keys, and
+schema handling from the delivery contract.
 
 ## How do you serialize a custom object before sending it to a Kafka topic?
 
@@ -332,26 +329,24 @@ producer configuration looks like this:
 
 ```java
 public class CustomObjectProducer {
-    public static void main(String[] args) {
-        // Kafka producer configuration settings
+    public static void main(String[] args) throws Exception {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, UserSerializer.class.getName());
-        // Create a Kafka producer
-        KafkaProducer<String, User> producer = new KafkaProducer<>(props);
-        // Create a custom object
+
         User user = new User(1, "John Doe", "john.doe@example.com");
-        // Create a producer record
         ProducerRecord<String, User> record = new ProducerRecord<>("users-topic", user);
-        // Send the custom object to the Kafka topic
-        producer.send(record);
-        System.out.println("Sent message: " + user);
-        // Close the producer
-        producer.close();
+
+        try (KafkaProducer<String, User> producer = new KafkaProducer<>(props)) {
+            producer.send(record).get();
+        }
     }
 }
 ```
+
+The `UserSerializer` and `User` types are application-specific. Prefer a schema-registry-compatible
+serializer when events cross service or team boundaries.
 
 ## Describe how you can handle serialization errors in Kafka producers.
 
@@ -376,21 +371,24 @@ route the original business input through an explicit remediation path when poli
 
 **Answer**
 
+Configure the value deserializer for the target type, subscribe, and poll continuously. Offset
+commit policy must match when processing is considered complete.
+
 ```java
 public class JsonKafkaConsumer {
     public static void main(String[] args) {
-        // Kafka consumer configuration settings
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "json-consumer-group");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, UserDeserializer.class.getName());
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,
+            StringDeserializer.class.getName());
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,
+            UserDeserializer.class.getName());
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        // Create a Kafka consumer
-        KafkaConsumer<String, User> consumer = new KafkaConsumer<>(props);
-        // Subscribe to the topic
-        consumer.subscribe(Collections.singletonList("users-topic"));
-        // Poll for new messages
-        try {
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "true");
+
+        try (KafkaConsumer<String, User> consumer = new KafkaConsumer<>(props)) {
+            consumer.subscribe(List.of("users-topic"));
             while (true) {
                 ConsumerRecords<String, User> records = consumer.poll(Duration.ofMillis(100));
                 for (ConsumerRecord<String, User> record : records) {
@@ -398,13 +396,14 @@ public class JsonKafkaConsumer {
                     System.out.println("Received message: " + user);
                 }
             }
-        } finally {
-            // Close the consumer
-            consumer.close();
         }
     }
 }
 ```
+
+This example relies on automatic offset commits and is intentionally incomplete. A real consumer
+must coordinate processing, retries, deserialization failures, shutdown, and offset commits so a
+crash does not silently lose work.
 
 ## How do you handle deserialization errors in Kafka consumers?
 
@@ -500,5 +499,7 @@ the simplistic label "stream" versus "queue."
 
 - [Apache Kafka documentation](https://kafka.apache.org/documentation/)
 - [Kafka design](https://kafka.apache.org/documentation/#design)
+- [`KafkaProducer` API](https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/producer/KafkaProducer.html)
+- [`KafkaConsumer` API](https://kafka.apache.org/41/javadoc/org/apache/kafka/clients/consumer/KafkaConsumer.html)
 - [Confluent Schema Registry fundamentals](https://docs.confluent.io/platform/current/schema-registry/fundamentals/)
 - [RabbitMQ reliability guide](https://www.rabbitmq.com/docs/reliability)
