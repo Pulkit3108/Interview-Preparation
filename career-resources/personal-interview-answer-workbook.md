@@ -1,23 +1,22 @@
 # Personal Interview Answer Workbook
 
-This page preserves the personal-answer material from the original notes while separating durable
-facts from answers that must be refreshed for each interview.
+Use this workbook to turn personal experience into interview answers while separating verifiable
+facts from details that must be refreshed for each role.
 
 [Back to career resources](README.md)
 
-## Verify Before Using
+## Candidate Details To Verify
 
-The source notes described the candidate as Pulkit Mittal, a full-stack or development engineer at
-Kongsberg Digital in Bengaluru, with a B.Tech in Computer Science from the University of Petroleum
-and Energy Studies. They listed experience with C#, C++, TypeScript, Angular, .NET, Java, Spring Boot,
-SQL, Python, AI, machine learning, and computer vision, plus reading as a hobby. They also mentioned
-work on SiteCom, REST APIs, Angular widgets, dashboard-report APIs, high automated-test coverage, an
-onsite assignment supporting Aramco in Saudi Arabia, and a Spotlight Award.
+The draft profile identifies Pulkit Mittal as a full-stack or development engineer at Kongsberg
+Digital in Bengaluru, with a B.Tech in Computer Science from the University of Petroleum and Energy
+Studies. Candidate experience may include C#, C++, TypeScript, Angular, .NET, Java, Spring Boot, SQL,
+Python, AI, machine learning, computer vision, and reading as a hobby. Potential examples include
+work on SiteCom, REST APIs, Angular widgets, dashboard-report APIs, automated-test coverage, an onsite
+assignment supporting Aramco in Saudi Arabia, and a Spotlight Award.
 
-These are a **historical source snapshot**, not automatically current claims. Before publishing a
-resume or speaking in an interview, verify employer, title, location, years of experience, skill
-depth, product confidentiality, metrics, client-name permission, award wording, degree details, and
-every outcome. Remove any claim that cannot be supported.
+Before using any detail in a resume or interview, verify the current employer, title, location,
+years of experience, skill depth, product confidentiality, metrics, permission to name clients,
+award wording, degree details, and every claimed outcome. Remove anything that cannot be supported.
 
 ## Tell Me About Yourself
 
@@ -34,8 +33,8 @@ context. Do not use an old “years of experience” figure without recalculatin
 
 ## Why Should We Hire You?
 
-Convert adjectives from the source, such as diligent, adaptable, reliable, quick learner, good
-listener, and team player, into evidence:
+Convert adjectives such as diligent, adaptable, reliable, quick learner, good listener, and team
+player into evidence:
 
 ```text
 The role needs [capability]. I demonstrated that when I [action and result]. It also needs
@@ -62,11 +61,11 @@ around the work sought next, not unsupported criticism of the current employer.
 
 ## Strengths And Weaknesses
 
-The source proposed adaptability, problem solving, collaboration, attention to detail, and time
-management as strengths. Choose only those supported by a specific example.
+Possible strengths include adaptability, problem solving, collaboration, attention to detail, and
+time management. Choose only those supported by a specific example.
 
-It proposed public speaking, perfectionism, impatience, and hesitation to ask questions as possible
-weaknesses. Do not claim a development activity, such as joining Toastmasters, unless it is true.
+Possible development areas include public speaking, perfectionism, impatience, and hesitation to
+ask questions. Do not claim a development activity, such as joining Toastmasters, unless it is true.
 Choose a real, non-fatal weakness and show the trigger, impact, action, and measured improvement.
 
 ## Conflicts, Leadership, And Workload
@@ -77,8 +76,8 @@ dependency management, feedback, and results rather than only listing intentions
 
 For excess workload, show current commitments and consequences, then ask the decision owner to
 choose among scope, sequence, deadline, or capacity. For estimation, decompose work, identify
-unknowns and dependencies, compare with completed work, use a range, and update it. The source's
-fixed “multiply by 1.5 and then double” rule is not a sound general estimation method.
+unknowns and dependencies, compare with completed work, use a range, and update it. Avoid fixed
+formulas such as “multiply by 1.5 and then double”; they are not sound general estimation methods.
 
 ## Recruiter And Offer Questions
 

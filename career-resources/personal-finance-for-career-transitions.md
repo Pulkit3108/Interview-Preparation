@@ -4,7 +4,7 @@ General planning principles for a job change, employment gap, relocation, or com
 
 [Back to career resources](README.md)
 
-For definitions and deeper coverage of the finance topics consolidated from the original notes, see
+For definitions and deeper coverage of tax, banking, insurance, investing, and trading topics, see
 the [finance reference](finance/README.md).
 
 This guide is educational, not individualized financial, tax, insurance, or legal advice. Rules and

@@ -19,8 +19,8 @@ depends on complete, correctly signed cash flows and can be ambiguous in unusual
 
 **Rolling returns** are returns for many overlapping windows of equal length. For example, a
 three-year rolling series can calculate annualized return for every possible three-year window over
-the observation period. The source document's formula that averages yearly percentage returns is
-not a rolling-return calculation and ignores compounding.
+the observation period. Averaging yearly percentage returns is not a rolling-return calculation and
+ignores compounding.
 
 **Tracking difference** is the fund return minus benchmark return over a period. **Tracking error**
 measures variability of active return, commonly the annualized standard deviation of periodic fund
@@ -43,13 +43,11 @@ strike, premium, time, volatility, contract multiplier, margin, and settlement. 
 losses much larger than the initial cash committed, especially for option writers and futures
 positions. Learn contract specifications and risk controls before trading.
 
-## A Safer Company-Research Process
+## Company-Research Process
 
-The source recommended buying at most one or two mid- or small-cap companies. That is concentration,
-not diversification. It also suggested that paying taxes and dividends proves a small company has
-cash. Those payments are evidence to reconcile, not proof that accounts are reliable.
-
-A more defensible research sequence is:
+Owning only one or two mid- or small-cap companies creates concentration rather than diversification.
+Tax and dividend payments are evidence to reconcile, not proof that a company's accounts are
+reliable. A defensible research sequence is:
 
 1. understand the business model, customers, competitive position, industry structure, and major
    risks;
@@ -70,12 +68,12 @@ Cash flow, tax paid, and dividends should be reconciled with balance-sheet movem
 ## Personal-Finance Rules In Context
 
 The rule of 72, age-based equity allocation, 50-30-20 budgeting, pay-yourself-first, six-month
-emergency reserve, auto-sweep, income multiples for life cover, EMI-to-income limits, and 25-times
-expenses retirement rule are all preserved in the
+emergency reserve, auto-sweep, income multiples for life cover, EMI-to-income limits, and the
+25-times-expenses retirement rule are covered in the
 [career-transition finance guide](../personal-finance-for-career-transitions.md). They are screening
 heuristics, not guarantees or eligibility rules.
 
-The source's “3x3x3” list is better treated as a checklist, not a mandatory product allocation:
+A “3x3x3” framework is best treated as a checklist, not a mandatory product allocation:
 
 - protection: appropriate life and health cover plus an emergency reserve;
 - obligations: debt-repayment plan and goal-specific retirement planning;
@@ -84,13 +82,13 @@ The source's “3x3x3” list is better treated as a checklist, not a mandatory 
 NPS, gold, real estate, mutual funds, or individual stocks may or may not belong in a particular
 plan. Product choice follows the need; it does not define it.
 
-## Reading List From The Source
+## Further Reading
 
 - *Diamonds in the Dust*
 - *Coffee Can Investing*
 
-These titles are preserved as reading leads, not endorsements. Check edition, author, scope, and
-whether claims remain applicable under current markets and regulation.
+These titles are reading leads, not endorsements. Check the edition, author, scope, and whether the
+claims remain applicable under current markets and regulation.
 
 ## Primary References
 

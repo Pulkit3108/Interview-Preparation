@@ -14,9 +14,9 @@ A **fixed deposit (FD)** places money for a defined tenure at stated terms. A **
 renewal defaults, tax, whether the interest rate is fixed or variable, and deposit-insurance coverage.
 
 A **flexi deposit** or **auto-sweep** links a transaction account to term deposits and moves balances
-above or below configured thresholds. It can improve yield on idle cash, but the source document's
-claim of a guaranteed 5-7% is unsafe. Rates, sweep lot sizes, tenure, breakage method, tax, and the
-order in which deposits are liquidated vary by bank.
+above or below configured thresholds. It can improve yield on idle cash, but returns are not
+guaranteed. Rates, sweep lot sizes, tenure, breakage method, tax, and the order in which deposits are
+liquidated vary by bank.
 
 ## Interest Rates And RBI Tools
 
@@ -36,10 +36,10 @@ paid to a retail depositor.
 
 ## Banks And NBFCs
 
-A non-banking financial company performs specified financial activities without being a bank. The
-source claim that NBFCs are “not regulated” was wrong: RBI registers, regulates, and supervises
-applicable NBFC categories under its statutory framework. Regulation does not make every NBFC
-product equivalent to a bank deposit, and only eligible entities may accept public deposits.
+A non-banking financial company performs specified financial activities without being a bank. RBI
+registers, regulates, and supervises applicable NBFC categories under its statutory framework.
+Regulation does not make every NBFC product equivalent to a bank deposit, and only eligible entities
+may accept public deposits.
 
 Before placing money with or borrowing from an NBFC, verify the legal entity and RBI registration,
 whether the proposed activity is permitted, grievance route, charges, security, credit risk, and

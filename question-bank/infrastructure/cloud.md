@@ -48,9 +48,8 @@ EventBridge terminology.
   do not manage the underlying worker instances.
 
 These services do not automatically scale every workload. Scaling policies, capacity configuration,
-networking, identity, health checks, and application behavior must still be designed. AWS OpsWorks,
-which appeared in the source notes, is a legacy service and should not be the default recommendation
-for a new architecture.
+networking, identity, health checks, and application behavior must still be designed. AWS OpsWorks
+is a legacy service and should not be the default recommendation for a new architecture.
 
 ## What is an AWS IAM role, and who can assume one?
 

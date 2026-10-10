@@ -7,7 +7,6 @@ subject for quick reference.
 
 - [Browse the complete question bank](question-bank/README.md)
 - [Use the career preparation guides](career-resources/README.md)
-- [Review the legacy-content preservation audit](CONTENT_AUDIT.md)
 - [Contribute or improve content](CONTRIBUTING.md)
 
 ## Coverage

@@ -55,10 +55,9 @@ S&P's methodology. **Nasdaq-100** tracks large non-financial companies listed on
 methodology. None is “the market” in full; country, sector, currency, valuation, and concentration
 exposures differ.
 
-## ETF Due Diligence Instead Of Ticker Tips
+## ETF Due Diligence
 
-The source listed several brand-specific tickers for sectors, dividends, gold, and overseas themes.
-Those names and portfolios can change. For any ETF, verify:
+ETF names, mandates, fees, availability, and portfolios can change. For any ETF, verify:
 
 1. legal name, exchange symbol, AMC, current scheme documents, and benchmark;
 2. what the index actually holds and how it weights and rebalances constituents;

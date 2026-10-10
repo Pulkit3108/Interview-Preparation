@@ -31,7 +31,7 @@ the complete tax computation before buying a product for a deduction.
 | --- | --- | --- |
 | 80C, 80CCC, 80CCD(1) | Eligible payments such as provident fund, specified insurance, NSC, eligible tuition, housing-loan principal, and qualifying pension contributions | The combined listed limit is ₹1.5 lakh; eligibility and lock-ins differ by product |
 | 80CCD(1B) | Eligible individual contribution to the Central Government pension scheme | Additional listed limit of ₹50,000; PRAN and contribution details are required |
-| 80CCD(2) | Eligible employer contribution to NPS | Limit depends on regime and employer category; verify the current percentage rather than using the source document's old blanket figure |
+| 80CCD(2) | Eligible employer contribution to NPS | Limit depends on regime and employer category; verify the current applicable percentage |
 | 80D | Eligible health-insurance premium, preventive check-up, and certain senior-citizen medical expenditure | Limits vary by covered person's age and whether insurance premium was paid |
 | 80E | Interest on an eligible higher-education loan | Applies to eligible interest, not the entire EMI; check lender, relationship, and period conditions |
 | Section 24(b) | Eligible interest on housing or improvement borrowing | Treatment differs for self-occupied and let-out property and by loan purpose/date |
@@ -46,9 +46,10 @@ lower. The Income Tax Department's AY 2026-27 page lists the Section 80CCD(2) em
 under the new regime at 14% of salary for all employer categories; its old-regime table lists 14%
 for Central or State Government employers and 10% for PSU or other employers.
 
-The source document's combined “employer NPS plus employer PF ₹7.5 lakh” statement must not be used
-as the Section 80CCD(2) deduction limit. The deduction for an eligible employer NPS contribution and
-the separate tax treatment of aggregate employer contributions are different calculations.
+Do not treat the tax rule for aggregate employer contributions to NPS, superannuation funds, and
+recognized provident funds as the Section 80CCD(2) deduction limit. The deduction for an eligible
+employer NPS contribution and the separate tax treatment of aggregate employer contributions are
+different calculations.
 
 ## Tax-Linked Products
 
