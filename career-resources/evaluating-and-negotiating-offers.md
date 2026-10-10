@@ -82,6 +82,25 @@ Prioritize the few changes that materially affect the decision. Do not invent an
 another organization's confidential terms, or threaten to leave after accepting. If circumstances
 change after acceptance, communicate promptly and accept that the employer may withdraw the offer.
 
+## Discussing Growth In A Current Role
+
+Keep an evidence log of outcomes, scope, incidents resolved, people helped, and feedback. In a growth
+conversation, connect that evidence to the next level's written expectations and ask for a concrete
+gap assessment, sponsor, and review date. Visibility is useful; claiming that success would have been
+impossible without you or applying personal pressure is not.
+
+```text
+Over [period], I delivered [outcomes] and expanded my scope to [responsibilities]. Based on the
+expectations for [target level], I believe the strongest evidence is [examples]. Which gaps do you
+still see, and what results would demonstrate readiness? Can we record the plan and review it on
+[date]?
+```
+
+Build alliances by making ownership and impact legible, sharing credit, resolving disagreements on
+evidence, and escalating trade-offs through the agreed process. Never threaten departure merely to
+force a promotion. If growth remains unavailable, decide separately whether another role is a better
+fit.
+
 ## Decision Record
 
 Before accepting, write down:

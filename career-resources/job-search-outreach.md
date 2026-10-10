@@ -103,6 +103,41 @@ A useful cover letter is short and evidence-led:
 Do not repeat the entire resume or use a generic biography. Tailor claims to the role and remove
 employer-confidential details.
 
+### Short Cover-Letter Template
+
+```text
+Dear [hiring manager or team],
+
+I am applying for [role] because [specific product, problem, or team reason]. In [recent role or
+project], I [relevant action] and achieved [verifiable outcome], which matches your need for
+[requirement]. I also bring [second relevant capability with evidence].
+
+I would welcome a conversation about how this experience could help [team or company objective].
+Thank you for considering my application.
+
+Regards,
+[name]
+```
+
+## Message To A Former Employee
+
+Use this only for respectful, independent due diligence. Do not ask for confidential information or
+treat one account as a complete verdict.
+
+```text
+Hello [name],
+
+I am considering an offer for a [role] at [company] and noticed that you previously worked in a
+similar area. If you are comfortable sharing, did the day-to-day role, management support, and
+working expectations match what you were told during hiring?
+
+I understand if you would rather not discuss it. I will keep any response private and will not ask
+for confidential company information. Thank you for considering the request.
+```
+
+Compare several dated observations, role locations, and teams. Employee tenure or a departure alone
+does not establish that a workplace is healthy or unhealthy.
+
 ## Follow Up
 
 If no timeline was provided, one concise follow-up after several business days is normally enough.

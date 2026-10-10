@@ -13,6 +13,7 @@ QUESTION_BANK = ROOT / "question-bank"
 errors: list[str] = []
 SECTION_HEADINGS = {
     "Sections",
+    "Topics",
     "Questions To Ask The Interviewer",
     "References",
     "Topic Map",

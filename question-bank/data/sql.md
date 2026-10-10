@@ -683,3 +683,39 @@ Separating the levels supports data independence. **Logical data independence** 
 conceptual-schema changes on external views, while **physical data independence** lets storage and
 access structures change without altering the logical model. Actual database products approximate
 these boundaries rather than implementing every textbook layer literally.
+
+## What are strong and weak entities, attributes, and relationship cardinality?
+
+**Answer**
+
+A strong entity has a key that identifies its occurrences independently. A weak entity depends on an
+owner entity and is identified by the owner's key plus a partial key. This is a conceptual-modeling
+distinction; the relational schema implements it with columns, primary keys, foreign keys, and
+constraints.
+
+Attributes can be simple or composite, single- or multi-valued, stored or derived, and optional or
+required. Relationship cardinality describes maximum participation such as one-to-one, one-to-many,
+or many-to-many; minimum participation captures optionality. A junction relation normally implements
+a many-to-many relationship.
+
+## What is attribute closure and how does it help find keys?
+
+**Answer**
+
+For functional dependencies `F`, the closure `X+` is the set of attributes functionally determined
+by `X`. Start with `X`, then repeatedly add the right side of any dependency whose left side is
+already contained in the closure until nothing changes. If `X+` contains every attribute of the
+relation, `X` is a superkey. If no proper subset of `X` is also a superkey, it is a candidate key.
+
+Closure tests implication and keys for the stated dependency set. It does not prove that the
+dependencies accurately describe production data.
+
+## What are common relational-algebra operations?
+
+**Answer**
+
+Selection filters tuples; projection selects attributes; union, intersection, and difference combine
+compatible relations; Cartesian product pairs tuples; rename changes relation or attribute names;
+and joins combine related tuples according to a predicate. Division expresses “related to all” style
+queries. Relational algebra is a mathematical, set-oriented model; SQL adds bags, `NULL`, ordering,
+aggregation, and other behavior that requires careful translation.

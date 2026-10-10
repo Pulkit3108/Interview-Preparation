@@ -624,6 +624,68 @@ as QUIC combine transport and cryptographic setup differently over UDP.
 - UDP is not automatically faster for every workload. Congestion control, handshake behavior,
   packet loss, application recovery, and protocols such as QUIC affect the result.
 
+## What is a VPN, and how do remote-access and site-to-site VPNs differ?
+
+**Answer**
+
+A virtual private network creates an authenticated, usually encrypted tunnel across another network.
+A **remote-access VPN** connects an individual device to an organization's gateway. A **site-to-site
+VPN** connects networks through gateways so hosts can route between sites without each host creating
+its own tunnel.
+
+A VPN can protect traffic on an untrusted access network and expose private routes, but it does not
+make endpoints trustworthy, prevent application-layer attacks, or guarantee anonymity. It adds
+encapsulation overhead and can create latency, MTU, DNS, routing, availability, and concentration
+risks. Split tunneling sends only selected routes through the VPN; full tunneling sends the broader
+traffic set defined by policy.
+
+## What do `ping`, `ipconfig`, and `ifconfig` tell you?
+
+**Answer**
+
+`ping` sends ICMP echo requests and can show reachability and round-trip observations when the path
+permits echo traffic. Failure does not prove the host is down because ICMP may be filtered or
+deprioritized.
+
+On Windows, `ipconfig` displays interface IP configuration and can perform platform-specific DHCP or
+DNS-cache operations with options. On traditional Unix-like systems, `ifconfig` displays or changes
+interface configuration, but modern Linux commonly uses the `ip` command. Inspect address, prefix,
+interface state, routes, default gateway, and DNS separately; no one command proves end-to-end
+application health.
+
+## What are the main sources of packet delay?
+
+**Answer**
+
+- **Processing delay:** time to inspect headers and decide what to do with a packet.
+- **Queueing delay:** time waiting behind other work; it varies with load and scheduling.
+- **Transmission delay:** time to place packet bits on a link, approximately packet bits divided by
+  link bit rate.
+- **Propagation delay:** time for a signal to cross the physical distance, approximately distance
+  divided by propagation speed.
+
+For a multi-hop path, add the relevant components at each hop. Bandwidth changes transmission time,
+not the propagation speed through the medium.
+
+## How do a router and a gateway differ?
+
+**Answer**
+
+A router forwards packets between IP networks according to a routing table. A host's **default
+gateway** is usually the local router to which it sends traffic for non-local destinations. “Gateway”
+is broader and can also mean a system that translates protocols or mediates between different
+application or security domains. Therefore every default gateway commonly routes, but not every
+gateway is only an IP router.
+
+## What is an IPv4 link-local or APIPA address?
+
+**Answer**
+
+When a host cannot obtain other IPv4 configuration, it may self-assign a link-local address from
+`169.254.0.0/16` after checking for conflicts. Windows often calls this APIPA. Such an address can
+support same-link communication but is not normally routed, does not provide DNS configuration, and
+often signals a DHCP or network-path problem when broader connectivity was expected.
+
 ## References
 
 - [HTTP semantics and status codes](https://www.rfc-editor.org/rfc/rfc9110.html)
@@ -635,3 +697,4 @@ as QUIC combine transport and cryptographic setup differently over UDP.
 - [Classless Inter-Domain Routing (RFC 4632)](https://www.rfc-editor.org/rfc/rfc4632.html)
 - [IPv6 Addressing Architecture (RFC 4291)](https://www.rfc-editor.org/rfc/rfc4291.html)
 - [Transmission Control Protocol (RFC 9293)](https://www.rfc-editor.org/rfc/rfc9293.html)
+- [IPv4 link-local addressing (RFC 3927)](https://www.rfc-editor.org/rfc/rfc3927.html)

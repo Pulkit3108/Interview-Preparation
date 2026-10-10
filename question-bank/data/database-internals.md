@@ -660,6 +660,35 @@ Replicated state machines commonly use a consensus log to obtain this order. The
 inside the protocol's defined group and fault model; it does not automatically order unrelated
 external effects or make a non-deterministic state machine safe.
 
+## What states can a database transaction pass through?
+
+**Answer**
+
+A textbook transaction begins **active** while its operations execute. After its final statement it
+may be **partially committed** while the system completes the work required to make the commit
+durable. It becomes **committed** when the commit succeeds. An error can move it to **failed**, after
+which rollback makes it **aborted**; the application may terminate it or retry as a new transaction.
+
+Real engines expose more detailed wait, prepared, in-doubt, rollback, and recovery states. The
+important boundary is that an application-level success should be reported only after the required
+commit guarantee has been obtained.
+
+## How do heap, sequential, hash, and indexed file organizations differ?
+
+**Answer**
+
+- A **heap** places records in available space and favors simple insertion, but finding an
+  unindexed record may require a scan.
+- A **sequential or clustered organization** keeps records ordered by a key, supporting ordered
+  scans while making arbitrary insertion and reorganization more expensive.
+- A **hash organization** maps a key to buckets and favors equality access, but handles ranges and
+  skew poorly without additional structure.
+- An **indexed organization** maintains a separate search structure such as a B+ tree, trading
+  extra space and write maintenance for efficient lookups and ranges.
+
+Database engines combine these ideas at the page, table, index, partition, and storage-engine levels;
+the product's implementation and workload determine the actual trade-off.
+
 ## References
 
 - [PostgreSQL transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html)

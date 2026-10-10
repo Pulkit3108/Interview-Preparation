@@ -108,6 +108,8 @@ over a more complex lifecycle.
 - **Shortest job first (SJF):** chooses the smallest predicted CPU burst. It minimizes average
   waiting time when predictions are accurate, but long jobs can starve.
 - **Shortest remaining time first (SRTF):** the preemptive form of SJF.
+- **Longest remaining time first (LRTF):** preemptively favors the job with the largest estimated
+  remaining service time. It is mainly a textbook contrast and can penalize short work.
 - **Round robin:** gives each runnable task a time quantum. A very small quantum increases switching
   overhead; a very large one approaches FCFS.
 - **Priority scheduling:** selects by priority and needs an anti-starvation policy such as aging.
@@ -116,6 +118,16 @@ over a more complex lifecycle.
 
 There is no universally best scheduler. The choice depends on goals such as latency, fairness,
 deadline compliance, throughput, and implementation cost.
+
+## How do multitasking and multiprocessing differ?
+
+**Answer**
+
+Multitasking is the operating system's ability to make progress on multiple tasks by scheduling and
+switching among them. It can occur on one processor, where tasks take turns, or on multiple
+processors. Multiprocessing means the system has and uses multiple processing units or cores, so
+different tasks can execute physically at the same time. Multiprocessing can enable parallelism;
+multitasking alone guarantees only concurrency.
 
 ## What is a race condition?
 
@@ -155,6 +167,16 @@ A **semaphore** maintains a count. Waiting decrements or consumes an available p
 increments or returns one. Counting semaphores can limit access to a pool of resources or coordinate
 producers and consumers. A binary semaphore has at most one available permit, but it does not
 necessarily have the ownership rules of a mutex.
+
+## What is the bounded producer-consumer problem?
+
+**Answer**
+
+Producers add items to a finite buffer and consumers remove them. Correct coordination must prevent
+producers from writing when the buffer is full, consumers from reading when it is empty, and
+conflicting access to buffer state. One classic solution uses a mutex plus counting semaphores for
+empty and occupied slots. Condition variables with a mutex are another approach. Checks must be
+repeated after waking because conditions may have changed, and shutdown needs an explicit protocol.
 
 ## What is a deadlock?
 
@@ -380,6 +402,69 @@ levels trade write cost and rebuild complexity for usable capacity.
 RAID is not a backup. It does not inherently protect against accidental deletion, corruption,
 ransomware, controller defects, or site loss. The exact failure tolerance depends on the RAID level,
 layout, implementation, and which devices fail.
+
+## How do user-level and kernel-level threads differ?
+
+**Answer**
+
+The kernel schedules kernel threads and knows their execution and blocking state. User-level threads
+are created and coordinated by a runtime or library; how they use kernel threads depends on the
+threading model.
+
+- **Many-to-one:** many user threads share one kernel thread. Switching can be cheap, but one
+  blocking system call can block the whole set and the set cannot run on multiple cores at once.
+- **One-to-one:** each user thread maps to a kernel thread. It supports parallelism and independent
+  blocking, with greater kernel resource and scheduling cost.
+- **Many-to-many:** a runtime multiplexes user threads over a pool of kernel threads. It can combine
+  cheap user tasks with multicore execution, but scheduling and blocking integration are harder.
+
+“User thread” does not necessarily mean that the kernel sees only one thread. State the runtime and
+mapping model.
+
+## What are HRRN and multilevel-queue scheduling?
+
+**Answer**
+
+**Highest Response Ratio Next (HRRN)** is a non-preemptive policy that selects the ready process with
+the largest `(waiting time + estimated service time) / estimated service time`. Waiting raises the
+ratio, which reduces starvation compared with selecting only the shortest job, but the scheduler
+still needs an estimate of service time.
+
+A **multilevel queue** statically separates work into queues, often with a different policy per
+class and a fixed priority or time share among queues. A **multilevel feedback queue** additionally
+moves tasks between queues according to observed behavior. Promotion or aging is needed when strict
+priority could starve lower queues.
+
+## How do swapping and overlays differ?
+
+**Answer**
+
+**Swapping** moves a process's memory contents between RAM and backing storage so memory can be
+reclaimed. Modern virtual-memory systems usually page smaller units rather than swapping an entire
+process as one textbook operation, though operating systems still use the term for related reclaim.
+
+**Overlays** are a program-layout technique in which mutually exclusive code or data regions reuse
+the same memory area. They were important when address spaces were smaller than programs and are now
+largely replaced by virtual memory and dynamic loading. Swapping is operating-system residency
+management while overlays are application or linker layout.
+
+## Which timing components matter for a rotating disk request?
+
+**Answer**
+
+Approximate service time includes queueing, controller processing, **seek time** to move the head,
+**rotational latency** until the desired sector arrives, and **transfer time** for the bytes. Caching,
+request reordering, track geometry, and device firmware affect measurements. SSDs have no mechanical
+seek or rotation, so these textbook components should not be applied to them literally.
+
+## Why can multithreading help, and what does it cost?
+
+**Answer**
+
+Threads in one process can share data cheaply, keep a UI or server responsive while other work
+waits, overlap I/O with computation, and use multiple cores. Those benefits require suitable work
+and enough parallel capacity. Threads also add synchronization, scheduling, stack memory, race,
+deadlock, cancellation, testing, and debugging costs. More threads do not guarantee more throughput.
 
 ## References
 

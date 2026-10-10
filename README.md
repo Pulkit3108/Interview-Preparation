@@ -7,6 +7,7 @@ subject for quick reference.
 
 - [Browse the complete question bank](question-bank/README.md)
 - [Use the career preparation guides](career-resources/README.md)
+- [Review the legacy-content preservation audit](CONTENT_AUDIT.md)
 - [Contribute or improve content](CONTRIBUTING.md)
 
 ## Coverage
@@ -24,4 +25,4 @@ subject for quick reference.
 | Infrastructure | Cloud, containers, Kubernetes, Kafka, networking, CI/CD, and observability |
 | Developer tools | Git, command-line utilities, Maven, and Gradle |
 | Testing | Test design, Java mocking, Selenium, and browser automation |
-| Career preparation | Outreach, offer evaluation, negotiation, and transition finances |
+| Career preparation | Outreach, offer evaluation, negotiation, transition finances, and finance reference material |

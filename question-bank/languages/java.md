@@ -4,7 +4,7 @@ Java is divided into focused topic files so the question bank remains readable a
 
 [Back to the question-bank index](../README.md)
 
-### Topics
+## Topics
 
 - [JVM and runtime](java-jvm-runtime.md)
 - [Core language](java-core.md)

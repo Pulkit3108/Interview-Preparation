@@ -263,6 +263,84 @@ Private inheritance is an implementation technique, not ordinary subtype modelin
 composition when the derived class only needs to use another type's behavior and does not need to
 override protected virtual hooks or exploit another inheritance-specific requirement.
 
+## What are a class and an object in C++?
+
+**Answer**
+
+A class declares a user-defined type with data, operations, access control, and invariants. An object
+is an instance of a type with storage and lifetime. Unlike Java, ordinary C++ object construction does
+not require `new`:
+
+```cpp
+class Student {
+public:
+    explicit Student(int id) : id_(id) {}
+    int id() const { return id_; }
+
+private:
+    int id_;
+};
+
+Student local{42};
+```
+
+`Student* p = new Student{42};` is valid but creates a dynamically allocated object that must be
+owned correctly. Prefer automatic lifetime or a standard smart pointer when dynamic ownership is
+needed.
+
+## How do encapsulation and abstraction differ?
+
+**Answer**
+
+Encapsulation groups state and behavior and restricts direct access so the class can preserve its
+invariants. Abstraction exposes a useful contract while hiding implementation choices. Private data
+can support encapsulation, but a class full of trivial getters and setters may still leak its model.
+An abstract base class can express an abstraction, but templates, functions, and value types can too.
+
+## What inheritance shapes should a C++ developer recognize?
+
+**Answer**
+
+Single inheritance has one direct base; multiple inheritance has more than one; multilevel
+inheritance forms a chain; hierarchical inheritance gives one base multiple derived classes; and
+“hybrid” informally combines shapes. Multiple inheritance can create duplicate base subobjects in a
+diamond. Virtual inheritance can share the common base, but it adds complexity. Prefer composition
+unless the relationship is substitutable or inheritance supplies a deliberate customization point.
+
+## What do a destructor and the `this` pointer do?
+
+**Answer**
+
+A destructor runs when an object's lifetime ends and releases resources owned by that object. RAII
+ties resource cleanup to this deterministic lifetime. A base class used polymorphically should
+normally have a public virtual destructor, or a protected non-virtual destructor if deletion through
+the base is intentionally forbidden.
+
+Inside a non-static member function, `this` points to the current object. It can disambiguate a
+member, pass the current object, or return `*this` for chaining. A static member function has no
+`this`. Escaping `this` during construction is dangerous because another observer can see a partly
+constructed object.
+
+## What is aggregation, and how does it differ from composition?
+
+**Answer**
+
+Both model a has-a relationship. In **composition**, the containing object owns the part's lifetime,
+often by storing it by value or in an owning smart pointer. In **aggregation**, the containing object
+refers to an independently owned collaborator, often by reference, pointer, or
+`std::reference_wrapper`. The code must make ownership and lifetime explicit; the vocabulary alone
+does not prevent dangling references.
+
+## What is operator overloading?
+
+**Answer**
+
+Operator overloading defines supported operator behavior for user-defined types. At least one operand
+must have class or enumeration type, and C++ does not let an overload change precedence, arity, or
+evaluation rules. Implement only operations with unsurprising semantics, preserve invariants, and
+prefer non-member overloads for symmetric binary operations when implicit conversion of both sides
+is useful.
+
 ## References
 
 - [C++ smart pointers](https://en.cppreference.com/w/cpp/memory)
