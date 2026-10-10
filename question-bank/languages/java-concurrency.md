@@ -261,26 +261,38 @@ Use higher-level concurrency utilities from java.util.concurrent package.
 - **Intrinsic Locks (Monitors):** Every object in Java has an intrinsic lock. When a thread enters a synchronized method or block, it acquires the lock. When it exits, it releases the lock.
 - **Reentrant Locks:** Java's intrinsic locks are reentrant, meaning that if a thread already holds the lock, it can re-enter the synchronized method or block without blocking itself.
 
-## What is the difference between synchronized vs Reentrant Locks
+## What is the difference between `synchronized` and `ReentrantLock`?
 
 **Answer**
 
-Synchronized Block
-- **Basic Concept:** A synchronized block is a built-in mechanism in Java for achieving thread synchronization.
-- **Syntax:** Uses the synchronized keyword.
-- **Locking:** Implicitly acquires and releases the lock on the specified object.
-- **Reentrancy:** Supports reentrant locking, allowing a thread to re-enter a synchronized block it already holds the lock for.
-- **Fairness:** Does not provide fairness options; threads acquire locks in an unspecified order.
-- **Condition Variables:** Limited to using wait(), notify(), and notifyAll() for thread communication.
-- **Performance:** Simpler and generally faster for basic synchronization needs.
-ReentrantLock
-- **Basic Concept:** A ReentrantLock is a class in java.util.concurrent.locks package that provides more advanced locking mechanisms.
-- **Syntax:** Uses the ReentrantLock class.
-- **Locking:** Explicitly acquires and releases the lock using lock() and unlock() methods.
-- **Reentrancy:** Supports reentrant locking, similar to synchronized blocks.
-- **Fairness:** Can be configured for fairness, ensuring threads acquire locks in the order they requested them.
-- **Condition Variables:** Provides multiple Condition objects for more flexible thread communication.
-- **Performance:** More flexible and powerful, but slightly more complex and may have a performance overhead for simple use cases.
+Both provide mutual exclusion, memory-visibility guarantees, and reentrancy: a thread that already
+owns the lock can acquire it again. The main difference is control and flexibility.
+
+| Concern | `synchronized` | `ReentrantLock` |
+|---|---|---|
+| Lock lifecycle | Acquired and released automatically on block or method exit | Acquired with `lock()` and must be released with `unlock()` |
+| Interruptible acquisition | Not supported while waiting to enter | Supported through `lockInterruptibly()` |
+| Timed or non-blocking attempt | Not supported | Supported through `tryLock()` overloads |
+| Fairness policy | No configurable fairness policy | Optional fair policy, though fairness can reduce throughput |
+| Waiting conditions | One monitor wait set using `wait`, `notify`, and `notifyAll` | Multiple `Condition` instances per lock |
+| Typical choice | Simple scoped locking | Advanced acquisition or coordination requirements |
+
+Use `synchronized` by default when its structured locking is sufficient. Choose `ReentrantLock`
+when the design actually needs timed, interruptible, or conditional acquisition. Always release an
+explicit lock in `finally`:
+
+```java
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+try {
+    updateSharedState();
+} finally {
+    lock.unlock();
+}
+```
+
+Do not select either mechanism from a general performance claim. Measure the real contention pattern
+after choosing the simplest construct that provides the required semantics.
 
 ## What are the different methods used in multithreading?
 

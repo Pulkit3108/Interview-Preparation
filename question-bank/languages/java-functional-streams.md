@@ -50,19 +50,26 @@ Yes, you can have static methods in both functional interfaces and regular inter
 - **Custom Functional Interfaces:** Custom Interfaces: Define your own functional interfaces for modular and reusable code.
 - **Compatibility with Existing Libraries:** Backward Compatibility: Provide backward compatibility with existing libraries and frameworks.
 
-## What are the different functional interface in Java?
+## What are the common functional interfaces in Java?
 
 **Answer**
 
-- **Predicate:** Represents a boolean-valued function of one argument.
-- **Function:** Represents a function that takes one argument and produces a result.
-- **Consumer:** Represents an operation that takes a single input argument and returns no result.
-- **Supplier:** Represents a supplier of results.
-- **UnaryOperator:** A specialization of Function for the same input and output type.
-- **BinaryOperator:** A specialization of BiFunction for the same input and output type.
-- **BiFunction:** Represents a function that takes two arguments and produces a result.
-- **BiConsumer:** Represents an operation that takes two input arguments and returns no result.
-- **BiPredicate:** Represents a boolean-valued function of two arguments.
+The `java.util.function` package provides reusable target types for lambdas and method references.
+
+| Interface | Abstract method | Typical use |
+|---|---|---|
+| `Predicate<T>` | `boolean test(T value)` | Test or filter a value |
+| `Function<T, R>` | `R apply(T value)` | Transform one value into another |
+| `Consumer<T>` | `void accept(T value)` | Perform an operation with no returned result |
+| `Supplier<T>` | `T get()` | Create or provide a value without an input |
+| `UnaryOperator<T>` | `T apply(T value)` | Transform a value without changing its type |
+| `BinaryOperator<T>` | `T apply(T left, T right)` | Combine two same-typed values into one |
+| `BiFunction<T, U, R>` | `R apply(T left, U right)` | Transform two inputs into a result |
+| `BiConsumer<T, U>` | `void accept(T left, U right)` | Consume two inputs without returning a result |
+| `BiPredicate<T, U>` | `boolean test(T left, U right)` | Test a condition involving two inputs |
+
+Primitive specializations such as `IntPredicate` and `LongSupplier` avoid boxing when operating on
+primitive values.
 
 ## How functional interface and lambda expression is related to each other?
 
@@ -77,17 +84,19 @@ Yes, you can have static methods in both functional interfaces and regular inter
 
 **Answer**
 
-- **Comparable:** [Interface used with class]
-- **Purpose:** Defines the natural ordering of objects.
-- **Method:** int compareTo(T o)
-- **Single Sorting Sequence:** Only one sorting sequence can be defined.
-- **Package:** java.lang
-- **Example:** Sorting by a single attribute like id.
-- **Comparator:** Purpose: Defines multiple sorting sequences.
-- **Method:** int compare(T o1, T o2)
-- **Multiple Sorting Sequences:** Multiple sorting sequences can be defined.
-- **Package:** java.util
-- **Example:** Sorting by different attributes like id and name.
+Both define an ordering, but they place that responsibility in different locations.
+
+| Concern | `Comparable<T>` | `Comparator<T>` |
+|---|---|---|
+| Meaning | The type's natural ordering | An external or alternate ordering |
+| Method | `int compareTo(T other)` | `int compare(T left, T right)` |
+| Package | `java.lang` | `java.util` |
+| Implementation | Implemented by the class being ordered | Implemented separately or supplied as a lambda |
+| Number of orderings | Normally one natural order per type | Any number of named or composed orders |
+
+For example, an `Employee` might implement `Comparable<Employee>` to order by employee ID while
+separate comparators order employees by name or joining date. In both cases, the comparison contract
+must be transitive and consistent enough for the target sorted collection or algorithm.
 
 ## Why Comparable Interface is not Functional Interface?
 
@@ -100,49 +109,52 @@ type is more meaningful than creating ad hoc lambda instances.
 - **Comparator Interface:** Annotated with @FunctionalInterface and designed to represent a comparison function.
 Commonly used with lambda expressions and method references to define custom orderings.
 
-## What is Consumer, forEach and Stream API?
+## How do `Consumer`, `forEach`, and the Stream API relate?
 
 **Answer**
 
-- **Stream API:** Functional Programming: Provides a functional approach to processing sequences of elements.
-- **Intermediate Operations:** Return a new stream (e.g., filter, map).
-- **Terminal Operations:** Produce a result or a side-effect (e.g., forEach, collect).
-Intermediate operations are defined and chained together, but they are not executed until a terminal operation is invoked.
-- **Usage:** stream().filter(...).map(...).collect(...)
-forEach Method:
-- **Iterable Interface:** Used to iterate over elements in a collection and perform an action on each element.
-- **Stream Interface:** Used to perform actions on each element of a stream.
-- **Usage:** collection.forEach(action) or stream.forEach(action)
-- **Consumer Interface:** Functional Interface: Represents an operation that takes a single input argument and returns no result.
-- **Method:** void accept(T t)
-- **Usage:** Commonly used in lambda expressions and method references.
-- **Example:** `Consumer<String> printName = name -> System.out.println("Name: " + name)`
+These three APIs work together, but they are not the same thing.
 
-- **Predicate Interface:** A functional interface that represents a single argument function returning a boolean value.
-- **Method:** boolean test(T t) evaluates the predicate on the given argument.
-- **Default Methods:** Includes methods for combining predicates (and, or, negate).
-- **Usage:** Commonly used in lambda expressions, method references, and with the Stream API for filtering and matching operations.
-- **Example:** `Predicate<Integer> isEven = number -> number % 2 == 0`
-- **Supplier Interface:** Represents a supplier of results. It does not take any arguments and returns a result of a specified type.
-- **Method:** T get() - Gets a result.
-- **Default Methods:** The Supplier interface does not have any default methods.
-- **Usage:** Commonly used in lambda expressions, method references, and with the Stream API for generating or providing values.
-- **Example:** `Supplier<Double> randomSupplier = Math::random`
-- **Function Interface:** A functional interface that represents a function taking one argument and producing a result.
-- **Method:** R apply(T t) applies the function to the given argument and returns the result.
-- **Default Methods:** Includes methods for composing functions (andThen, compose).
-- **Usage:** Commonly used in lambda expressions, method references, and with the Stream API for mapping and transforming data.
-- **Example:** `Function<String, Integer> stringLengthFunction = String::length`
-- **Runnable Interface:** A functional interface that represents a task that can be executed by a thread. It does not take any arguments and does not return a result.
-- **Method:** void run() - Executes the task.
-- **Default Methods:** The Runnable interface does not have any default methods.
-- **Usage:** Commonly used to define tasks that can be executed by threads, often in lambda expressions and method references.
-- **Example:** `Runnable task = () -> System.out.println("Task is running")`
-- **Comparator Interface:** A functional interface that represents a comparison function, which imposes a total ordering on some collection of objects.
-- **Method:** int compare(T o1, T o2) - Compares its two arguments for order. Returns a negative integer, zero, or a positive integer as the first argument is less than, equal to, or greater than the second.
-- **Default Methods:** Includes methods for composing comparators (thenComparing, reversed).
-- **Usage:** Commonly used to define custom sorting orders for collections, often in lambda expressions and method references.
-- **Example:** `Comparator<String> byLength = Comparator.comparingInt(String::length)`
+### `Consumer<T>`
+
+`Consumer<T>` is a functional interface for an operation that accepts one value and returns no
+result. Its single abstract method is `void accept(T value)`. It is appropriate for an intentional
+side effect such as printing, logging, or sending a value to another API.
+
+```java
+Consumer<String> printName = name -> System.out.println("Name: " + name);
+printName.accept("Asha");
+```
+
+### `forEach`
+
+`forEach` accepts a `Consumer` and invokes it for each element:
+
+- `Iterable.forEach` traverses an iterable such as a `List`.
+- `Stream.forEach` is a terminal stream operation. On a parallel stream it does not guarantee
+  encounter order; use `forEachOrdered` when that order is required.
+
+```java
+List<String> names = List.of("Asha", "Ravi", "Mina");
+names.forEach(System.out::println);
+```
+
+### Stream API
+
+The Stream API processes a sequence of elements as a pipeline. A stream does not store data. It
+reads from a source, applies zero or more lazy intermediate operations such as `filter` and `map`,
+and finishes with a terminal operation such as `collect`, `reduce`, or `forEach`.
+
+```java
+List.of("Asha", "Ravi", "Mina").stream()
+    .filter(name -> name.length() == 4) // intermediate; builds the pipeline
+    .map(String::toUpperCase)           // intermediate; transforms each match
+    .forEach(System.out::println);       // terminal; executes the pipeline
+```
+
+Here, the lambda passed to `forEach` is represented by a `Consumer<String>`. Prefer transformations
+and collectors when producing a result; use `forEach` when the required outcome is genuinely a side
+effect.
 
 ## Which functional interfaces fit common invoice operations?
 
@@ -162,18 +174,28 @@ Supplier<Invoice> invoiceSupplier =
 Mutable consumers are easy to misuse in parallel streams. Keep state changes deliberate and avoid
 using side effects merely to work around a missing transformation.
 
-## What is GroupBy & PartitioningBy?
+## What is the difference between `groupingBy` and `partitioningBy`?
 
 **Answer**
 
-groupingBy:
-- **Purpose:** Groups elements based on a classification function.
-- **Result:** Returns a Map where keys are the result of the classification function, and values are lists of items that match the classification.
-- **Example:** Grouping names by their length.
-partitioningBy:
-- **Purpose:** Partitions elements into two groups based on a predicate.
-- **Result:** Returns a Map with Boolean keys (true and false), where values are lists of items that match or do not match the predicate.
-- **Example:** Partitioning names by whether their length is greater than 3.
+Both are collectors, but they produce different key spaces.
+
+| Collector | Classifier | Result |
+|---|---|---|
+| `groupingBy` | A function that produces any key type | A `Map<K, List<T>>` with one group per observed key |
+| `partitioningBy` | A predicate | A `Map<Boolean, List<T>>` with `true` and `false` partitions |
+
+```java
+List<String> names = List.of("Ana", "Ravi", "Mina", "Raj");
+
+Map<Integer, List<String>> byLength =
+    names.stream().collect(Collectors.groupingBy(String::length));
+
+Map<Boolean, List<String>> longerThanThree =
+    names.stream().collect(Collectors.partitioningBy(name -> name.length() > 3));
+```
+
+Use `groupingBy` for multiple categories and `partitioningBy` for a binary decision.
 
 ## What is faster Stream API or traditional loops?
 
@@ -186,30 +208,45 @@ side-effect free, and not constrained by ordering or the common pool. Data size 
 parallel execution faster. Benchmark the real operation with JMH after choosing the clearest correct
 implementation.
 
-## What are Terminal operations?
+## What are terminal stream operations?
 
 **Answer**
 
-- **Terminal Operations:** Operations that produce a result or a side-effect and mark the end of the stream pipeline.
-- **Common Terminal Operations:** forEach: Performs an action for each element.
-collect: Collect elements into a collection or another data structure.
-reduce: Reduces elements to a single value.
-toArray: Returns an array containing the elements.
-count: Returns the count of elements.
-findFirst: Returns the first element as an Optional.
-findAny: Returns any element as an Optional.
-allMatch, anyMatch, noneMatch: Return boolean values based on predicate matching.
+A terminal operation starts traversal of the stream pipeline and produces a non-stream result or a
+side effect. After it completes, that stream cannot be reused.
 
-## What is the difference between flatmap() and a map()?
+| Purpose | Common operations | Result |
+|---|---|---|
+| Aggregate | `collect`, `reduce`, `count` | A collection, summary, count, or combined value |
+| Search | `findFirst`, `findAny` | An `Optional` containing a matching element, if present |
+| Match | `allMatch`, `anyMatch`, `noneMatch` | A boolean; these operations may short-circuit |
+| Materialize | `toArray` | An array containing the traversed elements |
+| Perform an action | `forEach`, `forEachOrdered` | No value; invokes a `Consumer` for elements |
+
+Whether an operation processes every element depends on its semantics. For example, `anyMatch` can
+stop after the first match, while `collect` normally consumes the entire finite stream.
+
+## What is the difference between `map` and `flatMap`?
 
 **Answer**
 
-- **Transformation:** map(): Transforms each element of the stream into another element.
-flatMap(): Transforms each element of the stream into a stream of new elements and then flattens the resulting streams into a single stream.
-- **Mapping:** map(): One-to-One Mapping (each input element is transformed into exactly one output element).
-flatMap(): One-to-Many Mapping (each input element is transformed into zero or more output elements).
-- **Resulting Stream:** map(): The result is a stream of the same structure but with transformed elements.
-flatMap(): The result is a single flattened stream containing all the elements of the individual streams.
+`map` transforms each input element into one output value. `flatMap` transforms each input element
+into a stream and then flattens those nested streams into one stream.
+
+```java
+List<String> lines = List.of("red blue", "green");
+
+List<String[]> arrays = lines.stream()
+    .map(line -> line.split(" "))
+    .toList(); // one array per input line
+
+List<String> words = lines.stream()
+    .flatMap(line -> Arrays.stream(line.split(" ")))
+    .toList(); // one stream containing red, blue, and green
+```
+
+Use `map` for a one-to-one transformation and `flatMap` when each input can yield zero or more
+outputs or when a nested stream-like result needs to be flattened.
 
 ## What is parallelStream?
 
@@ -220,3 +257,9 @@ normally using the common `ForkJoinPool`. Parallel does not guarantee faster exe
 thread-per-element behavior. Avoid shared mutable side effects, understand encounter-order costs, and
 do not use it casually for blocking I/O or in server code where common-pool contention is difficult to
 control. Measure before keeping it.
+
+## References
+
+- [Java Stream package documentation](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html)
+- [`Stream` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html)
+- [`Consumer` API](https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Consumer.html)

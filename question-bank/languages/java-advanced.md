@@ -82,20 +82,23 @@ bounds, and native-safety concerns must be handled explicitly.
 
 **Answer**
 
-- **Unclosed resources:** these usually leak operating-system or pool resources rather than Java heap
-  by themselves, though their owners may also remain reachable. Use try-with-resources.
-- **Static Fields:** Holding references to objects in static fields.
-- **Solution:** Avoid using static fields for large collections of objects.
-- **Inner Classes and Anonymous Classes:** Non-static inner classes and anonymous classes holding references to their enclosing instance.
-- **Solution:** Use static inner classes if possible.
-- **Listeners and Callbacks:** Registering listeners or callbacks without unregistering them.
-- **Solution:** Properly unregister listeners and callbacks.
-- **Caching:** Caching objects without proper eviction policies.
-- **Solution:** Use caching libraries with built-in eviction policies.
-- **ThreadLocal Variables:** Not cleaning up ThreadLocal variables.
-- **Solution:** Ensure ThreadLocal variables are removed when no longer needed.
-- **Large Collections:** Holding references to large collections that grow indefinitely.
-- **Solution:** Use weak references or implement proper cleanup mechanisms.
+A Java heap leak occurs when objects that the application no longer needs remain strongly reachable,
+so the garbage collector cannot reclaim them. Common retention patterns include:
+
+| Cause | Why data remains reachable | Typical prevention |
+|---|---|---|
+| Static collections | A class-level reference can live for the lifetime of its class loader | Bound the collection and remove obsolete entries |
+| Unbounded caches | Entries accumulate without size, time, or weight-based eviction | Define an eviction policy and monitor cache size |
+| Listeners and callbacks | A long-lived publisher retains registered subscribers | Unregister them or use a lifecycle-aware registration |
+| Non-static inner classes | Each instance implicitly retains its enclosing instance | Use a static nested class when outer-instance access is unnecessary |
+| `ThreadLocal` values | Pool threads can outlive the request that set the value | Call `remove()` in `finally`, or avoid thread-local state |
+| Queues and collections | Producers add data faster than it is removed | Apply capacity limits, backpressure, and ownership rules |
+| Class-loader retention | Threads, static state, drivers, or callbacks retain an old loader | Stop and deregister resources during undeployment |
+
+Unclosed files, sockets, and database connections are primarily resource leaks rather than heap
+leaks, although the objects owning them may also remain reachable. Use try-with-resources for
+`AutoCloseable` resources. Weak references are not a general fix for unclear ownership; first find
+the unexpected path from a GC root in a heap dump.
 
 ## Can Polymorphism lead to memory issues? If so then in what scenario?
 
@@ -141,26 +144,33 @@ Helps identify memory leaks, excessive memory consumption, and inefficient objec
 - **Allocation Call Tree:** Identify where objects are being allocated in the code.
 - **Garbage Collection Monitoring:** Monitor GC activity and its impact on application performance.
 
-## Explain a bit about JProfiler?
+## What is JProfiler, and how would you use it?
 
 **Answer**
 
-JProfiler is a comprehensive Java profiling tool developed by ej-technologies. It is designed to help developers analyze and optimize the performance of their Java applications. Here are the key points:
-- **Key Features:** CPU Profiling: Identifies methods consuming the most CPU time.
-- **Memory Profiling:** Detects memory leaks and optimizes memory usage through heap dumps and object allocation tracking.
-- **Thread Profiling:** Monitors thread activity, states, contention, and lifecycles.
-- **Heap Walker:** Provides detailed views of objects in the heap, including references and sizes.
-- **Call Graphs:** Visualizes the call hierarchy and time spent in each method.
-- **SQL and NoSQL Profiling:** Profiles database interactions and optimizes database performance.
-- **Remote Profiling:** Profiles applications running on remote servers.
-- **IDE Integration:** Integrates with popular IDEs like IntelliJ IDEA, Eclipse, and NetBeans.
-- **Usage:** Installation: Download and install from the official website.
-- **Attaching to JVM:** Attach to a running JVM or start a new profiling session.
-- **Analyzing Data:** Use various views and tools to analyze CPU, memory, and thread data.
-- **Generating Reports:** Create detailed reports for further analysis and documentation.
-- **Example Use Case:** CPU Profiling: Optimize methods with high CPU usage.
-- **Memory Profiling:** Detects and fixes memory leaks.
-- **Thread Profiling:** Resolve thread contention and deadlocks.
+JProfiler is a Java profiler used to investigate CPU time, allocations, retained objects, garbage
+collection, threads, locks, and selected database activity. It can start an application with the
+profiling agent or attach to a compatible running JVM, including a remotely configured JVM.
+
+### Choose a view from the symptom
+
+| Symptom | Useful JProfiler view | What to inspect |
+|---|---|---|
+| High CPU usage | Call tree, hot spots, and call graph | Expensive methods, call counts, and caller paths |
+| Growing heap | Heap walker, allocation recording, and snapshots | Dominators, retained size, GC-root paths, and allocation sites |
+| Slow or stuck threads | Thread history and monitor views | Thread states, blocked owners, contention, and deadlocks |
+| Excessive database time | JDBC or probe telemetry when available | Slow calls, call sites, and repeated query patterns |
+
+### Investigation workflow
+
+1. Reproduce one measurable symptom under representative load.
+2. Record only the relevant telemetry because instrumentation can add overhead.
+3. Find the dominant call path, retained-object path, or lock owner.
+4. Form and test a source-level hypothesis instead of treating the hottest item as the root cause.
+5. Apply a focused change and repeat the same measurement to verify the improvement.
+
+A profiler provides evidence, not an automatic diagnosis. Compare like-for-like runs and account for
+warm-up, JIT compilation, garbage collection, sampling versus instrumentation, and profiler overhead.
 
 ## What are the strategies you will use to fix Memory Leaks in your application
 
@@ -284,3 +294,10 @@ PreparedStatement
 Returns the result of the first completed future.
 - **Combining with thenCombine:** Combines two CompletableFuture instances and applies a function to their results.
 Returns a new CompletableFuture that is completed with the result of the function.
+
+## References
+
+- [JProfiler introduction](https://www.ej-technologies.com/resources/jprofiler/help/doc/main/introduction.html)
+- [JProfiler CPU profiling](https://www.ej-technologies.com/resources/jprofiler/help/doc/main/cpu.html)
+- [JProfiler memory profiling](https://www.ej-technologies.com/resources/jprofiler/help/doc/main/memory.html)
+- [JProfiler thread profiling](https://www.ej-technologies.com/resources/jprofiler/help/doc/main/threads.html)
