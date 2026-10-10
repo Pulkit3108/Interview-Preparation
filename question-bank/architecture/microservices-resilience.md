@@ -377,9 +377,23 @@ default for a new Spring application. Current alternatives include Spring Cloud 
 gateways, ingress proxies, and service-mesh gateways. When maintaining Zuul, state the version and
 verify support, threading, timeout, filter, and security behavior.
 
+## What is service discovery?
+
+**Answer**
+
+Service discovery maps a logical service identity to currently usable endpoints. In client-side
+discovery, the caller queries a registry or local cache and selects an endpoint. In server-side
+discovery, a load balancer, proxy, gateway, or service mesh resolves and selects the endpoint.
+
+Registration and health must reflect readiness rather than mere process existence. Clients also need
+timeouts, load-balancing policy, stale-entry handling, connection refresh, retries bounded by an
+overall deadline, and behavior for an unavailable registry. In Kubernetes, Services and cluster DNS
+provide common discovery abstractions over changing Pod endpoints.
+
 ## References
 
 - [Temporal documentation](https://docs.temporal.io/)
 - [W3C Trace Context](https://www.w3.org/TR/trace-context/)
 - [OpenTelemetry documentation](https://opentelemetry.io/docs/)
 - [OWASP Microservices Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Microservices_Security_Cheat_Sheet.html)
+- [Kubernetes service discovery](https://kubernetes.io/docs/concepts/services-networking/service/)

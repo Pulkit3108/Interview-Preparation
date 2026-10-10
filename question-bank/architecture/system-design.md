@@ -11,6 +11,7 @@ Requirements, architectural trade-offs, API performance, and end-to-end design e
 - [API performance](#how-can-you-optimize-the-performance-of-a-high-performing-api-to-ensure-a-great-user-experience-and-efficient-application-operation)
 - [Interview method](#how-should-you-structure-a-system-design-interview)
 - [URL-shortener design exercise](#how-would-you-design-a-url-shortening-service)
+- [Leaderboard design exercise](#how-would-you-design-a-game-leaderboard)
 
 ## What is a system design?
 
@@ -96,7 +97,34 @@ deleted links, custom-alias conflicts, hot keys, regional failover, analytics lo
 outages. Observability should cover redirect latency, lookup failures, cache hit rate, key collisions,
 abuse decisions, and asynchronous analytics lag.
 
+## How would you design a game leaderboard?
+
+**Answer**
+
+Clarify whether the board is global or scoped by game mode, region, season, or friend group; whether
+scores replace, increment, or accumulate; how ties are broken; how quickly ranks must update; and
+whether users need top-N, their exact rank, or neighbors around their rank. Define reset, late-event,
+moderation, privacy, and cheating rules before choosing storage.
+
+Keep an authoritative score event or transaction with an idempotency key so retries cannot award a
+result twice. Maintain a ranked projection keyed by board and player. A Redis sorted set is one
+option for a bounded real-time board: the member is the player ID, the score is the ranking value,
+and sorted-set operations update scores and return ranges or ranks. Store profile data separately,
+define a deterministic tie-breaker, and rebuild the projection from authoritative data when needed.
+
+One ordered structure can become a hot key for a very large global board. Partitioning by region or
+league helps local boards but makes an exact global rank expensive because shard results must be
+merged or summarized. Alternatives include a database table with a suitable composite index,
+precomputed rank snapshots, or approximate distributions when exact rank is unnecessary. Separate
+exact leaderboards from heavy-hitter sketches, which answer a different question.
+
+Protect score submission with authentication, authorization, server-side validation, replay and
+rate controls, and an audit trail. Plan season rollover, retention, deletion, failover consistency,
+cache invalidation, and recovery. Observe update latency, read latency, rejected or duplicate events,
+projection lag, hot partitions, and rebuild progress.
+
 ## References
 
 - [Google SRE: Service Level Objectives](https://sre.google/sre-book/service-level-objectives/)
 - [RFC 9110: HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110)
+- [Redis sorted sets](https://redis.io/docs/latest/develop/data-types/sorted-sets/)

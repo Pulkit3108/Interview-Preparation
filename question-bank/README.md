@@ -19,6 +19,11 @@ Select a topic to view its questions and answers.
 
 - [Core data structures and algorithms](data-structures/algorithms.md)
 
+## Computer Science Fundamentals
+
+- [Computer architecture fundamentals](computer-science/computer-architecture.md)
+- [Operating systems](computer-science/operating-systems.md)
+
 ## Frontend
 
 - [HTML and CSS](frontend/html-css.md)

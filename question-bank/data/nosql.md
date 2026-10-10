@@ -43,6 +43,26 @@ Redis Cluster provide availability and partitioning options.
 Redis is not a drop-in relational database. Model memory bounds, eviction, persistence, replication
 lag, failover data loss, hot keys, and cache invalidation explicitly.
 
+## What is HyperLogLog, and when should you use it?
+
+**Answer**
+
+HyperLogLog is a probabilistic data structure for estimating **cardinality**, the number of distinct
+items in a multiset or stream. It hashes each item and uses patterns in the hash values to update a
+fixed-size collection of registers. The estimate uses bounded memory instead of retaining every
+distinct value, and independently built sketches with compatible parameters can be merged to
+estimate the cardinality of their union.
+
+Use it for questions such as approximate unique visitors, devices, or search terms when a small,
+known statistical error is acceptable and exact set membership is not required. It cannot list the
+items, prove whether one item was seen, or provide an exact count. Small-cardinality behavior,
+precision, representation size, merge compatibility, and error guarantees depend on the
+implementation; for example, Redis documents a standard error of about 0.81% for its implementation.
+
+A Bloom filter answers approximate membership, while HyperLogLog estimates distinct count. A
+frequency sketch or Top-K structure estimates repeated-item frequency or heavy hitters. Choosing one
+merely because all are space-efficient probabilistic structures produces the wrong query semantics.
+
 ## Is Redis single-threaded?
 
 **Answer**
@@ -82,4 +102,5 @@ fields, and verify the resulting query plan with representative data.
 - [MongoDB indexes](https://www.mongodb.com/docs/manual/indexes/)
 - [MongoDB replication](https://www.mongodb.com/docs/manual/replication/)
 - [Redis documentation](https://redis.io/docs/latest/)
+- [Redis HyperLogLog documentation](https://redis.io/docs/latest/develop/data-types/probabilistic/hyperloglogs/)
 - [Redis distributed locks](https://redis.io/docs/latest/develop/clients/patterns/distributed-locks/)

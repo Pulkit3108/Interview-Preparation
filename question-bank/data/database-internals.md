@@ -133,6 +133,23 @@ This design turns many writes into sequential I/O but introduces read, write, an
 compaction CPU/I/O, and tail-latency trade-offs. Range queries are supported because SSTables are
 sorted, though reads may consult several levels or runs.
 
+## What is a Bloom filter, and why do storage engines use one?
+
+**Answer**
+
+A Bloom filter is a space-efficient probabilistic membership structure. Adding an item sets several
+bit positions selected by hash functions. A lookup that finds any required bit unset proves the item
+was not added; a lookup whose bits are all set means the item is only **probably** present because
+other items may have set the same bits.
+
+Storage engines can check a Bloom filter before an expensive disk or network lookup. For example, an
+LSM-tree can skip an SSTable when its filter says a key is absent. A false positive performs an
+unnecessary lookup but does not return incorrect application data because the authoritative
+structure is still checked. Classic Bloom filters can have false positives but not false negatives
+under their stated model, and they do not support ordinary deletion without a variant such as a
+counting filter. Capacity, bits per item, number and quality of hashes, and acceptable false-positive
+rate must be chosen together.
+
 ## What types of database indexes should you know?
 
 **Answer**
@@ -334,6 +351,27 @@ under a defined fault model. Algorithms such as Raft and Paxos use quorums and t
 maintain safety. They cannot guarantee progress through arbitrary network partitions without enough
 reachable members, and they do not solve application-level conflicts automatically.
 
+## How does Paxos reach consensus?
+
+**Answer**
+
+In single-decree Paxos, proposers suggest numbered proposals, acceptors vote, and learners discover
+the chosen value. A value is chosen when a majority of acceptors accepts it. Intersecting majorities
+and the proposal-number rules preserve safety: before issuing a higher-numbered proposal, a proposer
+collects promises from a majority and must carry forward the value from the highest-numbered proposal
+already accepted by that majority, if one exists.
+
+The protocol separates safety from progress. Competing proposers can repeatedly interrupt one
+another without choosing a value, so practical systems normally use a stable leader and repeated
+instances, often called Multi-Paxos, to replicate a command log. Paxos assumes its defined crash and
+message-loss model; basic Paxos does not tolerate Byzantine behavior and a quorum must be reachable
+to make progress.
+
+Raft and Paxos solve the same broad crash-fault consensus problem but expose different abstractions
+and protocol structures. Raft specifies leader election, log replication, and membership-oriented
+mechanisms as an integrated algorithm; “Paxos” names a family whose production implementations add
+leadership, a replicated log, recovery, membership changes, snapshots, and operational safeguards.
+
 ## What is multi-leader replication?
 
 **Answer**
@@ -360,6 +398,21 @@ In a leaderless design, clients or coordinators write to and read from multiple 
 one elected write leader. Quorum reads/writes, read repair, hinted handoff, and anti-entropy can improve
 availability and convergence. Concurrent versions and sloppy quorums mean conflict resolution and
 consistency are more nuanced than the simple equation `R + W > N` suggests.
+
+## What is hinted handoff?
+
+**Answer**
+
+Hinted handoff is a best-effort repair mechanism for temporarily unavailable replicas. When a
+replica cannot receive a write, another node stores a persistent hint describing the intended
+mutation. If the target returns within the configured retention window, the holder replays the hint
+so the replica can catch up sooner.
+
+A hint is not another permanent replica and storing one does not by itself satisfy every durability
+or consistency requirement. The holder can also fail, hints can expire, and replay can create a
+large recovery workload. Systems therefore combine hinted handoff with read repair or anti-entropy
+repair, monitor retained and replayed hints, throttle delivery, and retain enough authoritative
+replicas and backups for the actual failure model.
 
 ## What are Merkle trees used for in distributed storage?
 
@@ -539,6 +592,74 @@ consistency, peer replication, and high write availability/throughput. Choose fr
 transaction needs, partition sizes, consistency, topology, and operational behavior, not from the
 generic label "NoSQL."
 
+## What is conflict serializability?
+
+**Answer**
+
+Two operations conflict when they belong to different transactions, access the same data item, and
+at least one is a write. A schedule is conflict-serializable when swapping adjacent non-conflicting
+operations can transform it into a serial schedule.
+
+Build a precedence graph with one node per transaction and an edge from `Ti` to `Tj` when a
+conflicting operation from `Ti` precedes one from `Tj`. The schedule is conflict-serializable if and
+only if this graph is acyclic. A topological ordering gives an equivalent serial order.
+
+Conflict serializability is a reasoning model. A database's advertised `SERIALIZABLE` isolation may
+use locking, serialization-graph checks, or another mechanism, and applications must still handle
+serialization failures and retries.
+
+## How do recoverable, cascadeless, and strict schedules differ?
+
+**Answer**
+
+- A **recoverable schedule** commits a transaction only after every transaction whose value it read
+  has committed. This prevents a committed transaction from depending on an aborted one.
+- A **cascadeless schedule** allows transactions to read only committed values, preventing an abort
+  from forcing dependent readers to abort.
+- A **strict schedule** prevents other transactions from reading or overwriting a value written by
+  an uncommitted transaction. This simplifies recovery and avoids dirty reads and dirty writes.
+
+Strictness implies cascadelessness, and cascadelessness implies recoverability. These definitions
+describe schedules; SQL isolation levels are related operational contracts but should not be treated
+as interchangeable vocabulary.
+
+## What is view serializability?
+
+**Answer**
+
+A schedule is view-serializable when it has the same read-from relationships and final writers as
+some serial schedule. It accepts some schedules that are not conflict-serializable, particularly
+ones involving blind writes.
+
+Testing general view serializability is substantially harder than testing conflict serializability,
+so practical concurrency-control systems generally enforce a more tractable sufficient condition
+rather than analyze arbitrary schedules this way at runtime.
+
+## What is a gossip protocol?
+
+**Answer**
+
+A gossip protocol spreads state through repeated peer-to-peer exchanges. Each node periodically
+selects peers and shares some known information; over multiple rounds, updates propagate through the
+membership rather than through one central broadcaster.
+
+Gossip is useful for membership, failure-detection observations, and eventually disseminated
+metadata. It is probabilistic and does not by itself provide consensus, a total order, or immediate
+agreement. Correct designs specify message versioning, duplicate handling, convergence, tombstones
+or expiry, bandwidth limits, and how suspicion differs from confirmed failure.
+
+## What is total-order broadcast?
+
+**Answer**
+
+Total-order broadcast delivers messages so that all non-faulty participants deliver the same set in
+the same order, subject to the protocol's validity and liveness conditions. It is stronger than
+reliable delivery alone: two replicas cannot apply the same operations in different orders.
+
+Replicated state machines commonly use a consensus log to obtain this order. The guarantee applies
+inside the protocol's defined group and fault model; it does not automatically order unrelated
+external effects or make a non-deterministic state machine safe.
+
 ## References
 
 - [PostgreSQL transaction isolation](https://www.postgresql.org/docs/current/transaction-iso.html)
@@ -546,3 +667,7 @@ generic label "NoSQL."
 - [Raft paper](https://raft.github.io/raft.pdf)
 - [ZooKeeper programmer's guide](https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html)
 - [Cloud Spanner documentation](https://cloud.google.com/spanner/docs)
+- [Apache Cassandra gossip documentation](https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html#gossip)
+- [Apache Cassandra storage engine and Bloom filters](https://cassandra.apache.org/doc/stable/cassandra/architecture/storage-engine.html)
+- [Apache Cassandra hinted handoff](https://cassandra.apache.org/doc/stable/cassandra/managing/operating/hints.html)
+- [Leslie Lamport: Paxos Made Simple](https://www.microsoft.com/en-us/research/publication/paxos-made-simple/)

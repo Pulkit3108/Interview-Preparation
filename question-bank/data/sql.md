@@ -581,3 +581,105 @@ SELECT employee_id, employee_name, department_id
 FROM Employees
 WHERE status = 'ACTIVE';
 ```
+
+## What do superkey, candidate key, primary key, alternate key, and foreign key mean?
+
+**Answer**
+
+- A **superkey** is any set of attributes that uniquely identifies a row. It can contain attributes
+  that are not needed for uniqueness.
+- A **candidate key** is a minimal superkey: removing any attribute would lose uniqueness.
+- A **primary key** is the candidate key chosen as the relation's main identifier.
+- An **alternate key** is another candidate key not selected as the primary key.
+- A **foreign key** constrains values in referencing columns to match an eligible key in another row
+  or table, subject to the database's null and action rules.
+
+A **composite key** uses more than one column; it can be primary, candidate, or foreign. A SQL
+`UNIQUE` constraint is a practical way to enforce an alternate key, but null treatment and whether a
+foreign key may reference it are database-specific.
+
+## What is an entity-relationship model?
+
+**Answer**
+
+An entity-relationship model describes domain objects, their attributes, and the relationships and
+constraints between them before or alongside relational schema design.
+
+- An **entity** is one identifiable occurrence, such as one employee.
+- An **entity set** is a collection of similar entities.
+- An **attribute** describes an entity or relationship.
+- **Cardinality** describes how many occurrences may participate, such as one-to-one,
+  one-to-many, or many-to-many.
+- **Participation** describes whether participation is optional or mandatory.
+
+A relational implementation usually represents a one-to-many relationship with a foreign key and a
+many-to-many relationship with an associative table. The diagram is a model; the actual schema must
+still define keys, nullability, uniqueness, referential actions, and other constraints.
+
+## What is a functional dependency?
+
+**Answer**
+
+For attribute sets `X` and `Y`, the functional dependency `X -> Y` means that any two valid rows
+with the same values for `X` must also have the same values for `Y`. It is a constraint derived from
+the domain, not merely a pattern observed in one sample dataset.
+
+The dependency is **trivial** when `Y` is a subset of `X`. The **closure** of `X`, written `X+`, is
+the set of attributes that can be derived from `X` using the known dependencies. If `X+` contains
+every attribute in the relation, `X` is a superkey; if no proper subset of `X` is also a superkey,
+it is a candidate key.
+
+## What makes a relational decomposition lossless and dependency-preserving?
+
+**Answer**
+
+A decomposition is **lossless** when joining the decomposed relations recreates exactly the valid
+original relation rather than introducing spurious rows or losing information.
+
+It is **dependency-preserving** when the original functional dependencies can be enforced by
+checking constraints within the decomposed relations without first joining them. A normalization
+step should aim for both, but some higher-normal-form decompositions trade dependency preservation
+for stronger redundancy control. Losslessness is the essential correctness property.
+
+## How are SQL statements commonly categorized?
+
+**Answer**
+
+Textbooks often group statements as:
+
+- **DDL:** schema definition, such as `CREATE`, `ALTER`, and `DROP`;
+- **DML:** data query and modification, such as `SELECT`, `INSERT`, `UPDATE`, `DELETE`, and `MERGE`;
+- **DCL:** privilege control, such as `GRANT` and `REVOKE`; and
+- **transaction control:** `COMMIT`, `ROLLBACK`, and `SAVEPOINT`.
+
+These labels are teaching conventions rather than perfectly portable language partitions. For
+example, some material calls `SELECT` DQL, and transaction behavior for DDL varies by database.
+Always answer with the target database's actual syntax and transactional semantics.
+
+## What is the difference between a database schema and a database instance?
+
+**Answer**
+
+The **schema** is the defined structure and constraints: relations, columns, types, keys, indexes,
+views, and other database objects. A database **instance** is the data and relevant state stored at a
+particular time.
+
+Older texts sometimes call these **intension** and **extension**, respectively. A schema can evolve,
+but it normally changes far less frequently than the rows that conform to it. Do not confuse a
+database instance in this modeling sense with a running database-server process, which vendors also
+commonly call an instance.
+
+## What are the external, conceptual, and internal levels of database abstraction?
+
+**Answer**
+
+- The **external level** exposes user- or application-specific views of the data.
+- The **conceptual level** describes the overall logical schema and relationships independently of
+  one application's view.
+- The **internal level** describes physical organization such as files, pages, indexes, partitions,
+  and access paths.
+
+Separating the levels supports data independence. **Logical data independence** limits the effect of
+conceptual-schema changes on external views, while **physical data independence** lets storage and
+access structures change without altering the logical model. Actual database products approximate
+these boundaries rather than implementing every textbook layer literally.

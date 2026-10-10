@@ -6,6 +6,7 @@ subject for quick reference.
 ## Explore
 
 - [Browse the complete question bank](question-bank/README.md)
+- [Use the career preparation guides](career-resources/README.md)
 - [Contribute or improve content](CONTRIBUTING.md)
 
 ## Coverage
@@ -15,6 +16,7 @@ subject for quick reference.
 | Behavioral | Introductions, career decisions, teamwork, leadership, and recruiter conversations |
 | Languages | Java, JavaScript, C#, and C++ fundamentals plus coding exercises |
 | Data structures | Core structures, algorithms, complexity, and implementation exercises |
+| Computer science fundamentals | Operating systems, processes, concurrency, memory, storage I/O, and processor caches |
 | Frontend | HTML/CSS, Angular, legacy AngularJS, React, and web analytics |
 | Backend | Spring Boot, Spring Data/JPA, REST, Node.js, and .NET |
 | Data | SQL, NoSQL, database internals, and data-processing systems |
@@ -22,3 +24,4 @@ subject for quick reference.
 | Infrastructure | Cloud, containers, Kubernetes, Kafka, networking, CI/CD, and observability |
 | Developer tools | Git, command-line utilities, Maven, and Gradle |
 | Testing | Test design, Java mocking, Selenium, and browser automation |
+| Career preparation | Outreach, offer evaluation, negotiation, and transition finances |

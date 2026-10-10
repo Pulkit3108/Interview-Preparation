@@ -71,6 +71,28 @@ Layer 7 can route by HTTP attributes. Correct design includes health checks, con
 timeouts, retries, session affinity only when necessary, zone/region failure, TLS, and overload
 protection.
 
+## How do TLS termination, TLS passthrough, and TLS re-encryption differ at a load balancer?
+
+**Answer**
+
+- With **TLS termination**, the load balancer completes the client TLS connection and decrypts the
+  traffic. It can then inspect HTTP attributes, apply Layer 7 routing and security policy, and manage
+  the public certificate centrally. If it forwards plaintext, the backend network must be trusted
+  and protected.
+- With **TLS passthrough**, the load balancer forwards the encrypted connection without decrypting
+  it. The backend terminates TLS and owns the certificate and cryptographic policy. The load balancer
+  has less application-layer visibility and normally routes using transport information or limited
+  handshake metadata such as SNI when it is visible.
+- With **TLS re-encryption**, the load balancer terminates the client connection and creates a
+  separate TLS connection to the backend. This preserves Layer 7 control while encrypting both
+  network segments, but it requires certificate validation and lifecycle management on both sides.
+
+These modes create different trust boundaries; none is automatically the most secure. Choose from
+the required inspection and routing, encryption across network segments, compliance rules,
+client-certificate handling, backend identity verification, certificate ownership, performance, and
+failure behavior. Termination with re-encryption creates two TLS connections and two trust
+relationships, not one uninterrupted client-to-backend TLS session.
+
 ## How do TCP and UDP differ?
 
 **Answer**
@@ -117,6 +139,7 @@ substitute for an authoritative database by default.
 
 - [Redis documentation](https://redis.io/docs/latest/)
 - [Memcached documentation](https://docs.memcached.org/)
+- [HAProxy: TLS termination and passthrough](https://www.haproxy.com/blog/haproxy-ssl-termination)
 - [RFC 9293: TCP](https://www.rfc-editor.org/rfc/rfc9293)
 - [RFC 768: UDP](https://www.rfc-editor.org/rfc/rfc768)
 - [WebSocket standard](https://websockets.spec.whatwg.org/)

@@ -130,6 +130,139 @@ bool hasUniqueBytes(std::string_view input) {
 This checks unique bytes, which is appropriate for ASCII or raw-byte input. It does not check
 Unicode characters or grapheme clusters; those require an explicit encoding-aware design.
 
+## What constructor forms should a C++ class designer know?
+
+**Answer**
+
+Important forms include default, converting or other parameterized, copy, and move constructors.
+The compiler may implicitly declare some special member functions, but declaring a destructor, copy
+operation, or move operation can affect which others are generated or deleted.
+
+Prefer the **rule of zero**: let value-type members and RAII ownership types manage resources so the
+class needs no custom destructor, copy constructor, copy assignment, move constructor, or move
+assignment. When a class directly manages a resource and must define one of these operations,
+consider the complete rule-of-five contract.
+
+## Why should a polymorphic base class usually have a virtual destructor?
+
+**Answer**
+
+Deleting a derived object through a base pointer requires the base destructor to be virtual. Without
+it, the behavior is undefined and the derived portion may not be destroyed correctly.
+
+```cpp
+class Shape {
+public:
+    virtual ~Shape() = default;
+    virtual double area() const = 0;
+};
+```
+
+A base class that is not intended for polymorphic deletion can instead make destruction protected or
+otherwise prevent deletion through a base pointer. Do not add virtual dispatch to every class
+automatically; make the ownership and substitution contract explicit.
+
+## What is a pure virtual function and an abstract class?
+
+**Answer**
+
+A pure virtual function is declared with `= 0`. A class with at least one unimplemented pure virtual
+function is abstract and cannot be instantiated. Derived concrete classes must provide the required
+overrides unless they remain abstract.
+
+```cpp
+class Shape {
+public:
+    virtual ~Shape() = default;
+    virtual double area() const = 0;
+};
+```
+
+A pure virtual function can still have a definition in some advanced designs, but the class remains
+abstract. Use `override` on derived implementations so the compiler diagnoses signature mistakes.
+
+## How does runtime polymorphism work in C++?
+
+**Answer**
+
+Calling a virtual function through a base-class pointer or reference selects the final overrider for
+the object's dynamic type.
+
+```cpp
+#include <iostream>
+
+class Base {
+public:
+    virtual ~Base() = default;
+    virtual void show() const { std::cout << "base\n"; }
+};
+
+class Derived final : public Base {
+public:
+    void show() const override { std::cout << "derived\n"; }
+};
+```
+
+Non-virtual member calls are selected from the static type. Object slicing can also discard the
+derived portion when an object is copied into a base value, so polymorphic code normally uses
+references or ownership-aware pointers.
+
+## Can functions be overloaded by return type alone?
+
+**Answer**
+
+No. An overload set is distinguished by its parameter-type list and, for member functions, relevant
+qualifiers and constraints. The return type alone does not provide enough information at many call
+sites and is not part of ordinary overload selection.
+
+```cpp
+int convert(int value);
+// double convert(int value); // error: differs only by return type
+```
+
+Use a different function name, an output parameter, a result wrapper, or a template whose requested
+type is supplied explicitly when callers need different result types.
+
+## What are friend functions and classes?
+
+**Answer**
+
+A `friend` declaration grants a named non-member function or another class access to private and
+protected members. Friendship is explicitly granted, is not inherited, and is not automatically
+reciprocal or transitive.
+
+Friendship can be appropriate for tightly coupled operators or helper types whose implementation is
+part of the class's abstraction. It also increases coupling, so prefer a small public interface when
+that interface can express the operation without exposing representation details.
+
+## What problem do C++ namespaces solve?
+
+**Answer**
+
+Namespaces group declarations and prevent unrelated libraries from colliding on the same names.
+Qualified names such as `project::parser::parse` make ownership explicit, while namespace aliases
+can shorten a frequently used qualified name locally.
+
+Avoid `using namespace ...` in headers because it affects every including translation unit and can
+create ambiguous or silently changed lookup. A using-declaration for one name in a narrow scope is
+usually safer.
+
+## How do `public`, `protected`, and `private` inheritance differ?
+
+**Answer**
+
+The inheritance access specifier controls how accessible base members appear through the derived
+type:
+
+- `public` inheritance preserves public and protected access and normally models an is-a
+  substitution relationship;
+- `protected` inheritance makes inherited public members protected; and
+- `private` inheritance makes inherited public and protected members private.
+
+Private inheritance is an implementation technique, not ordinary subtype modeling. Prefer
+composition when the derived class only needs to use another type's behavior and does not need to
+override protected virtual hooks or exploit another inheritance-specific requirement.
+
 ## References
 
 - [C++ smart pointers](https://en.cppreference.com/w/cpp/memory)

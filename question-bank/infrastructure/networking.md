@@ -469,9 +469,169 @@ DNSSEC signs DNS data so a validating resolver can detect forged answers; it doe
 queries. DNS-over-HTTPS and DNS-over-TLS address transport privacy to a resolver but do not replace
 DNSSEC authenticity.
 
+## What is a network topology, and what trade-offs do common topologies make?
+
+**Answer**
+
+A network topology describes how nodes and links are arranged physically or logically.
+
+- **Star:** each endpoint connects to a central switch or access point. One endpoint link can fail
+  without disconnecting the others, but the central device is a shared dependency.
+- **Bus:** endpoints share one communication medium. It uses little cabling but creates contention
+  and a shared failure domain.
+- **Ring:** each node connects to two neighbors in a closed path. A basic single ring is sensitive to
+  a link or node failure; redundant rings and protection mechanisms can provide alternate paths.
+- **Mesh:** nodes have multiple paths between them. It improves resilience and route choice at the
+  cost of links, configuration, and control-plane complexity.
+- **Tree or hierarchical star:** access networks connect through aggregation layers. It scales
+  operationally but makes the upper layers important capacity and failure domains.
+
+Real networks commonly combine these patterns. Evaluate redundancy, convergence, cost, cabling,
+capacity, blast radius, and operational complexity instead of memorizing one topology as “best.”
+
+## How do the OSI and Internet protocol models help explain networking?
+
+**Answer**
+
+The seven-layer OSI model is a conceptual vocabulary:
+
+1. physical transmission;
+2. data-link framing and local delivery;
+3. network-layer addressing and routing;
+4. end-to-end transport;
+5. session management;
+6. representation, encoding, and encryption; and
+7. application protocols.
+
+The Internet protocol suite is usually described more practically as link, internet, transport,
+and application layers. Its boundaries do not map perfectly to OSI. For example, TLS is commonly
+used between an application protocol and transport, while many applications manage their own
+session and representation concerns.
+
+The models are troubleshooting tools, not a claim that every implementation has seven independent
+software components.
+
+## What is encapsulation in a TCP/IP network?
+
+**Answer**
+
+As application data moves down a protocol stack, each layer adds the information it needs. A TCP
+implementation adds a transport header to create a segment, IP adds an internet-layer header to
+create a packet, and a link technology such as Ethernet places the packet in a frame.
+
+At the receiver, each layer validates and removes or interprets its corresponding information before
+passing the payload upward. Intermediate routers normally forward based on the network-layer packet;
+they do not process the application payload as an endpoint would, though firewalls, proxies, and
+other middleboxes may inspect additional layers.
+
+## How do MAC addresses, IP addresses, and ports differ?
+
+**Answer**
+
+- A **MAC address** identifies an interface for delivery on a compatible local link. It is used in
+  link-layer frames and normally changes at each routed hop.
+- An **IP address** identifies an interface or logical endpoint at the internet layer and supports
+  routing across networks. It may be assigned statically or dynamically and is not necessarily a
+  permanent device identity.
+- A **transport port** identifies a TCP or UDP endpoint within a host. The combination of protocol,
+  source and destination addresses, and source and destination ports distinguishes a flow.
+
+Neither an ISP nor a hardware manufacturer is the universal source of these values. Operating
+systems, administrators, local address assignment, virtualization, privacy features, and cloud
+platforms can all affect them.
+
+## What does ARP do?
+
+**Answer**
+
+On an IPv4 local network, the Address Resolution Protocol maps an IPv4 address to the link-layer
+address needed for local delivery. A host first decides whether the destination is on-link. For an
+on-link destination it resolves that host; for an off-link destination it resolves the next-hop
+router instead.
+
+ARP requests are broadcast on the local link, while a reply normally identifies the requested
+mapping. Hosts cache mappings for a limited period. ARP has no built-in authentication, so networks
+may use controls such as segmentation and dynamic ARP inspection where spoofing is a concern. IPv6
+uses Neighbor Discovery rather than ARP.
+
+## What does DHCP provide?
+
+**Answer**
+
+DHCP lets a client obtain network configuration from a server. A typical IPv4 exchange is described
+as Discover, Offer, Request, and Acknowledge. The lease can include an address, prefix or subnet
+mask, default gateway, DNS resolvers, lease time, and other options.
+
+DHCP uses UDP ports 67 and 68 for IPv4. Because a new client may not yet have an address or know its
+server, the initial exchange can use broadcast and a relay can forward requests between subnets.
+Address assignment does not itself prove that the client is trusted or authorized.
+
+## What are CIDR notation and a subnet prefix?
+
+**Answer**
+
+Classless Inter-Domain Routing writes an address with a prefix length, such as `192.0.2.0/24` or
+`2001:db8::/32`. The prefix length says how many leading bits identify the network prefix; the
+remaining bits identify addresses within that prefix.
+
+For IPv4, `/24` corresponds to the mask `255.255.255.0`. Modern allocation and routing use
+prefixes rather than the historic Class A, B, and C boundaries. Subnet design must account for
+route aggregation, required address count, reserved addresses, growth, broadcast domains for IPv4,
+and security or failure boundaries.
+
+## How do unicast, broadcast, multicast, and anycast differ?
+
+**Answer**
+
+- **Unicast:** one sender addresses one destination interface.
+- **Broadcast:** one sender targets every receiver in an IPv4 broadcast domain. IPv6 does not use
+  broadcast.
+- **Multicast:** a sender targets a group whose interested receivers join; network support and scope
+  determine how the traffic is delivered.
+- **Anycast:** the same address is advertised from multiple locations, and routing delivers a packet
+  to one selected instance, usually the instance with the preferred route rather than a guaranteed
+  geographically nearest server.
+
+These are delivery models, not reliability guarantees. The application and transport still define
+ordering, retransmission, security, and session behavior.
+
+## How does the TCP three-way handshake establish a connection?
+
+**Answer**
+
+The client sends a segment with `SYN` and an initial sequence number. The server replies with
+`SYN-ACK`, acknowledging the client's sequence space and supplying its own initial sequence number.
+The client acknowledges the server's sequence number, after which both sides have synchronized
+sequence spaces and the connection is established.
+
+The handshake establishes TCP state; it does not authenticate the application server or encrypt
+traffic. HTTPS performs a TLS handshake over the transport connection, although newer protocols such
+as QUIC combine transport and cryptographic setup differently over UDP.
+
+## Which protocol facts are commonly misstated in interviews?
+
+**Answer**
+
+- ARP and ICMP do not use TCP or UDP ports. Port numbers belong to transport protocols.
+- Standard FTP control uses TCP port 21, not port 27; active-mode data traditionally uses TCP port
+  20, while passive mode negotiates another port.
+- A DHCPv4 server listens on UDP 67 and a client uses UDP 68; saying only “DHCP uses port 67” is
+  incomplete.
+- SMTP commonly uses TCP 25 for server-to-server relay, TCP 587 for message submission, and TCP 465
+  for implicit TLS submission. It is not universally an always-listening service on only port 25.
+- TCP reliability does not mean an application request ran exactly once. A response can be lost
+  after the server committed work, so APIs still need idempotency and retry design.
+- UDP is not automatically faster for every workload. Congestion control, handshake behavior,
+  packet loss, application recovery, and protocols such as QUIC affect the result.
+
 ## References
 
 - [HTTP semantics and status codes](https://www.rfc-editor.org/rfc/rfc9110.html)
 - [WebSocket protocol](https://www.rfc-editor.org/rfc/rfc6455.html)
 - [OAuth 2.0 Security Best Current Practice](https://www.rfc-editor.org/rfc/rfc9700.html)
 - [OWASP REST Security Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)
+- [IPv4 Address Resolution Protocol (RFC 826)](https://www.rfc-editor.org/rfc/rfc826.html)
+- [Dynamic Host Configuration Protocol (RFC 2131)](https://www.rfc-editor.org/rfc/rfc2131.html)
+- [Classless Inter-Domain Routing (RFC 4632)](https://www.rfc-editor.org/rfc/rfc4632.html)
+- [IPv6 Addressing Architecture (RFC 4291)](https://www.rfc-editor.org/rfc/rfc4291.html)
+- [Transmission Control Protocol (RFC 9293)](https://www.rfc-editor.org/rfc/rfc9293.html)
